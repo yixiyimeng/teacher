@@ -693,7 +693,7 @@ export default {
 					param = {
 						trueAnswer: answer,
 						score: score,
-						isImpromptu: true
+						impromptu: true
 						//uuid: $me.uuid
 					};
 				} else {
