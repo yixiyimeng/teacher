@@ -14,20 +14,20 @@ Vue.config.productionTip = false;
 // 混入一些在全局使用的功能
 
 /* eslint-disable no-new */
-// new Vue({
-//   el: '#app',
-//   router,
-//   store,
-//   components: { App },
-//   template: '<App/>',
-//   created() { 
-//     
-//   }
-// });
+   new Vue({
+     el: '#app',
+     router,
+     store,
+     components: { App },
+     template: '<App/>',
+     created() { 
+       
+     }
+   });
 // 
-new Vue({
-  components: { App },
-  router,
-  store,
-  template: '<App/>'
-}).$mount('#app')
+//new Vue({
+//components: { App },
+//router,
+//store,
+//template: '<App/>'
+//}).$mount('#app')

@@ -1,10 +1,11 @@
 <template>
 	<div style="text-align: center; padding-top: 10%; height: 70%; position: relative; width: 820px; margin: 0 auto;">
-		<div style="text-align: left; background: #fff; border: 2px solid #1890ff; border-radius:4px ;  padding-left: 20px;">
+		<!-- <div style="text-align: left; background: #fff; border: 2px solid #1890ff; border-radius:4px ;  padding-left: 20px;">
 			<span style="font-size: 30px;margin-right: 20px; ">选择时间筛选题目</span>
 			<date-picker v-model="rangetime" range appendToBody confirm confirm-text="确定" value-type="format" @input="changeTime"></date-picker>
-		</div>
-		<ul class="list">
+		</div> -->
+
+		<!-- <ul class="list">
 			<li v-for="(item, index) in titlesearchList" :accesskey="titlesearchList">
 				<label class="ant-radio-wrapper">
 					<span class="ant-radio">
@@ -14,9 +15,21 @@
 					<span>{{ item.titleName }}</span>
 				</label>
 			</li>
-		</ul>
+		</ul> -->
 		<div class="modbox" style="padding-top: 0;">
+			<div class="fromcontrol flex">
+				<date-picker v-model="rangetime" range appendToBody confirm confirm-text="确定" value-type="format" @input="changeTime"></date-picker>
+				</div>
 			<div>
+			<div class="fromcontrol flex">
+				<label>题目</label>
+				<v-select :options="titlesearchList" v-model="titleCode" placeholder="筛选题目" class="flex-1" style="padding-right: 20px;" label="titleName">
+					<template slot="no-options">
+						没有筛选到题目
+					</template>
+				</v-select>
+			</div>
+			
 				<div class="flex">
 					<a href="javascript:;" class="returnback mt20" @click="returnback()">返回</a>
 					<a href="javascript:;" class="loginBtn mt20 flex-1" @click="sendTiltle()">确定</a>
@@ -30,29 +43,31 @@
 <script>
 import { mapState } from 'vuex';
 import { urlPath } from '@/page/mainPage/utils/base';
-import {parseDay} from '@/page/mainPage/utils';
+import { parseDay } from '@/page/mainPage/utils';
 import { search } from '@/page/mainPage/components';
 import DatePicker from 'vue2-datepicker';
+import vSelect from '@/page/mainPage/components/vue-select';
 export default {
 	data() {
 		return {
-			titleCode: '',
+			titleCode: null,
 			rangetime: [],
 			sendInfo: {},
-			oldsendInfo:{},
+			oldsendInfo: {},
 			titlesearchList: []
 		};
 	},
 	components: {
 		search,
-		DatePicker
+		DatePicker,
+		vSelect
 	},
 	created() {
 		this.sendInfo = JSON.parse(this.$route.query.sendInfo);
-		this.oldsendInfo= this.$route.query.sendInfo;
-		var todayDate=new Date();
-		this.rangetime[0]=parseDay(todayDate.getTime()-30*86400000);
-		this.rangetime[1]=parseDay(todayDate.getTime());
+		this.oldsendInfo = this.$route.query.sendInfo;
+		var todayDate = new Date();
+		this.rangetime[0] = parseDay(todayDate.getTime() - 30 * 86400000);
+		this.rangetime[1] = parseDay(todayDate.getTime());
 		this.getTitleList();
 	},
 	methods: {
@@ -61,7 +76,7 @@ export default {
 		},
 		/* 查询题目 */
 		getTitleList() {
-				const $me = this;
+			const $me = this;
 			if (this.rangetime.length == 2 && this.rangetime[0] && this.rangetime[1]) {
 				var param = {
 					classCode: this.sendInfo.classCode,
@@ -69,7 +84,7 @@ export default {
 					startDateTime: this.rangetime.length > 0 && this.rangetime[0] ? this.rangetime[0] + ' 00:00:00' : '',
 					endDateTime: this.rangetime.length > 1 && this.rangetime[1] ? this.rangetime[1] + ' 23:59:59' : ''
 				};
-			
+
 				this.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/platform/getCoursewares',
@@ -78,25 +93,23 @@ export default {
 					if (da.data.ret == 'success') {
 						var list = da.data.data;
 						$me.titlesearchList = list;
-						
 					} else {
-						$me.titlesearchList=[];
-						$me.titleCode="";
+						$me.titlesearchList = [];
+						$me.titleCode = null;
 					}
 				});
 			} else {
-				$me.titlesearchList=[];
-				$me.titleCode="";
+				$me.titlesearchList = [];
+				$me.titleCode = null;
 			}
 		},
 		/* 提交题目信息 */
 		sendTiltle() {
 			const $me = this;
-			if (!$me.titleCode) {
+			if (!$me.titleCode||!$me.titleCode.titleCode) {
 				this.$toast.center('请选择一个题目');
 				return false;
 			}
-			$me.sendInfo.titleCode = $me.titleCode;
 			/* 同步题目 */
 			$me.synchronizedCoursewareQuestions();
 		},
@@ -109,10 +122,12 @@ export default {
 				headers: {
 					'Content-Type': 'application/json; charset=UTF-8'
 				},
-				data: JSON.stringify({ titleCode: $me.titleCode })
+				data: JSON.stringify({ titleCode: $me.titleCode.titleCode })
 			}).then(da => {
 				if (da.data.ret == 'success') {
-					sessionStorage.setItem('titleCode',$me.titleCode);
+					$me.sendInfo.titleCode = $me.titleCode.titleCode;
+					sessionStorage.setItem('titleCode', $me.titleCode.titleCode);
+					sessionStorage.setItem('titleName', $me.titleCode.titleName);
 					$me.startDirectBroadcasts(JSON.stringify($me.sendInfo));
 				}
 			});
@@ -131,7 +146,7 @@ export default {
 				headers: {
 					'Content-Type': 'application/json; charset=UTF-8'
 				},
-				data:param
+				data: param
 			})
 				.then(da => {
 					if (da.data.ret == 'success') {

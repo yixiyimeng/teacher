@@ -40,7 +40,7 @@
 			</div>
 		</div>
 		<!-- 选择答案的名单 -->
-		<div class="namelistbox animated fast"  :class="[isshowselectNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowselectNamelist">
+		<div class="namelistbox animated fast" :class="[isshowselectNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowselectNamelist">
 			<div class="mask" @click.stop="isshowselectNamelist = !isshowselectNamelist"></div>
 			<div class="namelistbox-bd">
 				<a href="javascript:;" class="close" @click="isshowselectNamelist = !isshowselectNamelist">×</a>
@@ -482,158 +482,171 @@ export default {
 						var received_msg = evt.data;
 						if (received_msg != '连接成功') {
 							var msg = JSON.parse(received_msg);
-							if (msg.reqType == 0) {
-								var obj = msg.data;
+							var obj = msg.data;
+							switch (msg.reqType) {
+								case 0: {
+									var time = $('#danmu').data('nowTime') + 1;
+									/*当渲染弹幕过多的时候,延迟处理弹幕*/
+									if ($('#danmu .danmaku').length > 500) {
+										time += 200; //2000毫秒。
+									}
+									var answer = '';
+									/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
+									if (msg.businessType == 1 || msg.businessType == 2 || msg.businessType == 3) {
+										answer = obj.answer;
+									} else if (msg.businessType == 4) {
+										answer = obj.answer == 'E' ? '✔' : '✖';
+									} else if (msg.businessType == 5) {
+										answer = obj.answer == 'E' ? '懂' : '不懂';
+									}
+									if (msg.businessType == 6) {
+										/*抢红包*/
+										$me.addredenvelope(msg.data);
+									} else {
+										$('#danmu').danmu('addDanmu', [
+											{
+												text: obj.stuName,
+												color: 'white',
+												size: 0,
+												position: 0,
+												time: time
+											}
+										]);
+									}
+									break;
+								}
+								case 1: {
+									/*刷新名单*/
+									for (var i = 0; i < msg.urlPaths.length; i++) {
+										if (msg.urlPaths[i].method == 'getNamelist') {
+											$me.getNamelist(msg.urlPaths[i].url);
+										} else if (msg.urlPaths[i].method == 'getprogress') {
+											$me.getprogress(urlPath);
+										}
+									}
+									break;
+								}
 
-								/* 	if ($me.uuid != msg.uuid) {
-									//console.log(msg.uuid)
-									return;
-								} */
-								var time = $('#danmu').data('nowTime') + 1;
-								/*当渲染弹幕过多的时候,延迟处理弹幕*/
-								if ($('#danmu .danmaku').length > 500) {
-									time += 200; //2000毫秒。
+								case 4: {
+									if (msg.order == 'START_BUSINESS_TYPE_10') {
+										var obj = msg.data;
+										$me.stuName = obj.stuName;
+										$me.ismicrophone = true;
+									}
+									break;
 								}
-								var answer = '';
-								/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
-								if (msg.businessType == 1 || msg.businessType == 2 || msg.businessType == 3) {
-									answer = obj.answer;
-								} else if (msg.businessType == 4) {
-									answer = obj.answer == 'E' ? '✔' : '✖';
-								} else if (msg.businessType == 5) {
-									answer = obj.answer == 'E' ? '懂' : '不懂';
+								case 6: {
+									$me.chartDate.title.push(msg.data.className);
+									$me.chartDate.agreeNumber.push(msg.data.agreeNumber);
+									$me.chartDate.disagreeNumber.push(msg.data.disagreeNumber);
+									var option = [
+										{
+											name: '懂',
+											type: 'bar',
+											stack: '主观题',
+											barWidth: 60,
+											data: $me.chartDate.agreeNumber,
+											label: {
+												normal: {
+													show: true,
+													position: 'inside',
+													color: '#fff',
+													formatter: function(param) {
+														return param.value > 0 ? param.value + '人' : '';
+													},
+													textStyle: {
+														fontSize: 24
+													}
+												}
+											}
+										},
+										{
+											name: '不懂',
+											type: 'bar',
+											stack: '主观题',
+											barWidth: 60,
+											data: $me.chartDate.disagreeNumber,
+											label: {
+												normal: {
+													show: true,
+													position: 'inside',
+													color: '#fff',
+													formatter: function(param) {
+														return param.value > 0 ? param.value + '人' : '';
+													},
+													textStyle: {
+														fontSize: 24
+													}
+												}
+											}
+										}
+									];
+									$me.getChartData(option, $me.chartDate.title);
+									break;
 								}
-								if (msg.businessType == 6) {
-									/*抢红包*/
-									$me.addredenvelope(msg.data);
-								} else {
+								case 7: {
+									/* 语音测评 */
+									var obj = msg.data;
+									/* if ($me.uuid != msg.uuid) {
+										return;
+									} */
+									var time = $('#danmu').data('nowTime') + 1;
+									/*当渲染弹幕过多的时候,延迟处理弹幕*/
+									if ($('#danmu .danmaku').length > 500) {
+										time += 200; //2000毫秒。
+									}
+									var answer = obj.score;
 									$('#danmu').danmu('addDanmu', [
 										{
-											text: obj.stuName,
+											text: obj.name + '(' + answer + ')',
 											color: 'white',
 											size: 0,
 											position: 0,
 											time: time
 										}
 									]);
+									break;
 								}
-							} else if (msg.reqType == 1) {
-								/*刷新名单*/
-								for (var i = 0; i < msg.urlPaths.length; i++) {
-									if (msg.urlPaths[i].method == 'getNamelist') {
-										$me.getNamelist(msg.urlPaths[i].url);
-									} else if (msg.urlPaths[i].method == 'getprogress') {
-										$me.getprogress(urlPath);
+								case 8: {
+									/* 语言解析 */
+									var obj = msg.data;
+									if (obj.ret == 'success') {
+										$me.txtlist.push(obj.data);
+										$me.$nextTick(function() {
+											$('.txtlist').animate({ scrollTop: $('.txtlist')[0].scrollHeight }, 400);
+										});
 									}
+									break;
 								}
-							} else if (msg.reqType == 2 || msg.reqType == 3) {
-								/*弹出提示语*/
-								$me.$toast.center(msg.data);
-							} else if (msg.reqType == 5) {
-								/*正确率*/
-								// 								$me.CorrectchartDate.title.push(msg.data.className);
-								// 								$me.CorrectchartDate.data.push(((msg.data.trueNum / msg.data.totalNum) * 100).toFixed(2));
-								// 								$me.getCorrectChartData($me.CorrectchartDate);
-							} else if (msg.reqType == 6) {
-								$me.chartDate.title.push(msg.data.className);
-								$me.chartDate.agreeNumber.push(msg.data.agreeNumber);
-								$me.chartDate.disagreeNumber.push(msg.data.disagreeNumber);
-								var option = [
-									{
-										name: '懂',
-										type: 'bar',
-										stack: '主观题',
-										barWidth: 60,
-										data: $me.chartDate.agreeNumber,
-										label: {
-											normal: {
-												show: true,
-												position: 'inside',
-												color: '#fff',
-												formatter: function(param) {
-													return param.value > 0 ? param.value + '人' : '';
-												},
-												textStyle: {
-													fontSize: 24
-												}
-											}
-										}
-									},
-									{
-										name: '不懂',
-										type: 'bar',
-										stack: '主观题',
-										barWidth: 60,
-										data: $me.chartDate.disagreeNumber,
-										label: {
-											normal: {
-												show: true,
-												position: 'inside',
-												color: '#fff',
-												formatter: function(param) {
-													return param.value > 0 ? param.value + '人' : '';
-												},
-												textStyle: {
-													fontSize: 24
-												}
-											}
-										}
-									}
-								];
-								$me.getChartData(option, $me.chartDate.title);
-							} else if (msg.reqType == 7) {
-								/* 语音测评 */
-								var obj = msg.data;
-								/* if ($me.uuid != msg.uuid) {
-									return;
-								} */
-								var time = $('#danmu').data('nowTime') + 1;
-								/*当渲染弹幕过多的时候,延迟处理弹幕*/
-								if ($('#danmu .danmaku').length > 500) {
-									time += 200; //2000毫秒。
+								case 9: {
+									var obj = msg.data;
+									var stuName = obj.stuName;
+									$me.stuName = obj.stuName;
+									$me.isparticlesbox = false;
+									$me.ismicrophone = true;
+									break;
 								}
-								var answer = obj.score;
-								$('#danmu').danmu('addDanmu', [
-									{
-										text: obj.name + '(' + answer + ')',
-										color: 'white',
-										size: 0,
-										position: 0,
-										time: time
-									}
-								]);
-							} else if (msg.reqType == 8) {
-								/* 语言解析 */
-								var obj = msg.data;
-								if (obj.ret == 'success') {
-									$me.txtlist.push(obj.data);
-									$me.$nextTick(function() {
-										$('.txtlist').animate({ scrollTop: $('.txtlist')[0].scrollHeight }, 400);
-									});
+								case 11: {
+									var obj = msg.data;
+									$me.stuName = obj.stuName;
+									break;
 								}
-							} else if (msg.reqType == 9) {
-								var obj = msg.data;
-								var stuName = obj.stuName;
-								$me.stuName = obj.stuName;
-								$me.isparticlesbox = false;
-								$me.ismicrophone = true;
-							} else if (msg.reqType == 12) {
-								/* 网络连接断开 */
-								$me.$toast('网络连接断开');
-							} else if (msg.reqType == 13) {
-								/* 网络连接连接 */
-								$me.$toast('网络连接成功');
-							} else if (msg.reqType == 14) {
-								/* 网络连接断开 */
-								//$me.$toast('USB连接断开');
-								$me.$toast(msg.data);
-							} else if (msg.reqType == 15) {
-								/* 网络连接连接 */
-								//$me.$toast('USB连接成功');
-								$me.$toast(msg.data);
+								case 12: {
+									/* 网络连接断开 */
+									$me.$toast('网络连接断开');
+									break;
+								}
+								case 13: {
+									/* 网络连接连接 */
+									$me.$toast('网络连接成功');
+									break;
+								}
+								default:{
+									$me.$toast(msg.data);
+									break;
+								}
 							}
-
-							/*获取作答进度*/
+							
 						} else {
 							$('#danmu').data('danmuList', {});
 							$('#danmu').danmu('danmuStop');
@@ -820,8 +833,8 @@ export default {
 			//$me.$store.commit("SET_isShowbg", true);
 		},
 		/* 调用开始接口成功以后，页面显示 */
-		startVIew(){
-			const $me=this;
+		startVIew() {
+			const $me = this;
 			$me.clear();
 			$me.isAnswering = true; //开始答题
 			/*开始答题*/
@@ -838,8 +851,8 @@ export default {
 					document.getElementById('music').play();
 				}
 			}
-			$me.isSubject = false;//不显示题目
-			$me.isStop = true;//显示停止按钮
+			$me.isSubject = false; //不显示题目
+			$me.isStop = true; //显示停止按钮
 			if ($me.subjecttitle == 6) {
 				/* 语音识别 */
 				$me.isanalysis = true;
@@ -1079,7 +1092,8 @@ export default {
 								color: 'transparent'
 							}
 						}
-					}
+					},
+					minInterval: 1
 				},
 
 				series: [
@@ -1231,14 +1245,13 @@ export default {
 			const $me = this;
 			const type = ($me.reftitletype = obj.value);
 			$me.talkName = '';
-// 			if (type == 1) {
-// 				$me.reftitletypelist = $me.alltxtlist['enWord'];
-// 			} else if (type == 2) {
-// 				$me.reftitletypelist = $me.alltxtlist['enSentence'];
-// 			} else {
-// 				$me.reftitletypelist = $me.alltxtlist['cnSentence'];
-// 			}
-			
+			// 			if (type == 1) {
+			// 				$me.reftitletypelist = $me.alltxtlist['enWord'];
+			// 			} else if (type == 2) {
+			// 				$me.reftitletypelist = $me.alltxtlist['enSentence'];
+			// 			} else {
+			// 				$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+			// 			}
 		},
 		/* 选择语言测评题目 */
 		selTalkName(talk) {
@@ -1408,7 +1421,7 @@ export default {
 		/* 解绑一个学生 */
 		unBindOneStu(stu) {
 			const $me = this;
-			if($me.isAnswering){
+			if ($me.isAnswering) {
 				$me.$toast.center('答题过程中不能解绑');
 				return false;
 			}
@@ -1421,7 +1434,7 @@ export default {
 		/* 解绑选中学生 */
 		unbindCheckedStu() {
 			const $me = this;
-			if($me.isAnswering){
+			if ($me.isAnswering) {
 				$me.$toast.center('答题过程中不能解绑');
 				return false;
 			}
@@ -1446,7 +1459,7 @@ export default {
 		/* 解绑所有学生名单吗 */
 		unBindAllStu() {
 			const $me = this;
-			if($me.isAnswering){
+			if ($me.isAnswering) {
 				$me.$toast.center('答题过程中不能解绑');
 				return false;
 			}
@@ -1511,7 +1524,6 @@ export default {
 					$me.titlename = $me.titlenamelist[da.data.data.questionType - 1].titlename;
 					$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 					$me.startVIew();
-					
 				} else {
 					$me.$toast.center(da.data.message);
 				}
