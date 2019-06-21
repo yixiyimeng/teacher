@@ -39,8 +39,8 @@ a {
 .mt10 {
 	margin-top: 10px;
 }
-.ml20{
-	margin-left: 20px
+.ml20 {
+	margin-left: 20px;
 }
 .ant-radio-wrapper {
 	cursor: pointer;
@@ -48,7 +48,8 @@ a {
 }
 
 .ant-radio {
-	font-family: "Chinese Quote", -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-family: 'Chinese Quote', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Helvetica, Arial,
+		sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';
 	font-size: 14px;
 	font-variant: tabular-nums;
 	line-height: 1.5;
@@ -104,12 +105,12 @@ a {
 	transition: all 0.3s cubic-bezier(0.78, 0.14, 0.15, 0.86);
 }
 
-.ant-radio input:checked+.ant-radio-inner,
+.ant-radio input:checked + .ant-radio-inner,
 .ant-radio:hover .ant-radio-inner {
 	border-color: #1890ff;
 }
 
-.ant-radio input:checked+.ant-radio-inner:after {
+.ant-radio input:checked + .ant-radio-inner:after {
 	-webkit-transform: scale(0.875);
 	transform: scale(0.875);
 	opacity: 1;
@@ -470,7 +471,7 @@ a {
 	display: inline-block;
 	color: #fff;
 	vertical-align: middle;
-	background:  rgba(255, 0, 0, 0.6);;
+	background: rgba(255, 0, 0, 0.6);
 	// background: @baseColor;
 	// padding: 6px 15px;
 	padding: 10px;
@@ -545,7 +546,7 @@ a {
 	bottom: 0;
 	z-index: 9999;
 }
-.namelistbox>div.mask{
+.namelistbox > div.mask {
 	position: absolute;
 	top: 0;
 	left: 0;
@@ -553,7 +554,7 @@ a {
 	bottom: 0;
 	background: rgba(0, 0, 0, 0);
 }
-.namelistbox>div.namelistbox-bd{
+.namelistbox > div.namelistbox-bd {
 	background: #42744f;
 	width: 60%;
 	height: 60%;
@@ -646,25 +647,62 @@ a {
 	margin-left: 10px;
 	text-decoration: underline;
 }
-.namelistbox .close{
-	background: #f00; color: #fff; font-size: 40px; position: absolute; right: -20px; top: -20px; border-radius: 100%; display: block;width: 40px; height: 40px; text-align: center;line-height: 35px;
+.namelistbox .close {
+	background: #f00;
+	color: #fff;
+	font-size: 40px;
+	position: absolute;
+	right: -20px;
+	top: -20px;
+	border-radius: 100%;
+	display: block;
+	width: 40px;
+	height: 40px;
+	text-align: center;
+	line-height: 35px;
 }
-.mx-datepicker-range{
-		width: 500px;
-		height: 64px;
-		
-	}
-	.mx-input{
-		height: 64px;
-		border: 2px solid transparent;
-		font-size: 30px;
-	}
-	.mx-input-append{
-		width: 40px;
-	}
-	.mx-datepicker-popup{
-		font-size: 16px;
-	}
-	.mx-panel-date td, .mx-panel-date th{
-		font-size: 14px;
-	}
+.mx-datepicker-range {
+	width: 500px;
+	height: 64px;
+}
+.mx-input {
+	height: 64px;
+	border: 2px solid transparent;
+	font-size: 30px;
+}
+.mx-input-append {
+	width: 40px;
+}
+.mx-datepicker-popup {
+	font-size: 16px;
+}
+.mx-panel-date td,
+.mx-panel-date th {
+	font-size: 14px;
+}
+.uploadbox {
+	margin-top: 20px;
+	overflow: hidden;
+	margin-left: 10px;
+	position: relative;
+	display: inline-block;
+	background: @baseColor;
+	color: #fff;
+	border-radius: @borderRadius;
+	padding: 10px 20px;
+	font-size: 20px;
+	vertical-align: middle;
+	line-height: 40px;
+}
+
+.uploadbox input[type='file'] {
+	position: absolute;
+	font-size: 400px;
+	right: 0;
+	top: 0;
+	opacity: 0;
+}
+
+.uploadbox span {
+	cursor: pointer;
+}

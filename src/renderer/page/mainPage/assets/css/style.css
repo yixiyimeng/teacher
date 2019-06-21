@@ -935,32 +935,7 @@ select {
 }
 
 
-.uploadbox {
-	margin-top: 20px;
-	overflow: hidden;
-	margin-left: 10px;
-	position: relative;
-	display: inline-block;
-	background: #72cb53;
-	color: #005a2e;
-	border-radius: 50px;
-	padding: 10px 20px;
-	font-size: 20px;
-	vertical-align: middle;
-	line-height: 40px;
-}
 
-.uploadbox input[type=file] {
-	position: absolute;
-	font-size: 400px;
-	right: 0;
-	top: 0;
-	opacity: 0;
-}
-
-.uploadbox span {
-	cursor: pointer;
-}
 
 
 .danmaku .avatar {

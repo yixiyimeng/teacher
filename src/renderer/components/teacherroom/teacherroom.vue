@@ -982,6 +982,7 @@ export default {
 				method: 'post',
 				url: urlPath + 'teacher-client/statistics/getEveryAnswerNum'
 			}).then(da => {
+				console.log("测试"+JSON.stringify(da))
 				var list = da.data.data;
 				var title = [],
 					data = [];

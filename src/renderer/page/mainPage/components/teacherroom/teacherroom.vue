@@ -222,6 +222,11 @@
 							<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
 							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
 						</div>
+						
+					</div>
+					<div class="uploadbox">
+						<input type="file" name="" value="" id="upload" @change="uploadfile" />
+						<span>上传题目</span>
 					</div>
 				</div>
 				<div class="fromcontrol flex" v-if="subjecttitle == 8">
@@ -393,7 +398,7 @@ export default {
 		this.$store.commit('SET_startClass', true);
 		this.$electron.ipcRenderer.send('onlinedirebro', true);
 		this.getNamelist('bingingCard/getAllBingdCardInfo');
-		// this.getjson();
+		this.getjson();
 	},
 	mounted() {
 		this.myChart = echarts.init($('#myChart')[0]);
@@ -641,12 +646,11 @@ export default {
 									$me.$toast('网络连接成功');
 									break;
 								}
-								default:{
+								default: {
 									$me.$toast(msg.data);
 									break;
 								}
 							}
-							
 						} else {
 							$('#danmu').data('danmuList', {});
 							$('#danmu').danmu('danmuStop');
@@ -1144,7 +1148,9 @@ export default {
 			$me.selectAnswer = [];
 
 			$me.myCorrectChart.on('click', function(param) {
+				
 				if ($me.subjecttitle == 3) {
+					
 					if (colorList[param.dataIndex] == '#ff999a') {
 						colorList[param.dataIndex] = '#61a0a8';
 						for (var i = 0; i < $me.selectAnswer.length; i++) {
@@ -1159,7 +1165,14 @@ export default {
 					}
 					$me.myCorrectChart.setOption(option);
 				} else {
-					$me.getEveryAnswerName({ answer: title[param.dataIndex] });
+					/* if(param.dataIndex==0){
+						$me.getEveryAnswerName({ answer:$me.trueAnswer });
+					}else{
+						$me.getFalseAnswerName ();
+					} */
+					 $me.getEveryAnswerName({ answer: title[param.dataIndex] });
+					//$me.getEveryAnswerName({ answer:$me.trueAnswer });
+					
 				}
 			});
 		},
@@ -1167,6 +1180,12 @@ export default {
 		getCorrectChartpieData(myoption) {
 			const $me = this;
 			$me.isChart = true;
+			var List=myoption;
+			var title=[];
+			for(var i=0;i<List.length;i++){
+				title.push(List[i].name);
+			}
+			console.log("哈哈哈哈"+JSON.stringify(title))
 			let option = {
 				legend: {
 					x: 'center',
@@ -1174,7 +1193,8 @@ export default {
 					textStyle: {
 						color: '#fff'
 					},
-					data: ['正确', '错误']
+					//data: ['正确', '错误']
+					data:title
 				},
 
 				color: ['#61a0a8', '#ff999a', '#ffcc67', '#af89d6'],
@@ -1208,6 +1228,14 @@ export default {
 			setTimeout(function() {
 				$me.myChart.resize();
 			}, 100);
+			$me.myChart.on('click', function(param) {
+				if(title[param.dataIndex]=='正确'){
+					$me.getEveryAnswerName({ answer: $me.trueAnswer });
+				}else{
+					$me.getFalseAnswerName({ answer: $me.trueAnswer });
+				}
+				
+			});
 		},
 		/* 清空页面显示内容 */
 		clear() {
@@ -1245,13 +1273,13 @@ export default {
 			const $me = this;
 			const type = ($me.reftitletype = obj.value);
 			$me.talkName = '';
-			// 			if (type == 1) {
-			// 				$me.reftitletypelist = $me.alltxtlist['enWord'];
-			// 			} else if (type == 2) {
-			// 				$me.reftitletypelist = $me.alltxtlist['enSentence'];
-			// 			} else {
-			// 				$me.reftitletypelist = $me.alltxtlist['cnSentence'];
-			// 			}
+			if (type == 1) {
+				$me.reftitletypelist = $me.alltxtlist['enWord'];
+			} else if (type == 2) {
+				$me.reftitletypelist = $me.alltxtlist['enSentence'];
+			} else {
+				$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+			}
 		},
 		/* 选择语言测评题目 */
 		selTalkName(talk) {
@@ -1356,12 +1384,12 @@ export default {
 				formData.append('teacAssistantName', $me.sendInfo.teacAssistantName);
 				this.$http({
 					method: 'post',
-					url: $me.foundationpath + '/teacher-platform/foun/questions/uploadQuestion',
+					url: urlPath + '/teacher-client/platform/importVoiceQuesrions',
 					data: formData,
 					processData: false, // jQuery不要去处理发送的数据
 					contentType: false
 				}).then(da => {
-					if (da.data.code == 0) {
+					if (da.data.ret == 'success') {
 						//showMessage('上传成功')
 						$me.$toast.center('上传成功');
 						$me.getjson();
@@ -1377,7 +1405,7 @@ export default {
 			const $me = this;
 			this.$http({
 				method: 'post',
-				url: $me.foundationpath + '/teacher-platform/foun/questions/getQuestions',
+				url: urlPath + '/teacher-client/platform/selectVoiceQuestions',
 				data: JSON.stringify({
 					teacAssistantCode: $me.sendInfo.teacAssistantCode,
 					teacAssistantName: $me.sendInfo.teacAssistantName
@@ -1497,6 +1525,25 @@ export default {
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/statistics/getEveryAnswerName',
+				headers: {
+					'Content-Type': 'application/json; charset=UTF-8'
+				},
+				data: JSON.stringify(param)
+			}).then(da => {
+				if (da.data.ret == 'success') {
+					/*  */
+					$me.isshowselectNamelist = true;
+					$me.selectNamelist = da.data.data;
+				} else {
+					$me.$toast.center('查询失败');
+				}
+			});
+		},
+		getFalseAnswerName(param){
+			const $me = this;
+			this.$http({
+				method: 'post',
+				url: urlPath + 'teacher-client/statistics/getFalseAnswerName',
 				headers: {
 					'Content-Type': 'application/json; charset=UTF-8'
 				},

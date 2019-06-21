@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class="bg">
 		<div class="modbox">
 			<div>
 				<form @keyup.enter="login">
@@ -76,7 +76,9 @@ export default {
 								schoolCode: da.data.data.schoolCode,
 								schoolName: da.data.data.schoolName,
 								teacAssistantCode: da.data.data.userId,
-								teacAssistantName: da.data.data.name
+								teacAssistantName: da.data.data.name,
+								teacherCode: da.data.data.userId,
+								teacherName: da.data.data.name
 							};
 							$me.$router.push({
 								//页面跳转
@@ -99,4 +101,10 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped="scoped">
+	.bg{
+		height: 100%;
+		width: 100%;
+		background: rgba(0,0,0,.6);
+		}
+</style>
