@@ -109,13 +109,13 @@
 		<!-- 结果 -->
 		<div class="resultbox " v-show="isResult">
 			<div class="flex flex-v flex-align-center" style="height: 100%;">
-				<div class="rank" v-if="isRank" :class="{ top: isCorrectchart }">
+				<div class="rank" v-if="isRank" :class="{ top: isCorrectchart||isChart }">
 					<div class="rankitem bounceIn animated" v-for="(item, index) in ranklist">
 						<p>{{ item.stuName }}</p>
 						<p class="score">{{ item.score }}分</p>
 					</div>
 				</div>
-				<div class="flex-1" style="width: 80%; margin: 0 auto; padding: 2% 0 0; ">
+				<div class="chartbox"  :class="{'h70':isRank&&ranklist.length>0}">
 					<!-- 主观题统计 -->
 					<div class="chart" style="height:90%;width: 50%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
 					<!-- 正确率统计 -->
@@ -130,8 +130,6 @@
 							查看选择{{ selectAnswerStr }}人员名单
 						</a></div>
 						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
-						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
-						
 					</div>
 				</div>
 				<!-- <a class="sendtitle" href="javascript:;" @click="sendtitle" v-show="isSendtitle">下发题目</a> -->
@@ -453,6 +451,7 @@ export default {
 				}
 			}
 		}
+		
 	},
 	methods: {
 		exitBtn() {
@@ -1179,7 +1178,7 @@ export default {
 			$me.myCorrectChart.setOption(option);
 			setTimeout(function() {
 				$me.myCorrectChart.resize();
-			}, 50);
+			}, 200);
 			$me.myCorrectChart.off('click');
 			$me.selectAnswer = [];
 			$me.myCorrectChart.on('click', function(param) {
@@ -1263,7 +1262,8 @@ export default {
 			//console.log(option)
 			setTimeout(function() {
 				$me.myChart.resize();
-			}, 100);
+			}, 200);
+			$me.myChart.off('click');
 			$me.myChart.on('click', function(param) {
 				if (title[param.dataIndex] == '正确') {
 					$me.getEveryAnswerName({ answer: $me.trueAnswer });
@@ -1419,8 +1419,8 @@ export default {
 			$me.myChart.setOption(option);
 			setTimeout(function() {
 				$me.myChart.resize();
-			}, 100);
-			
+			}, 200);
+			$me.myChart.off('click');
 			$me.myChart.on('click', function(param) {
 				$me.getEveryAnswerName({ answer: title[param.dataIndex] });				
 			});

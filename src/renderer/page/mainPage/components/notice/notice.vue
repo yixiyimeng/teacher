@@ -64,7 +64,8 @@ p {
 	// line-height: 80px;
 	padding: 20px 0;
 	line-height: 40px;
-	border: 3px solid rgba(16, 120, 255, 0.8);
+	box-shadow: 0 0 10px rgba(0,0,0,.4);
+	// border: 3px solid rgba(16, 120, 255, 0.8);
 	border-radius: 5px;
 	background: #f9f6cf;
 	display: block;

@@ -2,7 +2,7 @@
 	<div class="fixed ">
 		<div class="board">
 			<span>正确答案</span>
-			<span class="warn">{{ trueAnswer }}</span>
+			<span class="warn">{{ trueAnswer | filtertrueAnswer }}</span>
 		</div>
 		<i></i>
 		<i></i>
@@ -20,6 +20,17 @@ export default {
 
 	props: {
 		trueAnswer: String
+	},
+	filters: {
+		filtertrueAnswer: function(value) {
+			if (value == 'E') {
+				return '√';
+			} else if (value == 'F') {
+				return '×';
+			} else {
+				return value;
+			}
+		}
 	}
 };
 </script>
@@ -53,7 +64,7 @@ export default {
 	top: 0;
 	right: 40px;
 	transition: all 5s;
-	background: #fff;
+	/* background: #fff; */
 	border-radius: 10px;
 }
 .fixed i {
@@ -84,9 +95,10 @@ export default {
 	padding: 20px 0 10px;
 	box-sizing: border-box;
 	font-size: 30px;
-	border: 3px solid rgba(16, 120, 255, 0.8);
+	/* border: 3px solid rgba(16, 120, 255, 0.8); */
 	border-radius: 5px;
 	background: #f9f6cf;
+		box-shadow: 0 0 10px rgba(0,0,0,.4);
 	/* display: none; */
 }
 /* .board {

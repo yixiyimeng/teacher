@@ -12,9 +12,9 @@
 						<search :searchList="subjectsearchList" :selectValue.sync="selectsubject" placeholdertxt="请选择科目" class="flex-1"></search>
 					</div>
 					<div class="fromcontrol flex flex-1">
-						<label>标题</label>
+						<label>主题</label>
 						<div class="flex-1" style="margin-right: 60px;">
-							<input type="text" name="" value="" autocomplete="off" v-model.trim="topicName" style="width: 100%;" placeholder="输入或者选择标题" />
+							<input type="text" name="" value="" autocomplete="off" v-model.trim="topicName" style="width: 100%;" placeholder="输入或者选择主题" />
 							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName">
 								<template slot-scope="item">
 									{{ item.data.topicName }}
@@ -25,7 +25,9 @@
 					</div>
 					<div class="fromcontrol flex flex-1">
 						<label>试卷</label>
-						<date-picker v-model="rangetime" range appendToBody confirm confirm-text="确定" value-type="format" @input="changeTime"></date-picker>
+						<div style=" width: 30px; position: absolute;overflow: hidden; left: 4em; height: 64px;">
+						<date-picker  style="padding-top: 15px;position: absolute; right: 0;" v-model="rangetime" range appendToBody confirm confirm-text="确定" value-type="format" @input="changeTime"></date-picker>
+						</div>
 						<div class="flex-1">
 							<v-select :options="titlesearchList" v-model="titleCode" placeholder="选择时间段筛选试卷" class="flex-1" style="padding-right: 20px;" label="titleName">
 								<template slot="no-options">
@@ -300,7 +302,7 @@ export default {
 			}
 			if ($me.topicName) {
 				if (htmlescpe.test($me.topicName)) {
-					this.$toast.center('标题包含特殊字符' + $me.topicName.match(htmlescpe) + '，请重新输入！');
+					this.$toast.center('主题包含特殊字符' + $me.topicName.match(htmlescpe) + '，请重新输入！');
 					return false;
 				}
 				$me.sendInfo.topicName = $me.topicName;
@@ -309,7 +311,7 @@ export default {
 				$me.sendInfo.questionId = $me.questionId;
 				
 			} else {
-				this.$toast.center('请选择或者输入标题');
+				this.$toast.center('请选择或者输入主题');
 				return false;
 			}
 
@@ -382,4 +384,24 @@ export default {
 };
 </script>
 
-<style></style>
+<style lang="less">
+	/deep/ .mx-datepicker-range {
+		width: 40px;
+		height: 64px;
+	}
+	/deep/ .mx-input {
+		height: 64px;
+		border: 2px solid transparent;
+		font-size: 30px;
+	}
+	/deep/ .mx-input-append {
+		width: 40px;
+	}
+	/deep/ .mx-datepicker-popup {
+		font-size: 16px;
+	}
+	/deep/ .mx-panel-date td,
+	/deep/ .mx-panel-date th {
+		font-size: 14px;
+	}
+</style>
