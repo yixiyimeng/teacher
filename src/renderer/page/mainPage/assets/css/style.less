@@ -460,8 +460,11 @@ a {
 .bottommenu {
 	position: fixed;
 	bottom: 0;
-	left: 100px;
-	right: 100px;
+// 	/* left: 100px;
+// 	right: 100px; */
+left:50%;
+margin-left: -50px;
+width: 100px;
 	height: 80px;
 	text-align: center;
 	z-index: 9999;
@@ -552,18 +555,20 @@ a {
 	left: 0;
 	right: 0;
 	bottom: 0;
-	background: rgba(0, 0, 0, 0);
+	background: rgba(0, 0, 0, 0.4);
 }
 .namelistbox > div.namelistbox-bd {
-	background: #42744f;
+	background: #fff;
 	width: 60%;
-	height: 60%;
+	// height: 60%;
 	position: absolute;
-	top: 15%;
+	top: 20%;
+	min-height: 100px;
 	left: 20%;
-	border: 10px solid #fed095;
-
-	padding: 20px;
+	border-radius: 14px;
+	max-height: 60%;
+	// border: 10px solid #fed095;
+	padding: 40px 40px 60px;
 }
 .namelistbox ul {
 	overflow: auto;
@@ -573,7 +578,7 @@ a {
 .namelistbox ul > li {
 	float: left;
 	margin: 10px 0;
-	color: #fff;
+	color: #333;
 	width: 25%;
 	padding-left: 10px;
 	box-sizing: border-box;
@@ -639,9 +644,9 @@ a {
 }
 .namelistbox .tag {
 	position: absolute;
-	bottom: 5px;
+	bottom: 10px;
 	left: 20px;
-	color: #fff;
+	color: #333;
 }
 .namelistbox .tag a {
 	margin-left: 10px;
@@ -662,7 +667,7 @@ a {
 	line-height: 35px;
 }
 .mx-datepicker-range {
-	width: 500px;
+	width: 40px;
 	height: 64px;
 }
 .mx-input {
@@ -705,4 +710,21 @@ a {
 
 .uploadbox span {
 	cursor: pointer;
+}
+.uploadTitle{
+	position: absolute;
+	right: -80px;
+	background: @baseColor;
+	font-size: 26px;
+	color: #fff;
+	line-height: 60px;
+	border-radius: @borderRadius;
+	padding: 0 15px;
+	 box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
+}.uploadTitle img{
+	width: 30px;
+	vertical-align: middle;
+	// margin-right: 10px;
+}.uploadTitle span{
+	vertical-align: middle
 }

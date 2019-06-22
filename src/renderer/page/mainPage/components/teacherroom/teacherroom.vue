@@ -25,8 +25,8 @@
 				<ul class="clearfix">
 					<!-- {{namelist}} -->
 					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
-						<i :class="item.state == 0 ? 'warn' : 'success'" @click="item.checked = !item.checked"></i>
-						<span @click="item.checked = !item.checked">{{ item.stuName }}</span>
+						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
+						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
 						<img src="../../assets/jiebang.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" />
 					</li>
 				</ul>
@@ -81,11 +81,11 @@
 					<div id="four"></div>
 					<div id="five"></div>
 				</div>
+				<img src="../../assets/audio.png" />
 				<div class="stuname" v-if="stuName">
-					<img src="../../assets/icon2.png" />
+					<img src="../../assets/icon7.png" />
 					<p>{{ stuName }}</p>
 				</div>
-				<img src="../../assets/audio.png" />
 			</div>
 			<!-- 语音文本显示 -->
 			<div class=" bounceInDown animated" v-if="isreftext">
@@ -112,17 +112,15 @@
 				<div class="rank" v-if="isRank" :class="{ top: isCorrectchart }">
 					<div class="rankitem bounceIn animated" v-for="(item, index) in ranklist">
 						<p>{{ item.stuName }}</p>
-						<p class="score">第{{ index + 1 }}名</p>
+						<p class="score">{{ item.score }}分</p>
 					</div>
 				</div>
-				<div class="flex-1" style="width: 80%; margin: 0 auto; ">
+				<div class="flex-1" style="width: 80%; margin: 0 auto; padding: 2% 0 0; ">
 					<!-- 主观题统计 -->
-					<div class="chart" style="height:90%;width: 50%; margin:2% auto; float: left;" v-show="isChart">
-						<div id="myChart" style="height:100%; min-height: 100px;"></div>
-					</div>
+					<div class="chart" style="height:90%;width: 50%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
 					<!-- 正确率统计 -->
 					<div class="Correctchart" style="height:90%; width: 50%; margin: 2% auto;float: left; text-align: center;" v-show="isCorrectchart">
-						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
+						<div style="height: 25px;">
 						<a
 							style="text-align: center; color: rgb(24, 114, 255);"
 							href="javascript:;"
@@ -130,7 +128,10 @@
 							@click="getEveryAnswerName({ answer: selectAnswerStr })"
 						>
 							查看选择{{ selectAnswerStr }}人员名单
-						</a>
+						</a></div>
+						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
+						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
+						
 					</div>
 				</div>
 				<!-- <a class="sendtitle" href="javascript:;" @click="sendtitle" v-show="isSendtitle">下发题目</a> -->
@@ -152,7 +153,7 @@
 					</div>
 				</div>
 			</div>
-
+		
 			<div class="commonroom flex-1" v-if="subjectType == 0">
 				<ul class="subjectitlebox flex flex-pack-justify">
 					<li v-for="item in subjectitleList" class="flex-1" :key="item.value" @click="selSubjecttitle(item)" :class="{ active: item.value == subjecttitle }">
@@ -160,10 +161,10 @@
 						<p>{{ item.name }}</p>
 					</li>
 				</ul>
-
+		
 				<div class="fromcontrol flex" v-if="subjecttitle != 4 && subjecttitle != 5">
 					<label>答案</label>
-
+		
 					<input type="password" name="" id="" value="" autocomplete="off" class="trueanswer" v-model="settrueanswer" placeholder="请输入正确答案" />
 				</div>
 				<p class="warn" v-if="subjecttitle != 4 && subjecttitle != 5">
@@ -190,7 +191,7 @@
 						<p>{{ item.name }}</p>
 					</li>
 				</ul>
-
+		
 				<div class="fromcontrol flex" v-if="subjecttitle == 6">
 					<label>题目类型</label>
 					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
@@ -212,7 +213,7 @@
 				</div>
 				<div class="fromcontrol flex" v-if="subjecttitle == 7">
 					<label>题目类型</label>
-
+		
 					<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1" :selectValue="onetitletype"></search>
 				</div>
 				<div class="flex flex-align-center" v-if="subjecttitle == 7">
@@ -222,10 +223,16 @@
 							<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
 							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
 						</div>
-						
 					</div>
 					<div class="uploadbox">
-						<input type="file" name="" value="" id="upload" @change="uploadfile" />
+						<input
+							type="file"
+							name=""
+							value=""
+							id="upload"
+							@change="uploadfile"
+							accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+						/>
 						<span>上传题目</span>
 					</div>
 				</div>
@@ -394,6 +401,7 @@ export default {
 	},
 	created() {
 		this.sendInfo = JSON.parse(this.$route.query.sendInfo);
+		//console.log(this.$route.query.sendInfo)
 		// this.onlinedirectBroadcastCode = this.sendInfo.directBroadcastCode;
 		this.$store.commit('SET_startClass', true);
 		this.$electron.ipcRenderer.send('onlinedirebro', true);
@@ -446,7 +454,6 @@ export default {
 			}
 		}
 	},
-
 	methods: {
 		exitBtn() {
 			const $me = this;
@@ -480,9 +487,7 @@ export default {
 				if (!$me.ws) {
 					// 打开一个 web socket
 					$me.ws = new WebSocket(urlwsPath + 'teacher-client/websocket');
-
 					$me.ws.onopen = function() {};
-
 					$me.ws.onmessage = function(evt) {
 						var received_msg = evt.data;
 						if (received_msg != '连接成功') {
@@ -531,7 +536,6 @@ export default {
 									}
 									break;
 								}
-
 								case 4: {
 									if (msg.order == 'START_BUSINESS_TYPE_10') {
 										var obj = msg.data;
@@ -544,6 +548,7 @@ export default {
 									$me.chartDate.title.push(msg.data.className);
 									$me.chartDate.agreeNumber.push(msg.data.agreeNumber);
 									$me.chartDate.disagreeNumber.push(msg.data.disagreeNumber);
+									$me.chartDate.unAnswerNum.push(msg.data.unAnswerNum);
 									var option = [
 										{
 											name: '懂',
@@ -571,6 +576,26 @@ export default {
 											stack: '主观题',
 											barWidth: 60,
 											data: $me.chartDate.disagreeNumber,
+											label: {
+												normal: {
+													show: true,
+													position: 'inside',
+													color: '#fff',
+													formatter: function(param) {
+														return param.value > 0 ? param.value + '人' : '';
+													},
+													textStyle: {
+														fontSize: 24
+													}
+												}
+											}
+										},
+										{
+											name: '未作答',
+											type: 'bar',
+											stack: '主观题',
+											barWidth: 60,
+											data: $me.chartDate.unAnswerNum,
 											label: {
 												normal: {
 													show: true,
@@ -646,6 +671,16 @@ export default {
 									$me.$toast('网络连接成功');
 									break;
 								}
+								case 14: {
+									/* 网络连接连接 */
+									$me.$toast('USB连接断开');
+									break;
+								}
+								case 15: {
+									/* 网络连接连接 */
+									$me.$toast('USB连接成功');
+									break;
+								}
 								default: {
 									$me.$toast(msg.data);
 									break;
@@ -656,10 +691,8 @@ export default {
 							$('#danmu').danmu('danmuStop');
 							$('#danmu').danmu('danmuStart');
 						}
-
 						//alert("数据已接收...");
 					};
-
 					$me.ws.onclose = function() {
 						// 关闭 websocket
 						//	alert("连接已关闭...");
@@ -813,7 +846,6 @@ export default {
 						url = 'microphone/start2';
 						$me.titlename = '群发麦克风';
 					}
-
 					break;
 				}
 			}
@@ -875,7 +907,6 @@ export default {
 		},
 		stopRace() {
 			/* 点击结束答题 */
-
 			const $me = this;
 			$me.clear();
 			/* 先不隐藏停止按钮，以免停止事件挥着查询排名接口报错，无法显示下发题目按钮 */
@@ -904,7 +935,6 @@ export default {
 					url = 'singleAnswer/stop';
 					break;
 				}
-
 				case '3': {
 					url = 'sMultiAnswer/stop';
 					break;
@@ -986,16 +1016,21 @@ export default {
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/statistics/getSubjectiveResult'
-			}).then(da => {
+			}).then(da => {				
 				var list = da.data.data;
+				console.log("主观题统计"+JSON.stringify(da.data.data.unAnswerNum))
 				var option = [
 					{
 						value: list.agreeNumber,
 						name: '懂'
 					},
 					{
-						value: list.totalNum - list.agreeNumber,
+						value: list.disagreeNumber,
 						name: '不懂'
+					},
+					{
+						value: list.unAnswerNum,
+						name: '未作答'
 					}
 				];
 				$me.getChartData(option);
@@ -1025,7 +1060,7 @@ export default {
 				});
 			});
 		},
-		/*获取答题正确率 柱状图chart*/
+		/*获取答题 柱状图chart*/
 		getCorrectChartData(myoption) {
 			const $me = this;
 			var fontSize = $me.getDpr();
@@ -1065,6 +1100,8 @@ export default {
 						padding: [4, 10, 4, 10],
 						interval: 0
 					}
+					/* ,
+					triggerEvent:true */
 				},
 				yAxis: {
 					type: 'value',
@@ -1084,7 +1121,7 @@ export default {
 						padding: [4, 10, 4, 5],
 						rich: {
 							a: {
-								color: 'red',
+								color:'red',
 								lineHeight: 10
 							},
 							b: {
@@ -1099,7 +1136,6 @@ export default {
 					},
 					minInterval: 1
 				},
-
 				series: [
 					{
 						data: mydata,
@@ -1146,46 +1182,47 @@ export default {
 			}, 50);
 			$me.myCorrectChart.off('click');
 			$me.selectAnswer = [];
-
 			$me.myCorrectChart.on('click', function(param) {
-				
-				if ($me.subjecttitle == 3) {
-					
-					if (colorList[param.dataIndex] == '#ff999a') {
-						colorList[param.dataIndex] = '#61a0a8';
-						for (var i = 0; i < $me.selectAnswer.length; i++) {
-							if (title[param.dataIndex] == $me.selectAnswer[i]) {
-								$me.selectAnswer.splice(i, 1);
-								break;
+				/* if(param.componentType == "xAxis"){
+					console.log("单击了"+param.value+"x轴标签");
+				}else{ */
+					if ($me.subjecttitle == 3) {
+						if(title[param.dataIndex]=='未作答'){
+							 $me.getEveryAnswerName({ answer: title[param.dataIndex] });
+							}else{
+						if (colorList[param.dataIndex] == '#ff999a') {
+							colorList[param.dataIndex] = '#61a0a8';
+							for (var i = 0; i < $me.selectAnswer.length; i++) {
+								if (title[param.dataIndex] == $me.selectAnswer[i]) {
+									$me.selectAnswer.splice(i, 1);
+									break;
+								}
 							}
+						} else {
+							colorList[param.dataIndex] = '#ff999a';
+							$me.selectAnswer.push(title[param.dataIndex]);
 						}
+						}
+						$me.myCorrectChart.setOption(option);
 					} else {
-						colorList[param.dataIndex] = '#ff999a';
-						$me.selectAnswer.push(title[param.dataIndex]);
+						 $me.getEveryAnswerName({ answer: title[param.dataIndex] });
+						//$me.getEveryAnswerName({ answer:$me.trueAnswer });
+						
 					}
-					$me.myCorrectChart.setOption(option);
-				} else {
-					/* if(param.dataIndex==0){
-						$me.getEveryAnswerName({ answer:$me.trueAnswer });
-					}else{
-						$me.getFalseAnswerName ();
-					} */
-					 $me.getEveryAnswerName({ answer: title[param.dataIndex] });
-					//$me.getEveryAnswerName({ answer:$me.trueAnswer });
-					
-				}
+				// }
+				
 			});
 		},
 		/* 正确率显示 */
 		getCorrectChartpieData(myoption) {
 			const $me = this;
 			$me.isChart = true;
-			var List=myoption;
-			var title=[];
-			for(var i=0;i<List.length;i++){
+			var List = myoption;
+			var title = [];
+			for (var i = 0; i < List.length; i++) {
 				title.push(List[i].name);
 			}
-			console.log("哈哈哈哈"+JSON.stringify(title))
+			console.log('哈哈哈哈' + JSON.stringify(title));
 			let option = {
 				legend: {
 					x: 'center',
@@ -1194,9 +1231,8 @@ export default {
 						color: '#fff'
 					},
 					//data: ['正确', '错误']
-					data:title
+					data: title
 				},
-
 				color: ['#61a0a8', '#ff999a', '#ffcc67', '#af89d6'],
 				series: [
 					{
@@ -1229,12 +1265,11 @@ export default {
 				$me.myChart.resize();
 			}, 100);
 			$me.myChart.on('click', function(param) {
-				if(title[param.dataIndex]=='正确'){
+				if (title[param.dataIndex] == '正确') {
 					$me.getEveryAnswerName({ answer: $me.trueAnswer });
-				}else{
+				} else {
 					$me.getFalseAnswerName({ answer: $me.trueAnswer });
 				}
-				
 			});
 		},
 		/* 清空页面显示内容 */
@@ -1273,12 +1308,16 @@ export default {
 			const $me = this;
 			const type = ($me.reftitletype = obj.value);
 			$me.talkName = '';
-			if (type == 1) {
-				$me.reftitletypelist = $me.alltxtlist['enWord'];
-			} else if (type == 2) {
-				$me.reftitletypelist = $me.alltxtlist['enSentence'];
-			} else {
-				$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+			try {
+				if (type == 1) {
+					$me.reftitletypelist = $me.alltxtlist['enWord'];
+				} else if (type == 2) {
+					$me.reftitletypelist = $me.alltxtlist['enSentence'];
+				} else {
+					$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+				}
+			} catch (e) {
+					$me.reftitletypelist =[]
 			}
 		},
 		/* 选择语言测评题目 */
@@ -1322,7 +1361,12 @@ export default {
 				$me.reftitletype = '1';
 				$me.onetitletype = $me.titletypeList[0];
 				$me.talkName = '';
-				$me.reftitletypelist = $me.alltxtlist['enWord'];
+				try{
+					$me.reftitletypelist = $me.alltxtlist['enWord'];
+				}catch(e){
+					$me.reftitletypelist =[]
+				}
+				
 			} else if ($me.subjecttitle == 8) {
 				$me.iPhoneType = 0;
 			}
@@ -1331,6 +1375,11 @@ export default {
 		getChartData(myoption, title) {
 			const $me = this;
 			$me.isChart = true;
+			var List=myoption;
+			var title=[];
+			List.map(function(item){
+				title.push(item.name)
+			})
 			let option = {
 				legend: {
 					x: 'center',
@@ -1338,9 +1387,9 @@ export default {
 					textStyle: {
 						color: '#fff'
 					},
-					data: ['懂', '不懂']
+					//data: ['懂', '不懂',"未作答"]
+					data:title
 				},
-
 				color: ['#61a0a8', '#ff999a', '#ffcc67', '#af89d6'],
 				series: [
 					{
@@ -1368,15 +1417,24 @@ export default {
 			};
 			option.series[0].data = myoption;
 			$me.myChart.setOption(option);
-			//console.log(option)
 			setTimeout(function() {
 				$me.myChart.resize();
 			}, 100);
+			
+			$me.myChart.on('click', function(param) {
+				$me.getEveryAnswerName({ answer: title[param.dataIndex] });				
+			});
 		},
-
-		uploadfile() {
+		uploadfile(){
 			const $me = this;
 			var file = $('#upload')[0];
+			var FileExt = $('#upload')
+				.val()
+				.replace(/.+\./, ''); //正则表达式获取后缀
+			if (FileExt != 'xls' && FileExt != 'xlsx') {
+				$me.$toast.center('请上传excel文件');
+				return false;
+			}
 			if (file.files[0]) {
 				var formData = new FormData();
 				formData.append('file', file.files[0]);
@@ -1397,7 +1455,6 @@ export default {
 						$me.$toast.center('上传失败');
 					}
 				});
-
 				file.value = '';
 			}
 		},
@@ -1416,12 +1473,16 @@ export default {
 			}).then(da => {
 				$me.alltxtlist = da.data.data;
 				const type = $me.reftitletype;
-				if (type == 1) {
-					$me.reftitletypelist = $me.alltxtlist['enWord'];
-				} else if (type == 2) {
-					$me.reftitletypelist = $me.alltxtlist['enSentence'];
-				} else {
-					$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+				try{
+					if (type == 1) {
+						$me.reftitletypelist = $me.alltxtlist['enWord'];
+					} else if (type == 2) {
+						$me.reftitletypelist = $me.alltxtlist['enSentence'];
+					} else {
+						$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+					}
+				}catch(e){
+					$me.reftitletypelist=[];
 				}
 			});
 		},
@@ -1429,6 +1490,7 @@ export default {
 		unBindStu() {
 			const $me = this;
 			$me.isunbind = false;
+			
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/bingingCard/unBind',
@@ -1497,6 +1559,13 @@ export default {
 				classCode: $me.sendInfo.classCode
 			};
 		},
+		/* 选中一个学生 */
+		checkOneStu(item) {
+			const $me = this;
+			if (item.state != 0) {
+				item.checked = !item.checked;
+			}
+		},
 		/* 全选 */
 		checkAll() {
 			const $me = this;
@@ -1539,7 +1608,7 @@ export default {
 				}
 			});
 		},
-		getFalseAnswerName(param){
+		getFalseAnswerName(param) {
 			const $me = this;
 			this.$http({
 				method: 'post',
@@ -1566,9 +1635,10 @@ export default {
 				url: urlPath + 'teacher-client/common/nextQuestion'
 			}).then(da => {
 				if (da.data.ret == 'success') {
+					console.log("下一题"+JSON.stringify(da))
 					/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
 					$me.trueAnswer = da.data.data.trueAnswer;
-					$me.titlename = $me.titlenamelist[da.data.data.questionType - 1].titlename;
+					$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 					$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 					$me.startVIew();
 				} else {

@@ -12,7 +12,7 @@
 				</div>
 			</div>
 		</div>
-		<upload class="upload animated fast"  :class="[isCloseUpload ? 'fadeIn' : 'fadeOut']"  :isCloseUpload.sync="isCloseUpload" v-if="isCloseUpload" ></upload>
+		
 	</div>
 </template>
 
@@ -66,7 +66,7 @@ export default {
 			var param = {
 				code: this.directBroadcastCode
 			};
-			this.$loading('正在退出...');
+			this.$loading('正在下课...');
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/common/endClass'
@@ -183,5 +183,8 @@ export default {
 	bottom: 0;
 	left: 0;
 	width: 100%;
+}
+.bg{
+	// background: rgba(0,0,0,.6)
 }
 </style>

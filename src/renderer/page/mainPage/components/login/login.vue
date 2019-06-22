@@ -1,5 +1,5 @@
 <template>
-	<div class="bg">
+	<div >
 		<div class="modbox">
 			<div>
 				<form @keyup.enter="login">
@@ -102,9 +102,5 @@ export default {
 </script>
 
 <style scoped="scoped">
-	.bg{
-		height: 100%;
-		width: 100%;
-		background: rgba(0,0,0,.6);
-		}
+
 </style>

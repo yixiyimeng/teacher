@@ -11,7 +11,7 @@
 			<a href="javascript:;" class="minApp" @click="minApp" title="最小化" v-if="!isminimizeAppStatesub"><img src="../assets/min.png" alt="" /></a>
 			<a href="javascript:;" class="minApp" @click="maxApp" title="最大化" v-if="isminimizeAppStatesub"><img src="../assets/max.png" alt="" /></a>
 			<a href="javascript:;" class="exitBtn mt10" @click="exitBtn" title="下课" v-if="onlinedirebro"></a>
-			<a href="javascript:;" class="uploadTitle mt10" @click="uploadTitle" title="上传题目" v-if="isUploadfile"><img src="../../mainPage/assets/upload.png" alt="" /></a>
+			<!-- <a href="javascript:;" class="uploadTitle mt10" @click="uploadTitle" title="上传题目" v-if="isUploadfile"><img src="../../mainPage/assets/upload.png" alt="" /></a> -->
 			<a href="javascript:;" class="exitApp mt10" @click="exitBtnApp" title="退出"><img src="../assets/exit.png" alt="" /></a>
 		</div>
 	</div>

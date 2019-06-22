@@ -46,6 +46,7 @@ import { urlPath } from '@/page/mainPage/utils/base';
 import { parseDay } from '@/page/mainPage/utils';
 import { search } from '@/page/mainPage/components';
 import DatePicker from 'vue2-datepicker';
+
 import vSelect from '@/page/mainPage/components/vue-select';
 export default {
 	data() {
@@ -60,7 +61,7 @@ export default {
 	components: {
 		search,
 		DatePicker,
-		vSelect
+		vSelect,
 	},
 	created() {
 		this.sendInfo = JSON.parse(this.$route.query.sendInfo);

@@ -86,7 +86,7 @@ export default {
 	font-size: 30px;
 	border: 3px solid rgba(16, 120, 255, 0.8);
 	border-radius: 5px;
-	background: #fff;
+	background: #f9f6cf;
 	/* display: none; */
 }
 /* .board {

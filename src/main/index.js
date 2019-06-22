@@ -104,7 +104,7 @@ function createWindow() {
 
 function createSuspensionWindow() {
 	win = new BrowserWindow({
-		width: 110, //悬浮窗口的宽度 比实际DIV的宽度要多2px 因为有1px的边框
+		width: 60, //悬浮窗口的宽度 比实际DIV的宽度要多2px 因为有1px的边框
 		height: 250, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
 		type: 'toolbar', //创建的窗口类型为工具栏窗口
 		frame: false, //要创建无边框窗口
@@ -114,7 +114,7 @@ function createSuspensionWindow() {
 			devTools: false //关闭调试工具
 		},
 		useContentSize: true,
-		maxWidth: 110,
+		maxWidth: 60,
 		maxHeight: 250,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前

@@ -2,7 +2,7 @@
 	<div class="bg">
 		<div class="mask"></div>
 		<div class="upload-bd">
-			<a href="javascript:;" class="close" @click="close()">×</a>
+			<a href="javascript:;" class="close" @click="isCanclose()">×</a>
 			<div>
 				<div class="title">堂测标准答案设置</div>
 				<div class="btnbar flex flex-pack-justify flex-align-center">
@@ -21,11 +21,10 @@
 								accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 							/>
 						</div>
-						<a href="javascript:;" class="btn" @click="batchSave">批量保存</a>
+						
 						<!-- <a href="javascript:;" class="btn">清除答案</a> -->
 					</div>
 				</div>
-
 				<div class="input-row flex flex-align-center">
 					<label>题目总数</label>
 					<input type="number" name="" id="" value="" placeholder="请输入题目总数" v-model="Data.totalNum" class="flex-1 ant-input active" />
@@ -92,6 +91,19 @@
 					</tr>
 				</tbody>
 			</table>
+			<!-- totalbar -->
+			<div class="totalbar"><span>总题数{{total}}题，总分{{totalScore}}分</span> <a href="javascript:;" class="btn" @click="batchSave">批量保存</a></div>
+			</div>
+		</div>
+		<div class="exitappWin animated fadeIn" v-if="isSave">
+			<div class="confirm">
+				<div>
+					<div class="title">你有修改未保存，是否保存</div>
+					<div class="buttonGroup">
+						<a href="javascript:;" @click="close()">放弃</a>
+						<a href="javascript:;" class="comfirmBtn" @click="batchSave">保存</a>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -139,7 +151,8 @@ export default {
 			],
 			title: '',
 			oldSource: [],
-			dataSource: []
+			dataSource: [],
+			isSave:false
 		};
 	},
 	props: {
@@ -148,36 +161,38 @@ export default {
 			default: true
 		}
 	},
-	watch: {
-		totalNum(newValue, oldValue) {
-			if (newValue != oldValue) {
-			}
-		}
-	},
+	
 	created() {
 		this.sendInfo = sessionStorage.getItem('sendInfo') ? JSON.parse(sessionStorage.getItem('sendInfo')) : null;
-		this.titleCode= sessionStorage.getItem('titleCode') ? sessionStorage.getItem('titleCode') : null;
-		this.titleName= sessionStorage.getItem('titleName') ? sessionStorage.getItem('titleName') : null;
-		if(this.titleCode){
-		this.selectQuestions();
+		console.log(this.sendInfo)
+// 		this.titleCode= sessionStorage.getItem('titleCode') ? sessionStorage.getItem('titleCode') : null;
+// 		this.titleName= sessionStorage.getItem('titleName') ? sessionStorage.getItem('titleName') : null;
+// 		if(this.titleCode){
+// 		this.selectQuestions();
+// 		}
+	},
+	computed:{
+		total:function(){
+			return this.dataSource.length;
+		},
+		totalScore:function(){
+			let count=0;
+			if(this.dataSource.length>0){
+			   count=this.dataSource.reduce((count,item)=>count+=item.score-0,0);	
+			}
+			return count;
 		}
 	},
-	watch: {
-		/* 'Data':{
-			handler(newval,oldval){
-				var re =  /^[a-fA-F]*$/;
-				if(!re.test(newval.trueAnswer)){
-					this.Data.trueAnswer = '',
-					this.$toast.center('答案只能输入A-F');
-				 	return false;
-				}
-		        this.add(newval);
-            },
-            deep:true
-		} */
-	},
-
 	methods: {
+		isCanclose(){
+			/* 是否可以保存 */
+			const $me=this;
+			if(JSON.stringify($me.oldSource)==JSON.stringify($me.dataSource)){
+				$me.close();
+			}else{
+				$me.isSave=true;
+			}
+		},
 		close() {
 			this.$emit('update:isCloseUpload', false);
 		},
@@ -323,6 +338,7 @@ export default {
 		/* 批量保存 */
 		batchSave() {
 			const $me = this;
+			$me.isSave=false;
 			if (!$me.titleName) {
 				this.$toast.center('请输入标题');
 				return false;
@@ -331,10 +347,16 @@ export default {
 				this.$toast.center('请导入或者手动添加题目');
 				return false;
 			}
-			console.log(this.dataSource)
-			let questions=this.dataSource.map((item,index)=>{
+			//console.log(this.dataSource)
+			let questions=[];
+			for(var i=0;i<this.dataSource.length;i++){
+				var item=this.dataSource[i];
+				if(!item.questionType||!item.score||!item.trueAnswer){
+					this.$toast.center('请完善题目信息');
+					return false;
+				}
 				var param={
-					questionId:index+1,
+					questionId:i+1,
 					questionType:item.questionType,
 					score:item.score,
 					trueAnswer:item.trueAnswer
@@ -343,8 +365,21 @@ export default {
 				if (item.id){
 					param.id=item.id
 				}
-				return param
-			});
+				questions.push(param);
+			}
+// 			let questions=this.dataSource.map((item,index)=>{
+// 				var param={
+// 					questionId:index+1,
+// 					questionType:item.questionType,
+// 					score:item.score,
+// 					trueAnswer:item.trueAnswer
+// 					
+// 				};
+// 				if (item.id){
+// 					param.id=item.id
+// 				}
+// 				return param
+// 			});
 			var param = {
 				classCode: $me.sendInfo.classCode,
 				className: $me.sendInfo.className,
@@ -444,14 +479,17 @@ export default {
 }
 .bg > .upload-bd {
 	position: absolute;
-	left: 20%;
-	right: 20%;
+	left: 50%;
+	width: 60%;
+	transform: translateX(-50%);
+	min-width: 900px;
 	top: 20%;
 	bottom: 20%;
 	background: #fff;
 	border-radius: 14px;
-	padding: 40px;
+	padding: 40px 40px 60px;
 	height: auto;
+	box-sizing: border-box;
 }
 .bg > .upload-bd > div {
 	overflow: auto;
@@ -462,6 +500,7 @@ export default {
 	font-size: 16px;
 	line-height: 30px;
 	margin-bottom: 10px;
+	text-align: left;
 }
 .bg > div .btnbar {
 	padding-left: 10px;
@@ -604,4 +643,13 @@ export default {
 	text-align: center;
 	line-height: 35px;
 }
+.totalbar{
+	position: absolute;
+	right: 40px;
+	bottom: 15px;
+	line-height: 34px
+}
+.totalbar span{
+	vertical-align: middle
+	}
 </style>
