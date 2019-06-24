@@ -97,8 +97,8 @@ export default {
 	font-size: 30px;
 	/* border: 3px solid rgba(16, 120, 255, 0.8); */
 	border-radius: 5px;
-	background: #f9f6cf;
-		box-shadow: 0 0 10px rgba(0,0,0,.4);
+	background: #ffe35e;
+	box-shadow: 0 0 10px rgba(0,0,0,.4);
 	/* display: none; */
 }
 /* .board {

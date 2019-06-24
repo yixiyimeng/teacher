@@ -27,9 +27,10 @@
 					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
 						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
 						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
-						<img src="../../assets/jiebang.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" />
+						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)"  style="opacity: .6;"/>
 					</li>
 				</ul>
+				
 				<div class="tag">
 					<span>已选择{{ checkbindStu }}个学生</span>
 					<a href="javascript:;" @click="unbindCheckedStu">解绑选中学生</a>
@@ -47,14 +48,15 @@
 				<ul class="clearfix">
 					<!-- {{namelist}} -->
 					<li v-for="(item, index) in selectNamelist">
-						<span>{{ item.stuName }}</span>
+						<img src="../../assets/1.png"  style="width: 50px; height: 50px; vertical-align: middle;"/>
+						<span style="vertical-align: middle;">{{ item.stuName }}</span>
 					</li>
 				</ul>
 			</div>
 		</div>
 		<load :isprogress="isprogress" :rate="rate"></load>
 		<!-- 显示答案 -->
-		<notice :titlename="titlename" class=" animated fast" :class="[titlename ? 'slideInDown' : 'slideOutUp']"></notice>
+		<notice :titlename="titlename" class="animated fast" :class="[titlename ? 'slideInDown' : 'slideOutUp']"></notice>
 		<div class="namelist">
 			<div class="setting-drawer-index-handle" @click="isshowNamelist = !isshowNamelist" title="名单"><img src="../../assets/userlist.png" alt="" /></div>
 			<div class="swiper-container" style="height: 100%; overflow: auto;">
@@ -62,7 +64,7 @@
 					<li v-for="(item, index) in namelist" style="cursor: pointer;" title="解绑">
 						<i :class="item.state == 0 ? 'warn' : 'success'"></i>
 						<span>{{ item.stuName }}</span>
-						<img src="../../assets/jiebang.png" alt="" v-if="item.state == 1" style="width: 20px; height: 20px;" @click="unBindOneStu(item)" />
+						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" style="width: 20px; height: 20px;" @click="unBindOneStu(item)" />
 					</li>
 				</ul>
 			</div>
@@ -109,26 +111,36 @@
 		<!-- 结果 -->
 		<div class="resultbox " v-show="isResult">
 			<div class="flex flex-v flex-align-center" style="height: 100%;">
-				<div class="rank" v-if="isRank" :class="{ top: isCorrectchart||isChart }">
+				<div class="rank" v-if="isRank" :class="{ top: isCorrectchart || isChart }">
 					<div class="rankitem bounceIn animated" v-for="(item, index) in ranklist">
 						<p>{{ item.stuName }}</p>
 						<p class="score">{{ item.score }}分</p>
 					</div>
 				</div>
-				<div class="chartbox"  :class="{'h70':isRank&&ranklist.length>0}">
+				<div class="chartbox" :class="{ h70: isRank && ranklist.length > 0 }">
 					<!-- 主观题统计 -->
 					<div class="chart" style="height:90%;width: 50%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
 					<!-- 正确率统计 -->
-					<div class="Correctchart" style="height:90%; width: 50%; margin: 2% auto;float: left; text-align: center;" v-show="isCorrectchart">
-						<div style="height: 25px;">
-						<a
-							style="text-align: center; color: rgb(24, 114, 255);"
-							href="javascript:;"
-							v-if="selectAnswerStr"
-							@click="getEveryAnswerName({ answer: selectAnswerStr })"
-						>
-							查看选择{{ selectAnswerStr }}人员名单
-						</a></div>
+					<div class="Correctchart" style="height:90%; width: 50%;float: left; text-align: center;" v-show="isCorrectchart">
+						<div style="height: 25px; text-align: left; padding-left: 60px;" v-if="subjecttitle==3">
+							<div class="ant-checkbox-group">
+								<label class="ant-checkbox-group-item ant-checkbox-wrapper" v-for="(item, index) in checklist" :key="index">
+									<span class="ant-checkbox">
+										<input type="checkbox" v-model="item.ischeck" class="ant-checkbox-input" />
+										<span class="ant-checkbox-inner"></span>
+									</span>
+									<span>{{ item.name }}</span>
+								</label>
+							</div>
+							<a
+								style="text-align: center; color: rgb(24, 114, 255);"
+								href="javascript:;"
+								v-if="selectAnswerStr"
+								@click="getEveryAnswerName({ answer: selectAnswerStr })"
+							>
+								查看选择{{ selectAnswerStr }}人员名单
+							</a>
+						</div>
 						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
 					</div>
 				</div>
@@ -151,7 +163,7 @@
 					</div>
 				</div>
 			</div>
-		
+
 			<div class="commonroom flex-1" v-if="subjectType == 0">
 				<ul class="subjectitlebox flex flex-pack-justify">
 					<li v-for="item in subjectitleList" class="flex-1" :key="item.value" @click="selSubjecttitle(item)" :class="{ active: item.value == subjecttitle }">
@@ -159,10 +171,10 @@
 						<p>{{ item.name }}</p>
 					</li>
 				</ul>
-		
+
 				<div class="fromcontrol flex" v-if="subjecttitle != 4 && subjecttitle != 5">
 					<label>答案</label>
-		
+
 					<input type="password" name="" id="" value="" autocomplete="off" class="trueanswer" v-model="settrueanswer" placeholder="请输入正确答案" />
 				</div>
 				<p class="warn" v-if="subjecttitle != 4 && subjecttitle != 5">
@@ -189,7 +201,7 @@
 						<p>{{ item.name }}</p>
 					</li>
 				</ul>
-		
+
 				<div class="fromcontrol flex" v-if="subjecttitle == 6">
 					<label>题目类型</label>
 					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
@@ -211,7 +223,7 @@
 				</div>
 				<div class="fromcontrol flex" v-if="subjecttitle == 7">
 					<label>题目类型</label>
-		
+
 					<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1" :selectValue="onetitletype"></search>
 				</div>
 				<div class="flex flex-align-center" v-if="subjecttitle == 7">
@@ -379,7 +391,9 @@ export default {
 				{ titlename: '判断题', subjecttitle: '2' },
 				{ titlename: '主观题', subjecttitle: '4' },
 				{ titlename: '抢红包', subjecttitle: '5' }
-			]
+			],
+			checklist: [],
+			colorList: []
 		};
 	},
 	computed: {
@@ -393,8 +407,15 @@ export default {
 				return 0;
 			}
 		},
+// 		selectAnswerStr() {
+// 			return this.selectAnswer.sort().join('');
+// 		},
 		selectAnswerStr() {
-			return this.selectAnswer.sort().join('');
+			return this.checklist
+				.filter(item => item.ischeck)
+				.map(item => item.name)
+				.sort()
+				.join('');
 		}
 	},
 	created() {
@@ -405,7 +426,9 @@ export default {
 		this.$electron.ipcRenderer.send('onlinedirebro', true);
 		this.getNamelist('bingingCard/getAllBingdCardInfo');
 		this.getjson();
-	},
+		
+		},
+		
 	mounted() {
 		this.myChart = echarts.init($('#myChart')[0]);
 		this.myCorrectChart = echarts.init($('#myCorrectChart')[0]); //初始化echart
@@ -418,6 +441,7 @@ export default {
 			width: w,
 			left: l
 		});
+
 	},
 	watch: {
 		isshowNamelist: function(newval, oldval) {
@@ -450,8 +474,26 @@ export default {
 					this.$toast.center(`题目长度不能大于${maxnum}`);
 				}
 			}
+		},
+
+		checklist: {
+			handler(newName, oldName) {
+				const $me = this;
+				var option = $me.myCorrectChart.getOption();
+				console.log(option);
+				for (var i = 0; i < $me.checklist.length; i++) {
+					if ($me.checklist[i].ischeck) {
+						$me.colorList[i] = '#FF999A';
+					} else {
+						$me.colorList[i] = '#59ADF3';
+					}
+				}
+				$me.myCorrectChart.setOption(option);
+			},
+			deep: true
+			// 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
+			// immediate: true
 		}
-		
 	},
 	methods: {
 		exitBtn() {
@@ -1015,9 +1057,9 @@ export default {
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/statistics/getSubjectiveResult'
-			}).then(da => {				
+			}).then(da => {
 				var list = da.data.data;
-				console.log("主观题统计"+JSON.stringify(da.data.data.unAnswerNum))
+				console.log('主观题统计' + JSON.stringify(da.data.data.unAnswerNum));
 				var option = [
 					{
 						value: list.agreeNumber,
@@ -1066,15 +1108,28 @@ export default {
 			$me.isCorrectchart = true;
 			var title = myoption.title;
 			var mydata = myoption.data;
+			$me.checklist = title
+				.filter(item => item != '未作答')
+				.map(item => {
+					return {
+						name: item,
+						ischeck: false
+					};
+				});
 			console.log(mydata);
-			var colorList = [];
+			var defaultcolor=['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'];
+			$me.colorList = [];
 			if (title && title.length > 0) {
-				colorList = title.map(item => {
-					return '#61a0a8';
+				$me.colorList = title.map((item,i) => {
+					if($me.subjecttitle==4){
+						return defaultcolor[i]
+					}else{
+					return '#59ADF3';
+					}
 				});
 			}
 			let option = {
-				color: ['#ff999a', '#61a0a8', '#ffcc67', '#af89d6'],
+				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				grid: {
 					x: 110,
 					y: 55,
@@ -1092,9 +1147,9 @@ export default {
 					axisLabel: {
 						fontSize: fontSize > 24 ? 20 : fontSize,
 						backgroundColor: '#fff',
-						color: '#449933',
+						color: '#5793f3',
 						borderRadius: 4,
-						borderColor: '#449933',
+						borderColor: '#5793f3',
 						borderWidth: 1,
 						padding: [4, 10, 4, 10],
 						interval: 0
@@ -1113,14 +1168,14 @@ export default {
 						formatter: ['{b|a}{value}人'].join('\n'),
 						fontSize: fontSize > 24 ? 20 : fontSize,
 						backgroundColor: '#fff',
-						color: '#449933',
+						color: '#5793f3',
 						borderRadius: 4,
-						borderColor: '#449933',
+						borderColor: '#5793f3',
 						borderWidth: 1,
 						padding: [4, 10, 4, 5],
 						rich: {
 							a: {
-								color:'red',
+								color: 'red',
 								lineHeight: 10
 							},
 							b: {
@@ -1139,23 +1194,24 @@ export default {
 					{
 						data: mydata,
 						type: 'bar',
-						barWidth: 60,
+						barWidth: 70,
 						label: {
 							normal: {
 								show: true,
 								position: 'inside',
-								color: '#f00',
+								color: '#000',
 								formatter: function(param) {
 									return param.value + '人';
 								},
-								textStyle: { fontSize: 16 }
+								textStyle: { fontSize: 20 }
 							}
 						},
 						itemStyle: {
 							normal: {
 								color: function(params) {
-									return colorList[params.dataIndex];
-								}
+									return $me.colorList[params.dataIndex];
+								},
+								barBorderRadius: [8, 8, 0, 0]
 							}
 						}
 					}
@@ -1185,31 +1241,24 @@ export default {
 				/* if(param.componentType == "xAxis"){
 					console.log("单击了"+param.value+"x轴标签");
 				}else{ */
-					if ($me.subjecttitle == 3) {
-						if(title[param.dataIndex]=='未作答'){
-							 $me.getEveryAnswerName({ answer: title[param.dataIndex] });
-							}else{
-						if (colorList[param.dataIndex] == '#ff999a') {
-							colorList[param.dataIndex] = '#61a0a8';
-							for (var i = 0; i < $me.selectAnswer.length; i++) {
-								if (title[param.dataIndex] == $me.selectAnswer[i]) {
-									$me.selectAnswer.splice(i, 1);
-									break;
-								}
-							}
-						} else {
-							colorList[param.dataIndex] = '#ff999a';
-							$me.selectAnswer.push(title[param.dataIndex]);
-						}
-						}
-						$me.myCorrectChart.setOption(option);
+				if ($me.subjecttitle == 3) {
+					if (title[param.dataIndex] == '未作答') {
+						$me.getEveryAnswerName({ answer: title[param.dataIndex] });
 					} else {
-						 $me.getEveryAnswerName({ answer: title[param.dataIndex] });
-						//$me.getEveryAnswerName({ answer:$me.trueAnswer });
-						
+						if ($me.colorList[param.dataIndex] == '#FF999A') {
+							//$me.colorList[param.dataIndex] = '#61a0a8';
+							$me.checklist[param.dataIndex].ischeck = false;
+						} else {
+							//$me.colorList[param.dataIndex] = '#ff999a';
+							$me.checklist[param.dataIndex].ischeck = true;
+						}
 					}
+					//$me.myCorrectChart.setOption(option);
+				} else {
+					$me.getEveryAnswerName({ answer: title[param.dataIndex] });
+					//$me.getEveryAnswerName({ answer:$me.trueAnswer });
+				}
 				// }
-				
 			});
 		},
 		/* 正确率显示 */
@@ -1221,18 +1270,18 @@ export default {
 			for (var i = 0; i < List.length; i++) {
 				title.push(List[i].name);
 			}
-			console.log('哈哈哈哈' + JSON.stringify(title));
+			var fontSize = $me.getDpr();
 			let option = {
 				legend: {
 					x: 'center',
 					y: 'bottom',
 					textStyle: {
-						color: '#fff'
+						color: '#5793f3'
 					},
 					//data: ['正确', '错误']
 					data: title
 				},
-				color: ['#61a0a8', '#ff999a', '#ffcc67', '#af89d6'],
+				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				series: [
 					{
 						name: '正确率',
@@ -1246,7 +1295,8 @@ export default {
 								formatter: function(params) {
 									//console.log(params);
 									return params.name + params.value + '人\n(' + params.percent + '%)';
-								}
+								},
+								textStyle: { fontSize: fontSize > 18 ? 18 : fontSize, }
 							}
 						},
 						labelLine: {
@@ -1317,7 +1367,7 @@ export default {
 					$me.reftitletypelist = $me.alltxtlist['cnSentence'];
 				}
 			} catch (e) {
-					$me.reftitletypelist =[]
+				$me.reftitletypelist = [];
 			}
 		},
 		/* 选择语言测评题目 */
@@ -1361,12 +1411,11 @@ export default {
 				$me.reftitletype = '1';
 				$me.onetitletype = $me.titletypeList[0];
 				$me.talkName = '';
-				try{
+				try {
 					$me.reftitletypelist = $me.alltxtlist['enWord'];
-				}catch(e){
-					$me.reftitletypelist =[]
+				} catch (e) {
+					$me.reftitletypelist = [];
 				}
-				
 			} else if ($me.subjecttitle == 8) {
 				$me.iPhoneType = 0;
 			}
@@ -1375,22 +1424,23 @@ export default {
 		getChartData(myoption, title) {
 			const $me = this;
 			$me.isChart = true;
-			var List=myoption;
-			var title=[];
-			List.map(function(item){
-				title.push(item.name)
-			})
+			var List = myoption;
+			var title = [];
+			List.map(function(item) {
+				title.push(item.name);
+			});
+			var fontSize = $me.getDpr();
 			let option = {
 				legend: {
 					x: 'center',
 					y: 'bottom',
 					textStyle: {
-						color: '#fff'
+						color: '#5793f3'
 					},
 					//data: ['懂', '不懂',"未作答"]
-					data:title
+					data: title
 				},
-				color: ['#61a0a8', '#ff999a', '#ffcc67', '#af89d6'],
+				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				series: [
 					{
 						name: '主观题统计',
@@ -1404,7 +1454,8 @@ export default {
 								formatter: function(params) {
 									//console.log(params);
 									return params.name + params.value + '人\n(' + params.percent + '%)';
-								}
+								},
+								textStyle: { fontSize: fontSize > 18 ? 18 : fontSize, }
 							}
 						},
 						labelLine: {
@@ -1422,10 +1473,10 @@ export default {
 			}, 200);
 			$me.myChart.off('click');
 			$me.myChart.on('click', function(param) {
-				$me.getEveryAnswerName({ answer: title[param.dataIndex] });				
+				$me.getEveryAnswerName({ answer: title[param.dataIndex] });
 			});
 		},
-		uploadfile(){
+		uploadfile() {
 			const $me = this;
 			var file = $('#upload')[0];
 			var FileExt = $('#upload')
@@ -1473,7 +1524,7 @@ export default {
 			}).then(da => {
 				$me.alltxtlist = da.data.data;
 				const type = $me.reftitletype;
-				try{
+				try {
 					if (type == 1) {
 						$me.reftitletypelist = $me.alltxtlist['enWord'];
 					} else if (type == 2) {
@@ -1481,8 +1532,8 @@ export default {
 					} else {
 						$me.reftitletypelist = $me.alltxtlist['cnSentence'];
 					}
-				}catch(e){
-					$me.reftitletypelist=[];
+				} catch (e) {
+					$me.reftitletypelist = [];
 				}
 			});
 		},
@@ -1490,7 +1541,7 @@ export default {
 		unBindStu() {
 			const $me = this;
 			$me.isunbind = false;
-			
+
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/bingingCard/unBind',
@@ -1635,7 +1686,7 @@ export default {
 				url: urlPath + 'teacher-client/common/nextQuestion'
 			}).then(da => {
 				if (da.data.ret == 'success') {
-					console.log("下一题"+JSON.stringify(da))
+					console.log('下一题' + JSON.stringify(da));
 					/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
 					$me.trueAnswer = da.data.data.trueAnswer;
 					$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;

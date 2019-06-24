@@ -80,7 +80,8 @@ export default {
 			isCloseUpload: false,
 			titleCode: '',
 			titlesearchList: [],
-			reftitletypelist: []
+			reftitletypelist: [],
+			isSend:false
 		};
 	},
 	components: {
@@ -284,7 +285,9 @@ export default {
 		/* 提交班级信息 */
 		sendClass() {
 			const $me = this;
-
+			if($me.isSend){
+				return ;
+			}
 			if ($me.selectclass && $me.selectclass.code) {
 				$me.sendInfo.classCode = $me.selectclass.code;
 				$me.sendInfo.className = $me.selectclass.name;
@@ -317,9 +320,11 @@ export default {
 
 			/* 如果有选择了试卷，则需要同步 */
 			if ($me.titleCode&&$me.titleCode.titleCode) {
+				$me.isSend=true;
 				$me.synchronizedCoursewareQuestions();
 			}
 			else{
+				$me.isSend=true;
 				sessionStorage.setItem('sendInfo', JSON.stringify($me.sendInfo));
 				$me.startDirectBroadcasts($me.sendInfo);
 			}
@@ -346,7 +351,9 @@ export default {
 					sessionStorage.setItem('sendInfo', JSON.stringify($me.sendInfo));
 					$me.startDirectBroadcasts($me.sendInfo);
 				}
-			});
+			}).catch(function(err) {
+					$me.isSend=false;
+				});
 		},
 		/*开始上课*/
 		startDirectBroadcasts(param) {
@@ -371,10 +378,12 @@ export default {
 						$me.$loading.close();
 						$me.$toast.center(da.data.message);
 					}
+					$me.isSend=false;
 				})
 				.catch(function(err) {
 					$me.$toast.center('开始上课失败');
 					$me.$loading.close();
+					$me.isSend=false;
 				});
 		},
 		returnback() {

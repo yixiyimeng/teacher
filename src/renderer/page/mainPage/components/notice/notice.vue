@@ -67,7 +67,7 @@ p {
 	box-shadow: 0 0 10px rgba(0,0,0,.4);
 	// border: 3px solid rgba(16, 120, 255, 0.8);
 	border-radius: 5px;
-	background: #f9f6cf;
+	background: #ffe35e;
 	display: block;
 	width: 200px;
 }
