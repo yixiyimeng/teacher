@@ -441,7 +441,7 @@ export default {
 			} else if (questionType == 4) {
 				answerreg = /^[E-F]{1}$/;
 			} else if (questionType == 2) {
-				answerreg = /^(?!.*([A-D]).*\1)[A-D]{1,4}$/;
+				answerreg = /^(?!.*([A-D]).*\1)[A-D]{2,4}$/;
 			}
 			if (!answerreg.test(answer)) {
 				$me.$toast.center('请输入正确答案');
