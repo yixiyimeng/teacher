@@ -479,16 +479,18 @@ export default {
 		checklist: {
 			handler(newName, oldName) {
 				const $me = this;
-				var option = $me.myCorrectChart.getOption();
-				console.log(option);
-				for (var i = 0; i < $me.checklist.length; i++) {
-					if ($me.checklist[i].ischeck) {
-						$me.colorList[i] = '#FF999A';
-					} else {
-						$me.colorList[i] = '#59ADF3';
+				if ($me.subjecttitle == 3) {
+					var option = $me.myCorrectChart.getOption();
+					//console.log(option);
+					for (var i = 0; i < $me.checklist.length; i++) {
+						if ($me.checklist[i].ischeck) {
+							$me.colorList[i] = '#FF999A';
+						} else {
+							$me.colorList[i] = '#59ADF3';
+						}
 					}
+					$me.myCorrectChart.setOption(option);
 				}
-				$me.myCorrectChart.setOption(option);
 			},
 			deep: true
 			// 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
