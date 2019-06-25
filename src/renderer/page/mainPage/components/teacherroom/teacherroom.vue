@@ -873,12 +873,12 @@ export default {
 				}
 				case '6': {
 					url = 'voiceAnswer/startDiscern';
-					$me.titlename = '语言识别';
+					$me.titlename = '语音识别';
 					break;
 				}
 				case '7': {
 					url = 'voiceAnswer/startAppraisal';
-					$me.titlename = '语言测评';
+					$me.titlename = '语音测评';
 					break;
 				}
 				case '8': {
