@@ -27,10 +27,10 @@
 					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
 						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
 						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
-						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)"  style="opacity: .6;"/>
+						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" style="opacity: .6;" />
 					</li>
 				</ul>
-				
+
 				<div class="tag">
 					<span>已选择{{ checkbindStu }}个学生</span>
 					<a href="javascript:;" @click="unbindCheckedStu">解绑选中学生</a>
@@ -48,7 +48,7 @@
 				<ul class="clearfix">
 					<!-- {{namelist}} -->
 					<li v-for="(item, index) in selectNamelist">
-						<img src="../../assets/1.png"  style="width: 50px; height: 50px; vertical-align: middle;"/>
+						<img src="../../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
 						<span style="vertical-align: middle;">{{ item.stuName }}</span>
 					</li>
 				</ul>
@@ -122,7 +122,7 @@
 					<div class="chart" style="height:90%;width: 50%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
 					<!-- 正确率统计 -->
 					<div class="Correctchart" style="height:90%; width: 50%;float: left; text-align: center;" v-show="isCorrectchart">
-						<div style="height: 25px; text-align: left; padding-left: 60px;" v-if="subjecttitle==3">
+						<div style="height: 25px; text-align: left; padding-left: 60px;" v-if="subjecttitle == 3">
 							<div class="ant-checkbox-group">
 								<label class="ant-checkbox-group-item ant-checkbox-wrapper" v-for="(item, index) in checklist" :key="index">
 									<span class="ant-checkbox">
@@ -407,9 +407,9 @@ export default {
 				return 0;
 			}
 		},
-// 		selectAnswerStr() {
-// 			return this.selectAnswer.sort().join('');
-// 		},
+		// 		selectAnswerStr() {
+		// 			return this.selectAnswer.sort().join('');
+		// 		},
 		selectAnswerStr() {
 			return this.checklist
 				.filter(item => item.ischeck)
@@ -426,9 +426,8 @@ export default {
 		this.$electron.ipcRenderer.send('onlinedirebro', true);
 		this.getNamelist('bingingCard/getAllBingdCardInfo');
 		this.getjson();
-		
-		},
-		
+	},
+
 	mounted() {
 		this.myChart = echarts.init($('#myChart')[0]);
 		this.myCorrectChart = echarts.init($('#myCorrectChart')[0]); //初始化echart
@@ -441,7 +440,6 @@ export default {
 			width: w,
 			left: l
 		});
-
 	},
 	watch: {
 		isshowNamelist: function(newval, oldval) {
@@ -1119,17 +1117,18 @@ export default {
 					};
 				});
 			console.log(mydata);
-			var defaultcolor=['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'];
+			var defaultcolor = ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'];
 			$me.colorList = [];
 			if (title && title.length > 0) {
-				$me.colorList = title.map((item,i) => {
-					if($me.subjecttitle==4){
-						return defaultcolor[i]
-					}else{
-					return '#59ADF3';
+				$me.colorList = title.map((item, i) => {
+					if ($me.subjecttitle == 4) {
+						return defaultcolor[i];
+					} else {
+						return '#59ADF3';
 					}
 				});
 			}
+			console.log();
 			let option = {
 				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				grid: {
@@ -1298,7 +1297,7 @@ export default {
 									//console.log(params);
 									return params.name + params.value + '人\n(' + params.percent + '%)';
 								},
-								textStyle: { fontSize: fontSize > 18 ? 18 : fontSize, }
+								textStyle: { fontSize: fontSize > 18 ? 18 : fontSize }
 							}
 						},
 						labelLine: {
@@ -1457,7 +1456,7 @@ export default {
 									//console.log(params);
 									return params.name + params.value + '人\n(' + params.percent + '%)';
 								},
-								textStyle: { fontSize: fontSize > 18 ? 18 : fontSize, }
+								textStyle: { fontSize: fontSize > 18 ? 18 : fontSize }
 							}
 						},
 						labelLine: {

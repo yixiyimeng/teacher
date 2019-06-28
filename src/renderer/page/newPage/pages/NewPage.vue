@@ -1,6 +1,6 @@
 <template>
 	<div id="suspension">
-		<div class="rightBtnlist">
+		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}">
 			<a href="javascript:;" class="kjbtn">
 				<div class="la-ball-scale-multiple">
 					<div></div>
@@ -23,8 +23,9 @@ export default {
 	data() {
 		return {
 			isminimizeAppStatesub: false, //是否最小化
-			onlinedirebro: false, //是否连接直播间
-			isUploadfile:false//是否可以上传题目
+			onlinedirebro: true, //是否连接直播间
+			isUploadfile:false,//是否可以上传题目
+			ishover:false
 		};
 	},
 	mounted() {
@@ -69,6 +70,13 @@ export default {
 		_this.$electron.ipcRenderer.on('isUploadfile', (event, flag) => {
 			_this.isUploadfile = flag;
 		});
+		/* 是否改变了窗口大小 */
+		_this.$electron.ipcRenderer.on('isresize', (event,flag) => {
+			if(!flag){
+				_this.ishover = true;
+			}
+			
+		});
 		document.addEventListener('drag',function(event){
 			event.preventDefault()
 		},false);
@@ -109,13 +117,22 @@ export default {
 		exitBtnApp() {
 			/* 退出程序 */
 			this.$electron.ipcRenderer.send('isexitApp');
+		},
+		setbgwin(){
+			this.$electron.ipcRenderer.send('lgwin');
+		},
+		setsmwin(){
+			this.ishover=false
+			this.$electron.ipcRenderer.send('smwin');
+		
+			
 		}
 	}
 };
 </script>
 
 <style>
-* {
+* { 
 	padding: 0;
 	margin: 0;
 	-webkit-app-region: no-drag;
@@ -136,9 +153,12 @@ export default {
 	cursor: pointer;
 }
 .rightBtnlist {
-	margin: 10px auto;
+	margin: 0 auto;
 	width: 45px;
+	min-height: 45px;
 	position: relative;
+	padding-top: 3px;
+	
 }
 
 .rightBtnlist .uploadTitle,
@@ -147,15 +167,25 @@ export default {
 .rightBtnlist .exitBtn {
 	opacity: 0;
 	transition: all 0.3s;
+	 display: none; 
 }
-.rightBtnlist:hover .uploadTitle,
+/* .rightBtnlist:hover .uploadTitle,
 .rightBtnlist:hover .exitApp,
 .rightBtnlist:hover .minApp,
 .rightBtnlist:hover .exitBtn {
 	opacity: 1;
 	position: relative;
 	z-index: 999;
-}
+	display: block;
+} */
+.rightBtnlist.active .exitApp,
+.rightBtnlist.active .minApp,
+.rightBtnlist.active .exitBtn {
+	opacity: 1;
+	position: relative;
+	z-index: 999;
+	display: block;
+} 
 .rightBtnlist .kjbtn {
 	opacity: 1;
 	transition: all 0.3s;
@@ -164,9 +194,9 @@ export default {
 	display: block;
 	padding: 5px;
 	position: absolute;
-	top: 0;
+	top: 3px;
 }
-.rightBtnlist:hover .kjbtn {
+.rightBtnlist.active .kjbtn {
 	opacity: 0;
 }
 .exitApp,

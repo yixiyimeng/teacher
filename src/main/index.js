@@ -33,6 +33,7 @@ const subwinURL = process.env.NODE_ENV === 'development' ? 'http://localhost:908
 /**
  * Create main window
  */
+let iswinsm=true;
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		height: 1080,
@@ -104,18 +105,18 @@ function createWindow() {
 
 function createSuspensionWindow() {
 	win = new BrowserWindow({
-		width: 60, //悬浮窗口的宽度 比实际DIV的宽度要多2px 因为有1px的边框
-		height: 250, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
+		width: 70, //悬浮窗口的宽度 比实际DIV的宽度要多2px 因为有1px的边框
+		height: 60, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
 		type: 'toolbar', //创建的窗口类型为工具栏窗口
 		frame: false, //要创建无边框窗口
-		resizable: false, //禁止窗口大小缩放
+		resizable: true, //禁止窗口大小缩放
 		show: false, //先不让窗口显示
 		webPreferences: {
-			devTools: false //关闭调试工具
+			devTools: true //关闭调试工具
 		},
 		useContentSize: true,
-		maxWidth: 60,
-		maxHeight: 250,
+		maxWidth: 70,
+		maxHeight: 220,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前
 	});
@@ -132,7 +133,15 @@ function createSuspensionWindow() {
 
 	win.on('close', () => {
 		win = null;
-	})
+	});
+	win.on('resize', (e) => {
+		win.webContents.send('isresize', iswinsm);
+	});
+	win.on('will-resize', (e) => {
+		e.preventDefault();
+	});
+
+
 }
 /**
  * Create Tray
@@ -140,7 +149,7 @@ function createSuspensionWindow() {
 function createTray() {
 	let iconPath = path.join(__static, 'icons/icon6.png');
 	tray = new Tray(iconPath);
-	const contextMenu = Menu.buildFromTemplate([{	//小图标选项类型
+	const contextMenu = Menu.buildFromTemplate([{ //小图标选项类型
 			label: '打开',
 			type: 'normal',
 			click: onOpenAppClick
@@ -261,6 +270,16 @@ app.on('ready', () => {
 		}
 
 	});
+	ipcMain.on('lgwin', () => {
+		iswinsm=false;
+		win.setSize(70, 220);
+		
+	})
+
+	ipcMain.on('smwin', () => {
+		iswinsm=true;
+		win.setSize(70, 60)
+	})
 
 });
 
