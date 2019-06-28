@@ -1011,8 +1011,14 @@ export default {
 			})
 				.then(da => {
 					/*结束答题*/
-					$me.isResult = true; //显示作答结果
-					$me.isSendtitle = true; //显示下发题目按钮
+					console.log($me.subjecttitle)
+					/* 如果是语言题就不显示下发题目按钮。直接显示开始按钮 */
+					if($me.subjecttitle == 6 || $me.subjecttitle == 7 || $me.subjecttitle == 8){
+						$me.isSubject=true;
+					}else{
+						$me.isResult = true; //显示作答结果
+						$me.isSendtitle = true; //显示下发题目按钮
+					}
 					$me.isStop = false; //隐藏停止按钮
 					$me.uuid = ''; //清空uuid
 					$me.isAnswering = false; //停止答题
@@ -1116,7 +1122,6 @@ export default {
 						ischeck: false
 					};
 				});
-			console.log(mydata);
 			var defaultcolor = ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'];
 			$me.colorList = [];
 			if (title && title.length > 0) {
@@ -1124,6 +1129,9 @@ export default {
 					if ($me.subjecttitle == 4) {
 						return defaultcolor[i];
 					} else {
+						if((title[i]==($me.trueAnswer=='F'?'×':$me.trueAnswer=='E'?'√':$me.trueAnswer))&&($me.subjecttitle==1||$me.subjecttitle==2)){
+							return '#f00'
+						}
 						return '#59ADF3';
 					}
 				});
@@ -1273,15 +1281,14 @@ export default {
 			}
 			var fontSize = $me.getDpr();
 			let option = {
-				legend: {
-					x: 'center',
-					y: 'bottom',
-					textStyle: {
-						color: '#5793f3'
-					},
-					//data: ['正确', '错误']
-					data: title
-				},
+// 				legend: {
+// 					x: 'center',
+// 					y: 'bottom',
+// 					textStyle: {
+// 						color: '#5793f3'
+// 					},
+// 					data: title
+// 				},
 				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				series: [
 					{
@@ -1432,15 +1439,14 @@ export default {
 			});
 			var fontSize = $me.getDpr();
 			let option = {
-				legend: {
-					x: 'center',
-					y: 'bottom',
-					textStyle: {
-						color: '#5793f3'
-					},
-					//data: ['懂', '不懂',"未作答"]
-					data: title
-				},
+// 				legend: {
+// 					x: 'center',
+// 					y: 'bottom',
+// 					textStyle: {
+// 						color: '#5793f3'
+// 					},
+// 					data: title
+// 				},
 				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				series: [
 					{

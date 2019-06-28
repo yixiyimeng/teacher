@@ -23,7 +23,7 @@ export default {
 	data() {
 		return {
 			isminimizeAppStatesub: false, //是否最小化
-			onlinedirebro: true, //是否连接直播间
+			onlinedirebro: false, //是否连接直播间
 			isUploadfile:false,//是否可以上传题目
 			ishover:false
 		};
