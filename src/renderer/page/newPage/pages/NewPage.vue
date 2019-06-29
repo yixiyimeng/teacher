@@ -1,6 +1,6 @@
 <template>
 	<div id="suspension">
-		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}">
+		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}" >
 			<a href="javascript:;" class="kjbtn">
 				<div class="la-ball-scale-multiple">
 					<div></div>
@@ -72,9 +72,7 @@ export default {
 		});
 		/* 是否改变了窗口大小 */
 		_this.$electron.ipcRenderer.on('isresize', (event,flag) => {
-			if(!flag){
-				_this.ishover = true;
-			}
+		_this.ishover =!flag;
 			
 		});
 		document.addEventListener('drag',function(event){
@@ -122,7 +120,7 @@ export default {
 			this.$electron.ipcRenderer.send('lgwin');
 		},
 		setsmwin(){
-			this.ishover=false
+			this.ishover=false;
 			this.$electron.ipcRenderer.send('smwin');
 		
 			
@@ -138,8 +136,14 @@ export default {
 	-webkit-app-region: no-drag;
 	font-family: "microsoft yahei";
 }
+body,html{
+		width: 100%;
+	height: 100%;
+	overflow: hidden;
+}
 #suspension {
 	position: relative;
+
 }
 #suspension .apptitle {
 	background: rgba(255, 0, 0, 0.6);
@@ -158,6 +162,9 @@ export default {
 	min-height: 45px;
 	position: relative;
 	padding-top: 3px;
+	position: absolute;
+	top: 0;
+	left: 6px;
 	
 }
 
