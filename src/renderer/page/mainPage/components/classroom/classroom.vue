@@ -14,7 +14,16 @@
 					<div class="fromcontrol flex flex-1">
 						<label>主题</label>
 						<div class="flex-1" style="margin-right: 60px;">
-							<input type="text" name="" value="" autocomplete="off" v-model.trim="topicName" style="width: 100%;" placeholder="输入或者选择主题" />
+							<input
+								type="text"
+								name=""
+								value=""
+								autocomplete="off"
+								v-model.trim="topicName"
+								style="width: 100%;"
+								placeholder="输入或者选择主题"
+								@input="changrTopic"
+							/>
 							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName">
 								<template slot-scope="item">
 									{{ item.data.topicName }}
@@ -23,10 +32,30 @@
 							</dropmenu>
 						</div>
 					</div>
+					<div style="text-align: left; margin-top: 10px;">
+						<div class="ant-checkbox-group">
+							<label class="ant-checkbox-group-item ant-checkbox-wrapper" style="width: 20em;">
+								<span class="ant-checkbox">
+									<input type="checkbox" class="ant-checkbox-input" v-model="isClearquestion" />
+									<span class="ant-checkbox-inner"></span>
+								</span>
+								<span style="color: #f00; font-size:20px ;">是否清空之前作答记录</span>
+							</label>
+						</div>
+					</div>
 					<div class="fromcontrol flex flex-1">
 						<label>试卷</label>
 						<div style=" width: 30px; position: absolute;overflow: hidden; left: 4em; height: 64px;">
-						<date-picker  style="padding-top: 15px;position: absolute; right: 0;" v-model="rangetime" range appendToBody confirm confirm-text="确定" value-type="format" @input="changeTime"></date-picker>
+							<date-picker
+								style="padding-top: 15px;position: absolute; right: 0;"
+								v-model="rangetime"
+								range
+								appendToBody
+								confirm
+								confirm-text="确定"
+								value-type="format"
+								@input="changeTime"
+							></date-picker>
 						</div>
 						<div class="flex-1">
 							<v-select :options="titlesearchList" v-model="titleCode" placeholder="选择时间段筛选试卷" class="flex-1" style="padding-right: 20px;" label="titleName">
@@ -37,7 +66,6 @@
 						</div>
 						<a href="javascript:;" class="uploadTitle" @click="isCloseUpload = !isCloseUpload" v-if="sendInfo.classCode && sendInfo.subjectCode">
 							<img src="../../assets/upload.png" alt="" />
-							<!-- <span>导入试卷</span> -->
 						</a>
 					</div>
 				</form>
@@ -53,7 +81,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { urlPath,htmlescpe } from '@/page/mainPage/utils/base';
+import { urlPath, htmlescpe } from '@/page/mainPage/utils/base';
 import { search, dropmenu } from '@/page/mainPage/components';
 import vSelect from '@/page/mainPage/components/vue-select';
 import DatePicker from 'vue2-datepicker';
@@ -81,7 +109,9 @@ export default {
 			titleCode: '',
 			titlesearchList: [],
 			reftitletypelist: [],
-			isSend:false
+			isSend: false,
+			isClearquestion: false, //是否清空之前作答结果
+			isShowclear: false
 		};
 	},
 	components: {
@@ -107,7 +137,7 @@ export default {
 					}
 				} else {
 					this.sendInfo.classCode = '';
-					this.sendInfo.className ='';
+					this.sendInfo.className = '';
 				}
 				sessionStorage.setItem('sendInfo', JSON.stringify(this.sendInfo));
 			},
@@ -133,8 +163,8 @@ export default {
 			immediate: true
 		},
 		/* 监听导入题目的显隐 ，刷新题目列表 */
-		isCloseUpload(newvalue,oldvalue){
-			if(newvalue!=oldvalue&&!newvalue){
+		isCloseUpload(newvalue, oldvalue) {
+			if (newvalue != oldvalue && !newvalue) {
 				if (this.sendInfo.classCode && this.sendInfo.subjectCode) {
 					this.getTitleList();
 				}
@@ -281,12 +311,17 @@ export default {
 			$me.topicName = topic.topicName;
 			$me.topicCode = topic.topicCode;
 			$me.questionId = topic.questionId;
+			if ($me.questionId > 0) {
+				$me.isShowclear = true;
+			} else {
+				$me.isShowclear = false;
+			}
 		},
 		/* 提交班级信息 */
 		sendClass() {
 			const $me = this;
-			if($me.isSend){
-				return ;
+			if ($me.isSend) {
+				return;
 			}
 			if ($me.selectclass && $me.selectclass.code) {
 				$me.sendInfo.classCode = $me.selectclass.code;
@@ -309,27 +344,32 @@ export default {
 					return false;
 				}
 				$me.sendInfo.topicName = $me.topicName;
-				$me.sendInfo.topicCode=$me.topicCode;
+				$me.sendInfo.topicCode = $me.topicCode;
 				/* 如果是选择的主题，传主题的id */
-				$me.sendInfo.questionId = $me.questionId;
-				
+
+				if ($me.topicCode) {
+					/* 清空了之前作答记录*/
+					if ($me.isClearquestion) {
+						$me.sendInfo.questionId = null;
+					} else {
+						$me.sendInfo.questionId = $me.questionId;
+					}
+				}
 			} else {
 				this.$toast.center('请选择或者输入主题');
 				return false;
 			}
 
 			/* 如果有选择了试卷，则需要同步 */
-			if ($me.titleCode&&$me.titleCode.titleCode) {
-				$me.isSend=true;
+			if ($me.titleCode && $me.titleCode.titleCode) {
+				$me.isSend = true;
 				$me.synchronizedCoursewareQuestions();
-			}
-			else{
-				$me.isSend=true;
+			} else {
+				$me.isSend = true;
 				sessionStorage.setItem('sendInfo', JSON.stringify($me.sendInfo));
 				$me.startDirectBroadcasts($me.sendInfo);
 			}
-			
-			
+
 			/* 通知悬浮窗 上传 */
 			this.$electron.ipcRenderer.send('uploadfile', true);
 		},
@@ -343,16 +383,18 @@ export default {
 					'Content-Type': 'application/json; charset=UTF-8'
 				},
 				data: JSON.stringify({ titleCode: $me.titleCode.titleCode })
-			}).then(da => {
-				if (da.data.ret == 'success') {
-					$me.sendInfo.titleCode = $me.titleCode.titleCode;
-					sessionStorage.setItem('titleCode', $me.titleCode.titleCode);
-					sessionStorage.setItem('titleName', $me.titleCode.titleName);
-					sessionStorage.setItem('sendInfo', JSON.stringify($me.sendInfo));
-					$me.startDirectBroadcasts($me.sendInfo);
-				}
-			}).catch(function(err) {
-					$me.isSend=false;
+			})
+				.then(da => {
+					if (da.data.ret == 'success') {
+						$me.sendInfo.titleCode = $me.titleCode.titleCode;
+						sessionStorage.setItem('titleCode', $me.titleCode.titleCode);
+						sessionStorage.setItem('titleName', $me.titleCode.titleName);
+						sessionStorage.setItem('sendInfo', JSON.stringify($me.sendInfo));
+						$me.startDirectBroadcasts($me.sendInfo);
+					}
+				})
+				.catch(function(err) {
+					$me.isSend = false;
 				});
 		},
 		/*开始上课*/
@@ -378,39 +420,44 @@ export default {
 						$me.$loading.close();
 						$me.$toast.center(da.data.message);
 					}
-					$me.isSend=false;
+					$me.isSend = false;
 				})
 				.catch(function(err) {
 					$me.$toast.center('开始上课失败');
 					$me.$loading.close();
-					$me.isSend=false;
+					$me.isSend = false;
 				});
 		},
 		returnback() {
 			this.$router.go(-1);
+		},
+		changrTopic() {
+			/* 手动输入主题,清空主题code */
+			this.topicCode = '';
+			this.questionId = '';
 		}
 	}
 };
 </script>
 
 <style lang="less">
-	/deep/ .mx-datepicker-range {
-		width: 40px;
-		height: 64px;
-	}
-	/deep/ .mx-input {
-		height: 64px;
-		border: 2px solid transparent;
-		font-size: 30px;
-	}
-	/deep/ .mx-input-append {
-		width: 40px;
-	}
-	/deep/ .mx-datepicker-popup {
-		font-size: 16px;
-	}
-	/deep/ .mx-panel-date td,
-	/deep/ .mx-panel-date th {
-		font-size: 14px;
-	}
+/deep/ .mx-datepicker-range {
+	width: 40px;
+	height: 64px;
+}
+/deep/ .mx-input {
+	height: 64px;
+	border: 2px solid transparent;
+	font-size: 30px;
+}
+/deep/ .mx-input-append {
+	width: 40px;
+}
+/deep/ .mx-datepicker-popup {
+	font-size: 16px;
+}
+/deep/ .mx-panel-date td,
+/deep/ .mx-panel-date th {
+	font-size: 14px;
+}
 </style>
