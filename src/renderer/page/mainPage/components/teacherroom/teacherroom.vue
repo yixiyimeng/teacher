@@ -265,6 +265,19 @@
 						</label>
 					</div>
 				</div>
+				<div  class="fromcontrol flex flex-align-center" v-if="subjecttitle == 6||subjecttitle == 7">
+					<label>扬声器</label>
+					<div class="ant-checkbox-group " style="text-align: left;">
+						<label class="ant-checkbox-group-item ant-checkbox-wrapper" style="width: 20em;">
+							<span class="ant-checkbox">
+								<input type="checkbox" class="ant-checkbox-input" v-model="isSatrspeaker" />
+								<span class="ant-checkbox-inner"></span>
+							</span>
+							<span style="color: #f00; font-size:20px ;">是否开启扬声器</span>
+						</label>
+					</div>
+					
+				</div>
 			</div>
 		</div>
 		<div class="exitappWin animated fadeIn" v-if="isunbind">
@@ -393,7 +406,8 @@ export default {
 				{ titlename: '抢红包', subjecttitle: '5' }
 			],
 			checklist: [],
-			colorList: []
+			colorList: [],
+			isSatrspeaker:false//是否开启扬声器
 		};
 	},
 	computed: {
@@ -536,6 +550,7 @@ export default {
 							var obj = msg.data;
 							switch (msg.reqType) {
 								case 0: {
+									
 									var time = $('#danmu').data('nowTime') + 1;
 									/*当渲染弹幕过多的时候,延迟处理弹幕*/
 									if ($('#danmu .danmaku').length > 500) {
@@ -657,10 +672,9 @@ export default {
 								}
 								case 7: {
 									/* 语音测评 */
+									$me.ismicrophone = false;
 									var obj = msg.data;
-									/* if ($me.uuid != msg.uuid) {
-										return;
-									} */
+									
 									var time = $('#danmu').data('nowTime') + 1;
 									/*当渲染弹幕过多的时候,延迟处理弹幕*/
 									if ($('#danmu .danmaku').length > 500) {
@@ -680,6 +694,7 @@ export default {
 								}
 								case 8: {
 									/* 语言解析 */
+									$me.ismicrophone = false;
 									var obj = msg.data;
 									if (obj.ret == 'success') {
 										$me.txtlist.push(obj.data);
@@ -720,6 +735,13 @@ export default {
 								case 15: {
 									/* 网络连接连接 */
 									$me.$toast('USB连接成功');
+									break;
+								}
+								case 16: {
+									/* 随机抽查人 */
+									var obj = msg.data;
+									$me.stuName = obj.stuName;
+									console.log($me.stuName)
 									break;
 								}
 								default: {
@@ -871,11 +893,17 @@ export default {
 				}
 				case '6': {
 					url = 'voiceAnswer/startDiscern';
+						if($me.isSatrspeaker){
+						url = 'voiceAnswer/startDiscernAndMicrophone';
+					}
 					$me.titlename = '语音识别';
 					break;
 				}
 				case '7': {
 					url = 'voiceAnswer/startAppraisal';
+					if($me.isSatrspeaker){
+						url = 'voiceAnswer/startAppraisalAndMicrophone ';
+					}
 					$me.titlename = '语音测评';
 					break;
 				}
@@ -933,6 +961,10 @@ export default {
 			if ($me.subjecttitle == 6) {
 				/* 语音识别 */
 				$me.isanalysis = true;
+				if($me.isSatrspeaker){
+					$me.ismicrophone = true;
+				}
+				
 			} else if ($me.subjecttitle == 8) {
 				if ($me.iPhoneType != 0) {
 					/* 判断是否群麦克风 */
@@ -942,8 +974,11 @@ export default {
 				if ($me.subjecttitle == 7) {
 					$me.isreftext = true;
 					$me.reftext = $me.talkName;
+					if($me.isSatrspeaker){
+						$me.ismicrophone = true;
+					}
 				}
-				$me.isparticlesbox = true;
+				//$me.isparticlesbox = true;
 			}
 		},
 		stopRace() {
@@ -1012,6 +1047,7 @@ export default {
 				.then(da => {
 					/*结束答题*/
 					console.log($me.subjecttitle)
+					
 					/* 如果是语言题就不显示下发题目按钮。直接显示开始按钮  测试*/
 					if($me.subjecttitle == 6 || $me.subjecttitle == 7 || $me.subjecttitle == 8){
 						$me.sendtitle();
@@ -1031,6 +1067,7 @@ export default {
 					if ($me.subjecttitle == 4) {
 						$me.getSubjectiveResult();
 					}
+					
 				})
 				.catch(function(err) {
 					$me.$loading.close();
@@ -1333,7 +1370,7 @@ export default {
 		/* 清空页面显示内容 */
 		clear() {
 			const $me = this;
-			$me.stuName = ''; //麦克风学生名称
+			//$me.stuName = ''; //麦克风学生名称
 			$me.isResult = false; //是否显示统计结果
 			$me.ranklist = []; //排序列表
 			$me.isRank = false; //是否显示排序
@@ -1360,6 +1397,7 @@ export default {
 				title: [],
 				data: []
 			};
+			
 		},
 		/* 切换语言测评类型 */
 		changeTitleType(obj) {
@@ -1390,6 +1428,8 @@ export default {
 			$me.isSubject = true;
 			$me.titlename = '';
 			$me.trueAnswer = '';
+			$me.stuName = '';//麦克风学生名称
+			$me.isSatrspeaker=false;//是否开启扬声器
 		},
 		/* 切换题型 */
 		chooSesubjectType(type) {

@@ -344,7 +344,7 @@ var cyntax = {
 						//console.log(str);
 						var arr = reg.exec(str);
 						var newarr = arr[1].split(/[, ]+/g);
-						console.log(newarr[4]);
+						//console.log(newarr[4]);
 						var left = parseFloat(newarr[4]);
 						if (left < ($("#" + me.rows[i]).width()*-1-20)) {
 							me.rows[i] = 0;
