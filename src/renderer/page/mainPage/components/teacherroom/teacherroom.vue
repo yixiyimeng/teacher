@@ -791,7 +791,7 @@ export default {
 					} else if ($me.subjecttitle == 3) {
 						answerreg = /^(?!.*([A-D]).*\1)[A-D]{2,4}$/;
 					}
-					if (!answerreg.test(answer)) {
+					if (answer&&!answerreg.test(answer)) {
 						$me.$toast.center('请输入正确答案');
 						return false;
 					}

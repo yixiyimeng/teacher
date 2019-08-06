@@ -1,5 +1,5 @@
 <template>
-	<div >
+	<div>
 		<div class="modbox">
 			<div>
 				<form @keyup.enter="login">
@@ -11,7 +11,17 @@
 						<label>密码</label>
 						<input type="password" name="" id="" value="" placeholder="请输入密码" v-model.trim="password" class="flex-1" />
 					</div>
-
+					<div style="text-align: left; margin-top: 10px;">
+						<div class="ant-checkbox-group">
+							<label class="ant-checkbox-group-item ant-checkbox-wrapper" style="width: 20em;">
+								<span class="ant-checkbox">
+									<input type="checkbox" class="ant-checkbox-input" v-model="isRemeber" />
+									<span class="ant-checkbox-inner"></span>
+								</span>
+								<span style="color:#1890ff;font-size:20px ;">记住密码</span>
+							</label>
+						</div>
+					</div>
 					<a href="javascript:;" class="loginBtn mt20" @click="login()">登录</a>
 				</form>
 			</div>
@@ -33,13 +43,21 @@ export default {
 			downloadPercent: 0,
 			version: '0.0.4',
 			isShowversion: false,
-			remark: ''
+			remark: '',
+			isRemeber: true
 		};
 	},
 	created() {
 		const _this = this;
 		this.getApiPath(urlPath);
 		this.$electron.ipcRenderer.send('uploadfile', false);
+		try {
+			var userinfo = JSON.parse(localStorage.getItem('loginStore'));
+			this.username = userinfo.username;
+			this.password = userinfo.password;
+		} catch (e) {
+			//TODO handle the exception
+		}
 	},
 	methods: {
 		...mapActions(['getApiPath']),
@@ -72,6 +90,17 @@ export default {
 					.then(da => {
 						$me.$loading.close();
 						if (da.data.ret == 'success') {
+							if ($me.isRemeber) {
+								localStorage.setItem(
+									'loginStore',
+									JSON.stringify({
+										username: $me.username,
+										password: $me.password
+									})
+								);
+							}else{
+								localStorage.removeItem('loginStore')
+							}
 							$me.sendInfo = {
 								schoolCode: da.data.data.schoolCode,
 								schoolName: da.data.data.schoolName,
@@ -101,6 +130,4 @@ export default {
 };
 </script>
 
-<style scoped="scoped">
-
-</style>
+<style scoped="scoped"></style>
