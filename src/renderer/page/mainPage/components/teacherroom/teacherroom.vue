@@ -107,6 +107,7 @@
 					</div>
 				</div>
 			</div>
+			
 		</div>
 		<!-- 结果 -->
 		<div class="resultbox " v-show="isResult">
@@ -117,11 +118,11 @@
 						<p class="score">{{ item.score }}分</p>
 					</div>
 				</div>
-				<div class="chartbox" :class="{ h70: isRank && ranklist.length > 0 }">
+				<div class="chartbox" :class="{ h70: isRank && ranklist.length > 0 }" v-show="isChart||isCorrectchart">
 					<!-- 主观题统计 -->
-					<div class="chart" style="height:90%;width: 50%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
+					<div class="chart" style="height:90%;width: 45%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
 					<!-- 正确率统计 -->
-					<div class="Correctchart" style="height:90%; width: 50%;float: left; text-align: center;" v-show="isCorrectchart">
+					<div class="Correctchart" style="height:90%; float: left; text-align: center;" :style="{ width: isChart ? '55%' : '100%' }" v-show="isCorrectchart">
 						<div style="height: 25px; text-align: left; padding-left: 60px;" v-if="subjecttitle == 3">
 							<div class="ant-checkbox-group">
 								<label class="ant-checkbox-group-item ant-checkbox-wrapper" v-for="(item, index) in checklist" :key="index">
@@ -145,6 +146,17 @@
 					</div>
 				</div>
 				<!-- <a class="sendtitle" href="javascript:;" @click="sendtitle" v-show="isSendtitle">下发题目</a> -->
+				<!-- 语音测评排行榜 -->
+				<div class="rankborad" v-if="isrankboradlist">
+					<div class="item flex flex-align-center" v-for="(item, index) in rankboradlist" :key="index">
+						<div class="num">{{ index + 1 }}</div>
+						<div class="imgbox"><img src="../../assets/1.png" /></div>
+						<div class="flex-1 ml20">
+							<span class="name">{{ item.stuName }}</span>
+							<span class="ml20" style="color: #F5222D;">({{ item.score }}分)</span>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<!--选择题目-->
@@ -265,7 +277,7 @@
 						</label>
 					</div>
 				</div>
-				<div  class="fromcontrol flex flex-align-center" v-if="subjecttitle == 6||subjecttitle == 7">
+				<div class="fromcontrol flex flex-align-center" v-if="subjecttitle == 6 || subjecttitle == 7">
 					<label>扬声器</label>
 					<div class="ant-checkbox-group " style="text-align: left;">
 						<label class="ant-checkbox-group-item ant-checkbox-wrapper" style="width: 20em;">
@@ -276,7 +288,6 @@
 							<span style="color: #f00; font-size:20px ;">是否开启扬声器</span>
 						</label>
 					</div>
-					
 				</div>
 			</div>
 		</div>
@@ -291,11 +302,16 @@
 				</div>
 			</div>
 		</div>
+		<div class="setcountDown">
+			<span @click="checkshowcountDown" v-if="iscountDown">{{ countDownList }}</span>
+			<div class="checkbox" :class="{ active: iscountDown }" @click="checkcountDown"></div>
+		</div>
+		<timeswiper @countDown="countDown" @cancelcountDown="cancelcountDown" v-if="iscountDown && showcountDown" class="countDownbox"></timeswiper>
 	</div>
 </template>
 
 <script>
-import { notice, progressbox, dropmenu, search, load, board } from '@/page/mainPage/components';
+import { notice, progressbox, dropmenu, search, load, board, timeswiper } from '@/page/mainPage/components';
 import { IndexMixin } from '@/page/mainPage/mixins/index';
 import { mapState, mapGetters } from 'vuex';
 import { urlPath, urlwsPath, htmlescpe, allenglish, allchinese } from '@/page/mainPage/utils/base';
@@ -309,7 +325,8 @@ export default {
 		dropmenu,
 		search,
 		load,
-		board
+		board,
+		timeswiper
 	},
 	data() {
 		return {
@@ -329,7 +346,7 @@ export default {
 			isanalysis: false, //语音解析
 			txtlist: [], //语音解析文本
 			onlinedirectBroadcastCode: '', //直播间code
-			isResult: true, //是否显示统计结果
+			isResult: false, //是否显示统计结果
 			subjecttitle: '1', //题型
 			subjectType: 0, //0 普通 1 语音
 			settrueanswer: '', //正确答案
@@ -407,7 +424,49 @@ export default {
 			],
 			checklist: [],
 			colorList: [],
-			isSatrspeaker:false//是否开启扬声器
+			isSatrspeaker: false, //是否开启扬声器
+			countDownTime: '',
+			iscountDown: false,
+			showcountDown: false,
+			isrankboradlist:false,//是否显示语音测评结果
+			rankboradlist: [
+				{
+					stuCode: 'ba12a945d8eb4d9ca372938fc9dafdc8',
+					stuName: 'o喵咕酱> c <',
+					score: 96,
+					totalScore: null
+				},
+				{
+					stuCode: 'b7a60547002f4ad087a4f9e3808e4ad7',
+					stuName: '小恶魔系',
+					score: 95,
+					totalScore: null
+				},
+				{
+					stuCode: 'dcc370201909490395a52d739917b592',
+					stuName: '软酱奶糖',
+					score: 95,
+					totalScore: null
+				},
+				{
+					stuCode: '8e3a12b0b0c947868f899eebe5f1dc17',
+					stuName: '青春你太痘了',
+					score: 23,
+					totalScore: null
+				},
+				{
+					stuCode: '62b32c0e6d934d859218a44cac517b2f',
+					stuName: '乖僻猫性',
+					score: 0,
+					totalScore: null
+				},
+				{
+					stuCode: '8a630574db8e4bdb9ee08e16307e7903',
+					stuName: '果味小可爱',
+					score: 0,
+					totalScore: null
+				}
+			] //语音测评排名
 		};
 	},
 	computed: {
@@ -430,6 +489,9 @@ export default {
 				.map(item => item.name)
 				.sort()
 				.join('');
+		},
+		countDownList() {
+			return Math.floor((this.countDownTime / 60 / 60) % 24) + ':' + Math.floor((this.countDownTime / 60) % 60) + ':' + Math.floor(this.countDownTime % 60);
 		}
 	},
 	created() {
@@ -550,7 +612,6 @@ export default {
 							var obj = msg.data;
 							switch (msg.reqType) {
 								case 0: {
-									
 									var time = $('#danmu').data('nowTime') + 1;
 									/*当渲染弹幕过多的时候,延迟处理弹幕*/
 									if ($('#danmu .danmaku').length > 500) {
@@ -674,7 +735,7 @@ export default {
 									/* 语音测评 */
 									$me.ismicrophone = false;
 									var obj = msg.data;
-									
+
 									var time = $('#danmu').data('nowTime') + 1;
 									/*当渲染弹幕过多的时候,延迟处理弹幕*/
 									if ($('#danmu .danmaku').length > 500) {
@@ -741,7 +802,31 @@ export default {
 									/* 随机抽查人 */
 									var obj = msg.data;
 									$me.stuName = obj.stuName;
-									console.log($me.stuName)
+									console.log($me.stuName);
+									break;
+								}
+								case 17: {
+									/* 显示软件 */
+									$me.$electron.ipcRenderer.send('maxApp');
+									break;
+								}
+								case 18: {
+									/* 隐藏软件 */
+									$me.$electron.ipcRenderer.send('minApp');
+									break;
+								}
+								case 19: {
+									/* 停止答题 */
+									if ($me.isAnswering) {
+										$me.stopRace();
+									}
+									break;
+								}
+								case 20: {
+									/*下一题 */
+									if (!$me.isAnswering) {
+										$me.nextQuestion();
+									}
 									break;
 								}
 								default: {
@@ -791,7 +876,7 @@ export default {
 					} else if ($me.subjecttitle == 3) {
 						answerreg = /^(?!.*([A-D]).*\1)[A-D]{2,4}$/;
 					}
-					if (answer&&!answerreg.test(answer)) {
+					if (answer && !answerreg.test(answer)) {
 						$me.$toast.center('请输入正确答案');
 						return false;
 					}
@@ -893,7 +978,7 @@ export default {
 				}
 				case '6': {
 					url = 'voiceAnswer/startDiscern';
-						if($me.isSatrspeaker){
+					if ($me.isSatrspeaker) {
 						url = 'voiceAnswer/startDiscernAndMicrophone';
 					}
 					$me.titlename = '语音识别';
@@ -901,7 +986,7 @@ export default {
 				}
 				case '7': {
 					url = 'voiceAnswer/startAppraisal';
-					if($me.isSatrspeaker){
+					if ($me.isSatrspeaker) {
 						url = 'voiceAnswer/startAppraisalAndMicrophone ';
 					}
 					$me.titlename = '语音测评';
@@ -921,6 +1006,9 @@ export default {
 			if (judgetype) {
 				param.questionType = judgetype;
 			}
+			if ($me.iscountDown) {
+				$me.timeDown();
+			}
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/' + url,
@@ -935,6 +1023,7 @@ export default {
 				.catch(function(err) {
 					// $me.$loading.close();
 				});
+
 			//$me.$store.commit("SET_isShowbg", true);
 		},
 		/* 调用开始接口成功以后，页面显示 */
@@ -961,10 +1050,9 @@ export default {
 			if ($me.subjecttitle == 6) {
 				/* 语音识别 */
 				$me.isanalysis = true;
-				if($me.isSatrspeaker){
+				if ($me.isSatrspeaker) {
 					$me.ismicrophone = true;
 				}
-				
 			} else if ($me.subjecttitle == 8) {
 				if ($me.iPhoneType != 0) {
 					/* 判断是否群麦克风 */
@@ -974,7 +1062,7 @@ export default {
 				if ($me.subjecttitle == 7) {
 					$me.isreftext = true;
 					$me.reftext = $me.talkName;
-					if($me.isSatrspeaker){
+					if ($me.isSatrspeaker) {
 						$me.ismicrophone = true;
 					}
 				}
@@ -1046,12 +1134,12 @@ export default {
 			})
 				.then(da => {
 					/*结束答题*/
-					console.log($me.subjecttitle)
-					
+					console.log($me.subjecttitle);
+
 					/* 如果是语言题就不显示下发题目按钮。直接显示开始按钮  测试*/
-					if($me.subjecttitle == 6 || $me.subjecttitle == 7 || $me.subjecttitle == 8){
+					if ($me.subjecttitle == 6 || $me.subjecttitle == 8) {
 						$me.sendtitle();
-					}else{
+					} else {
 						$me.isResult = true; //显示作答结果
 						$me.isSendtitle = true; //显示下发题目按钮
 					}
@@ -1061,13 +1149,24 @@ export default {
 					if ($me.subjecttitle == 1 || $me.subjecttitle == 2 || $me.subjecttitle == 3 || $me.subjecttitle == 4) {
 						$me.getEveryAnswerNum();
 					}
-					if ($me.subjecttitle == 1 || $me.subjecttitle == 2 || $me.subjecttitle == 3) {
+					if ($me.trueAnswer && ($me.subjecttitle == 1 || $me.subjecttitle == 2 || $me.subjecttitle == 3)) {
 						$me.getAnswerAccuracy();
 					}
 					if ($me.subjecttitle == 4) {
 						$me.getSubjectiveResult();
 					}
-					
+					/* 显示语音测评结果 */
+					if($me.subjecttitle == 7){
+						$me.getHighScores()
+					}
+					/* 判断倒计时 */
+
+					if ($me.countDownTime > 0) {
+						clearInterval(this.timer);
+					}
+					$me.countDownTime = 0;
+					$me.iscountDown = false;
+					$me.showcountDown = false;
 				})
 				.catch(function(err) {
 					$me.$loading.close();
@@ -1129,18 +1228,21 @@ export default {
 			}).then(da => {
 				var list = da.data.data;
 				var title = [],
-					data = [];
+					data = [],
+					percentage = [];
 				if (list && list.length > 0) {
 					list.forEach(item => {
 						title.push(item.answer);
 						data.push(item.count);
+						percentage.push(item.percentage);
 					});
 				}
 				//var title = Object.keys(list);
 				//var data = title.map(item => list[item]);
 				$me.getCorrectChartData({
 					title,
-					data
+					data,
+					percentage
 				});
 			});
 		},
@@ -1151,6 +1253,7 @@ export default {
 			$me.isCorrectchart = true;
 			var title = myoption.title;
 			var mydata = myoption.data;
+			var percentage = myoption.percentage;
 			$me.checklist = title
 				.filter(item => item != '未作答')
 				.map(item => {
@@ -1166,8 +1269,8 @@ export default {
 					if ($me.subjecttitle == 4) {
 						return defaultcolor[i];
 					} else {
-						if((title[i]==($me.trueAnswer=='F'?'×':$me.trueAnswer=='E'?'√':$me.trueAnswer))&&($me.subjecttitle==1||$me.subjecttitle==2)){
-							return '#f00'
+						if (title[i] == ($me.trueAnswer == 'F' ? '×' : $me.trueAnswer == 'E' ? '√' : $me.trueAnswer) && ($me.subjecttitle == 1 || $me.subjecttitle == 2)) {
+							return '#f00';
 						}
 						return '#59ADF3';
 					}
@@ -1240,14 +1343,19 @@ export default {
 					{
 						data: mydata,
 						type: 'bar',
-						barWidth: 70,
+						barWidth: 80,
 						label: {
 							normal: {
 								show: true,
 								position: 'inside',
 								color: '#000',
 								formatter: function(param) {
-									return param.value + '人';
+									console.log(param);
+									if (param.value == 0) {
+										return 0;
+									} else {
+										return param.value + '人\n(' + percentage[param.dataIndex] + '%)';
+									}
 								},
 								textStyle: { fontSize: 20 }
 							}
@@ -1318,14 +1426,14 @@ export default {
 			}
 			var fontSize = $me.getDpr();
 			let option = {
-// 				legend: {
-// 					x: 'center',
-// 					y: 'bottom',
-// 					textStyle: {
-// 						color: '#5793f3'
-// 					},
-// 					data: title
-// 				},
+				// 				legend: {
+				// 					x: 'center',
+				// 					y: 'bottom',
+				// 					textStyle: {
+				// 						color: '#5793f3'
+				// 					},
+				// 					data: title
+				// 				},
 				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				series: [
 					{
@@ -1397,7 +1505,7 @@ export default {
 				title: [],
 				data: []
 			};
-			
+			$me.isrankboradlist=false;
 		},
 		/* 切换语言测评类型 */
 		changeTitleType(obj) {
@@ -1428,8 +1536,8 @@ export default {
 			$me.isSubject = true;
 			$me.titlename = '';
 			$me.trueAnswer = '';
-			$me.stuName = '';//麦克风学生名称
-			$me.isSatrspeaker=false;//是否开启扬声器
+			$me.stuName = ''; //麦克风学生名称
+			$me.isSatrspeaker = false; //是否开启扬声器
 		},
 		/* 切换题型 */
 		chooSesubjectType(type) {
@@ -1479,14 +1587,14 @@ export default {
 			});
 			var fontSize = $me.getDpr();
 			let option = {
-// 				legend: {
-// 					x: 'center',
-// 					y: 'bottom',
-// 					textStyle: {
-// 						color: '#5793f3'
-// 					},
-// 					data: title
-// 				},
+				// 				legend: {
+				// 					x: 'center',
+				// 					y: 'bottom',
+				// 					textStyle: {
+				// 						color: '#5793f3'
+				// 					},
+				// 					data: title
+				// 				},
 				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				series: [
 					{
@@ -1743,6 +1851,61 @@ export default {
 					$me.$toast.center(da.data.message);
 				}
 			});
+		},
+		/* 语音测评统计 */
+		getHighScores(){
+			const $me = this;
+			$me.$http({
+				method: 'post',
+				url: urlPath + 'teacher-client/statistics/getHighScores'
+			}).then(da => {
+				if (da.data.ret == 'success') {
+					$me.isrankboradlist=true;
+					$me.rankboradlist=da.data.data;
+				} else {
+					$me.$toast.center(da.data.message);
+				}
+			});
+			},
+		/* 设置倒计时 */
+		countDown(time) {
+			this.countDownTime = time;
+			this.showcountDown = false;
+		},
+		cancelcountDown() {
+			this.showcountDown = false;
+		},
+		/* 开始计时 */
+		timeDown() {
+			this.timer = setInterval(() => {
+				this.countDownTime--;
+				if (this.countDownTime == 0) {
+					clearInterval(this.timer);
+					this.stopRace();
+				}
+			}, 1000);
+		},
+		checkcountDown() {
+			if (this.isAnswering) {
+				return false;
+			}
+			this.countDownTime == 0;
+			if (this.iscountDown) {
+				this.iscountDown = false;
+				this.showcountDown = false;
+				if (this.timer) {
+					clearInterval(this.timer);
+				}
+			} else {
+				this.iscountDown = true;
+				this.showcountDown = true;
+			}
+		},
+		checkshowcountDown() {
+			if (this.isAnswering) {
+				return false;
+			}
+			this.showcountDown = !this.showcountDown;
 		}
 	}
 };
@@ -1773,5 +1936,33 @@ export default {
 	text-align: center;
 	margin-top: 10px;
 	/* margin-bottom: -10px; */
+}
+.setcountDown {
+	position: fixed;
+	right: 10px;
+	bottom: 20px;
+	z-index: 9999;
+}
+.setcountDown span {
+	vertical-align: middle;
+	margin-right: 10px;
+}
+.setcountDown .checkbox {
+	display: inline-block;
+	vertical-align: middle;
+	height: 40px;
+	width: 100px;
+	background: url(../../assets/off.png);
+	cursor: pointer;
+}
+.setcountDown .checkbox.active {
+	background: url(../../assets/on.png);
+}
+.countDownbox {
+	position: fixed;
+	right: 180px;
+	bottom: 20px;
+	width: 270px;
+	z-index: 9999;
 }
 </style>

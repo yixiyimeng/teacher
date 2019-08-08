@@ -14,4 +14,5 @@ import search from '@/page/mainPage/components/search/search.vue';
 import dropmenu from '@/page/mainPage/components/notice/dropmenu.vue';
 import board from '@/page/mainPage/components/board/board.vue';
 import load from '@/page/mainPage/components/load/load.vue';
-export {notice,progressbox,dropmenu,search,board,load}
+import timeswiper from '@/page/mainPage/components/timeswiper.vue';
+export {notice,progressbox,dropmenu,search,board,load,timeswiper}

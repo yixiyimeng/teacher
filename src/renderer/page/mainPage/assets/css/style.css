@@ -784,6 +784,46 @@ select {
 .txtlist .item .flex-1 img {
 	width: 40px;
 }
+.rankborad{
+	border: 4px solid #4fb57e;
+	padding: 10px 20px;
+	border-radius: 8px;
+	margin: 5px 0;
+	background: #f9f6cf;width: 70%;
+	position: fixed;
+	left: 15%;
+	top: 20%;
+	bottom: 20%;
+	overflow: auto;
+	z-index: 9999;
+}
+.rankborad .item{
+	width: 33.33%;
+	float: left;
+	color: #b85e1e;
+}
+.rankborad .item .name{
+	font-size: 20px;
+	font-weight: bold;
+}
+/* .rankborad .item:not(:last-child){
+	border-bottom: 1px solid #ccc;
+} */
+.rankborad .item .imgbox img{
+	width: 50px;
+}.rankborad .item .num{
+	/* background: url(../icon.png) no-repeat top center; */
+	width: 25px;
+	height: 25px;
+	background: #F5222D;
+	color: #fff;
+	border-radius: 100%;
+	font-size: 12px;
+	font-weight: bold;
+	text-align: center;
+	line-height: 25px;
+	margin-right: 10px;
+}
 
 @keyframes yuying1 {
 	0% {
