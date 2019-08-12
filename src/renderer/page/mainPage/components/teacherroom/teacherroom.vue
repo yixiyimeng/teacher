@@ -153,7 +153,7 @@
 						<div class="imgbox"><img src="../../assets/1.png" /></div>
 						<div class="flex-1 ml20">
 							<span class="name">{{ item.stuName }}</span>
-							<span class="ml20" style="color: #F5222D;">({{ item.score }}分)</span>
+							<span class="ml20">({{ item.score }}分)</span>
 						</div>
 					</div>
 				</div>
@@ -311,6 +311,9 @@
 </template>
 
 <script>
+	function fixedZero(val) {
+		return val * 1 < 10 ? `0${val}` : val;
+	}
 import { notice, progressbox, dropmenu, search, load, board, timeswiper } from '@/page/mainPage/components';
 import { IndexMixin } from '@/page/mainPage/mixins/index';
 import { mapState, mapGetters } from 'vuex';
@@ -491,7 +494,8 @@ export default {
 				.join('');
 		},
 		countDownList() {
-			return Math.floor((this.countDownTime / 60 / 60) % 24) + ':' + Math.floor((this.countDownTime / 60) % 60) + ':' + Math.floor(this.countDownTime % 60);
+			//return `${fixedZero(h)}:${fixedZero(m)}:${fixedZero(s)}`;
+			return fixedZero(Math.floor((this.countDownTime / 60 / 60) % 24)) + ':' + fixedZero(Math.floor((this.countDownTime / 60) % 60)) + ':' + fixedZero(Math.floor(this.countDownTime % 60));
 		}
 	},
 	created() {
@@ -1262,7 +1266,7 @@ export default {
 						ischeck: false
 					};
 				});
-			var defaultcolor = ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'];
+			var defaultcolor = ['#FF999A','#59ADF3', '#AF89D6', '#af89d6'];
 			$me.colorList = [];
 			if (title && title.length > 0) {
 				$me.colorList = title.map((item, i) => {
@@ -1271,6 +1275,9 @@ export default {
 					} else {
 						if (title[i] == ($me.trueAnswer == 'F' ? '×' : $me.trueAnswer == 'E' ? '√' : $me.trueAnswer) && ($me.subjecttitle == 1 || $me.subjecttitle == 2)) {
 							return '#ff999a';
+						}
+						if(item=='未作答'){
+							return '#AF89D6';
 						}
 						return '#59ADF3';
 					}
@@ -1432,7 +1439,7 @@ export default {
 				// 					},
 				// 					data: title
 				// 				},
-				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
+				color: [ '#FF999A', '#59ADF3','#AF89D6', '#af89d6'],
 				series: [
 					{
 						name: '正确率',
@@ -1593,7 +1600,7 @@ export default {
 				// 					},
 				// 					data: title
 				// 				},
-				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
+				color: [ '#FF999A', '#59ADF3','#AF89D6', '#af89d6'],
 				series: [
 					{
 						name: '主观题统计',
@@ -1875,6 +1882,7 @@ export default {
 		},
 		/* 开始计时 */
 		timeDown() {
+			this.showcountDown=false;
 			this.timer = setInterval(() => {
 				this.countDownTime--;
 				if (this.countDownTime == 0) {
@@ -1944,6 +1952,8 @@ export default {
 .setcountDown span {
 	vertical-align: middle;
 	margin-right: 10px;
+	color: #f00;
+	font-size: 20px;
 }
 .setcountDown .checkbox {
 	display: inline-block;
@@ -1958,7 +1968,7 @@ export default {
 }
 .countDownbox {
 	position: fixed;
-	right: 180px;
+	right: 220px;
 	bottom: 40px;
 	width: 270px;
 	z-index: 9999;
