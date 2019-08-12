@@ -42,19 +42,19 @@ export default {
 			swiperOption: {
 				direction: 'vertical',
 				loop: true,
-				slidesPerView: '5',
+				slidesPerView: '5', mousewheel: true,
 				centeredSlides: true
 			},
 			swiperOption1: {
 				direction: 'vertical',
 				loop: true,
-				slidesPerView: '5',
+				slidesPerView: '5', mousewheel: true,
 				centeredSlides: true
 			},
 			swiperOption2: {
 				direction: 'vertical',
 				loop: true,
-				slidesPerView: '5',
+				slidesPerView: '5', mousewheel: true,
 				centeredSlides: true
 			},
 			hourlist: [],
@@ -189,7 +189,7 @@ export default {
 	font-size: 18px;
 	background: #999;
 	& + a {
-		background: #07f8ff;
+		background: #1890ff;
 	}
 }
 </style>

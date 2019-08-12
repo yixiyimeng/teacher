@@ -67,12 +67,21 @@ export default {
 	/* background: #fff; */
 	border-radius: 10px;
 }
-.fixed i {
+/* .fixed i {
 	display: block;
 	width: 12px;
 	height: 32px;
 	position: absolute;
 	background: url(../../assets/notice2.png);
+	top: 0;
+} */
+.fixed i {
+	display: block;
+	width: 12px;
+	height: 32px;
+	position: absolute;
+	background: url(../../assets/notice3.png) no-repeat center center;
+	background-size: contain;
 	top: 0;
 }
 .fixed i:nth-child(2) {
@@ -97,7 +106,9 @@ export default {
 	font-size: 30px;
 	/* border: 3px solid rgba(16, 120, 255, 0.8); */
 	border-radius: 5px;
-	background: #ffe35e;
+	/* background: #ffe35e; */
+	background: #34c6cd;
+	color: #fff;
 	box-shadow: 0 0 10px rgba(0,0,0,.4);
 	/* display: none; */
 }

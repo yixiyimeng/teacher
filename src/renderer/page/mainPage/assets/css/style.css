@@ -785,11 +785,11 @@ select {
 	width: 40px;
 }
 .rankborad{
-	border: 4px solid #4fb57e;
-	padding: 10px 20px;
+	border: 6px solid #1890ff;
+	padding: 20px 30px;
 	border-radius: 8px;
 	margin: 5px 0;
-	background: #f9f6cf;width: 70%;
+	background: #fff;width: 70%;
 	position: fixed;
 	left: 15%;
 	top: 20%;
@@ -801,28 +801,66 @@ select {
 	width: 33.33%;
 	float: left;
 	color: #b85e1e;
+	padding-left: 30px;
+	box-sizing: border-box;
+	font-size: 18px;
 }
 .rankborad .item .name{
 	font-size: 20px;
 	font-weight: bold;
+	color: #1890ff;
+}
+.rankborad .item .name+span{
+	color: #333;
+}
+.rankborad .item1 .name+span,
+.rankborad .item2 .name+span,
+.rankborad .item3 .name+span{
+	color: #cc0000;
 }
 /* .rankborad .item:not(:last-child){
 	border-bottom: 1px solid #ccc;
 } */
+.rankborad .item .imgbox{
+	width:52px ;
+	height:80px ;
+	position: relative;
+	top: -15px;
+}
+.rankborad .item1 .imgbox,.rankborad .item2 .imgbox,.rankborad .item3 .imgbox{
+	background: no-repeat center bottom;
+	background-size: contain;
+	
+}
+.rankborad .item1 .imgbox{
+	background-image: url(../rank1.png)
+}.rankborad .item2 .imgbox{
+	background-image: url(../rank2.png)
+}.rankborad .item3 .imgbox{
+	background-image: url(../rank3.png)
+}
 .rankborad .item .imgbox img{
-	width: 50px;
+	width:48px;
+	padding-top: 30px;
+	padding-left: 2px;
 }.rankborad .item .num{
 	/* background: url(../icon.png) no-repeat top center; */
 	width: 25px;
 	height: 25px;
-	background: #F5222D;
+	background: #1890ff;
 	color: #fff;
 	border-radius: 100%;
 	font-size: 12px;
-	font-weight: bold;
+	/* font-weight: bold; */
 	text-align: center;
 	line-height: 25px;
 	margin-right: 10px;
+}.rankborad .item1 .num{
+	background: #fad111;
+}.rankborad .item2 .num{
+	background: #c6d3e2;
+}.rankborad .item3 .num{
+	background: #f8a86e;
 }
 
 @keyframes yuying1 {

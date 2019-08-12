@@ -41,7 +41,8 @@ p {
 	width: 12px;
 	height: 32px;
 	position: absolute;
-	background: url(../../assets/notice2.png);
+	background: url(../../assets/notice3.png) no-repeat;
+	background-size: contain;
 	top: 0;
 }
 .topmenu i:nth-child(2) {
@@ -67,7 +68,9 @@ p {
 	box-shadow: 0 0 10px rgba(0,0,0,.4);
 	// border: 3px solid rgba(16, 120, 255, 0.8);
 	border-radius: 5px;
-	background: #ffe35e;
+	// background: #ffe35e;
+ 	background: #34c6cd;
+color: #fff;
 	display: block;
 	width: 200px;
 }

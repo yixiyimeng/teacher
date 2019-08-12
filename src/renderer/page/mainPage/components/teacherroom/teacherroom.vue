@@ -148,7 +148,7 @@
 				<!-- <a class="sendtitle" href="javascript:;" @click="sendtitle" v-show="isSendtitle">下发题目</a> -->
 				<!-- 语音测评排行榜 -->
 				<div class="rankborad" v-if="isrankboradlist">
-					<div class="item flex flex-align-center" v-for="(item, index) in rankboradlist" :key="index">
+					<div class="item flex flex-align-center" :class="'item'+(index+1)"  v-for="(item, index) in rankboradlist" :key="index">
 						<div class="num">{{ index + 1 }}</div>
 						<div class="imgbox"><img src="../../assets/1.png" /></div>
 						<div class="flex-1 ml20">
@@ -1270,13 +1270,12 @@ export default {
 						return defaultcolor[i];
 					} else {
 						if (title[i] == ($me.trueAnswer == 'F' ? '×' : $me.trueAnswer == 'E' ? '√' : $me.trueAnswer) && ($me.subjecttitle == 1 || $me.subjecttitle == 2)) {
-							return '#f00';
+							return '#ff999a';
 						}
 						return '#59ADF3';
 					}
 				});
 			}
-			console.log();
 			let option = {
 				color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 				grid: {
@@ -1348,9 +1347,8 @@ export default {
 							normal: {
 								show: true,
 								position: 'inside',
-								color: '#000',
+								color: '#fff',
 								formatter: function(param) {
-									console.log(param);
 									if (param.value == 0) {
 										return 0;
 									} else {
@@ -1940,7 +1938,7 @@ export default {
 .setcountDown {
 	position: fixed;
 	right: 10px;
-	bottom: 20px;
+	bottom: 40px;
 	z-index: 9999;
 }
 .setcountDown span {
@@ -1961,7 +1959,7 @@ export default {
 .countDownbox {
 	position: fixed;
 	right: 180px;
-	bottom: 20px;
+	bottom: 40px;
 	width: 270px;
 	z-index: 9999;
 }
