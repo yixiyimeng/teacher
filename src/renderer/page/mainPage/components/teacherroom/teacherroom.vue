@@ -1010,9 +1010,7 @@ export default {
 			if (judgetype) {
 				param.questionType = judgetype;
 			}
-			if ($me.iscountDown) {
-				$me.timeDown();
-			}
+			
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/' + url,
@@ -1023,6 +1021,9 @@ export default {
 			})
 				.then(da => {
 					$me.startVIew();
+					if ($me.iscountDown) {
+						$me.timeDown();
+					}
 				})
 				.catch(function(err) {
 					// $me.$loading.close();
@@ -1852,6 +1853,10 @@ export default {
 					$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 					$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 					$me.startVIew();
+					if ($me.iscountDown) {
+						$me.timeDown();
+					}
+					
 				} else {
 					$me.$toast.center(da.data.message);
 				}
