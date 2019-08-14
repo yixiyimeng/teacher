@@ -32,7 +32,7 @@
 							</dropmenu>
 						</div>
 					</div>
-					<div style="text-align: left; margin-top: 10px;" v-if="questionId > 0||tempQuestionId>0">
+					<div style="text-align: left; margin-top: 10px;" v-if="questionId > 0 || tempQuestionId > 0">
 						<div class="ant-checkbox-group">
 							<label class="ant-checkbox-group-item ant-checkbox-wrapper" style="width: 20em;">
 								<span class="ant-checkbox">
@@ -103,7 +103,7 @@ export default {
 			sendInfo: {},
 			topicCode: '',
 			questionId: '',
-			tempQuestionId:'',
+			tempQuestionId: '',
 			topicName: '',
 			rangetime: [],
 			isCloseUpload: false,
@@ -302,19 +302,19 @@ export default {
 				}
 			});
 		},
-// 		cleartopic() {
-// 			$me.topicCode = '';
-// 			$me.questionId = '';
-// 			this.tempQuestionId='';
-// 		},
+		// 		cleartopic() {
+		// 			$me.topicCode = '';
+		// 			$me.questionId = '';
+		// 			this.tempQuestionId='';
+		// 		},
 		/* 切换 主题小标题 */
 		selTalkName(topic) {
 			const $me = this;
 			$me.topicName = topic.topicName;
 			$me.topicCode = topic.topicCode;
 			$me.questionId = topic.questionId;
-			$me.tempQuestionId=topic.tempQuestionId
-			if ($me.questionId > 0||$me.tempQuestionId>0) {
+			$me.tempQuestionId = topic.tempQuestionId;
+			if ($me.questionId > 0 || $me.tempQuestionId > 0) {
 				$me.isShowclear = true;
 			} else {
 				$me.isShowclear = false;
@@ -440,7 +440,7 @@ export default {
 			/* 手动输入主题,清空主题code */
 			this.topicCode = '';
 			this.questionId = '';
-			this.tempQuestionId='';
+			this.tempQuestionId = '';
 		}
 	}
 };
