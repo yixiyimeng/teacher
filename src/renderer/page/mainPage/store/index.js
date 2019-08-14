@@ -22,7 +22,10 @@ export default new Vuex.Store({
 		interactiopath: '', //数据管理地址
 		isShowbg: true,
 		isminimizeAppState: false,//最小化
-		isstartClass:''//直播间code
+		isstartClass:'',//直播间code
+		selectWordList:[],
+		selectSentenceList:[]
+		
 	},
 	getters: {
 		GET_WEBPATH: (state) => {
@@ -51,6 +54,12 @@ export default new Vuex.Store({
 		SET_startClass: (state, flag) => {
 			//console.log(directBroadcastCode);
 			state.isstartClass = flag
+		},
+		SET_selectWordList: (state, selectWordList) => {
+			state.selectWordList = selectWordList
+		},
+		SET_selectSentenceList: (state, selectSentenceList) => {
+			state.selectSentenceList = selectSentenceList
 		},
 	},
 	actions: {

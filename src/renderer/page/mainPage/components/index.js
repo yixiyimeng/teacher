@@ -15,4 +15,5 @@ import dropmenu from '@/page/mainPage/components/notice/dropmenu.vue';
 import board from '@/page/mainPage/components/board/board.vue';
 import load from '@/page/mainPage/components/load/load.vue';
 import timeswiper from '@/page/mainPage/components/timeswiper.vue';
-export {notice,progressbox,dropmenu,search,board,load,timeswiper}
+import xianshen from '@/page/mainPage/components/xianshen';
+export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen}

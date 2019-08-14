@@ -72,17 +72,19 @@
 				<div class="flex">
 					<a href="javascript:;" class="returnback mt20" @click="returnback()">返回</a>
 					<a href="javascript:;" class="loginBtn mt20 flex-1" @click="sendClass()">确定</a>
+					<a href="javascript:;" class="setEnglish mt20" @click="showXianshenWin()"></a>
 				</div>
 				<upload class="upload animated fast" :class="[isCloseUpload ? 'fadeIn' : 'fadeOut']" :isCloseUpload.sync="isCloseUpload" v-if="isCloseUpload"></upload>
 			</div>
 		</div>
+		<xianshen ref="xianshenWin"></xianshen>
 	</div>
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { urlPath, htmlescpe } from '@/page/mainPage/utils/base';
-import { search, dropmenu } from '@/page/mainPage/components';
+import { search, dropmenu,xianshen } from '@/page/mainPage/components';
 import vSelect from '@/page/mainPage/components/vue-select';
 import DatePicker from 'vue2-datepicker';
 import upload from '@/page/mainPage/components/upload/upload';
@@ -120,7 +122,8 @@ export default {
 		vSelect,
 		DatePicker,
 		upload,
-		dropmenu
+		dropmenu,
+		xianshen
 	},
 	computed: {
 		...mapState(['platformpath', 'interactiopath', 'foundationpath'])
@@ -183,6 +186,7 @@ export default {
 		this.rangetime[1] = parseDay(todayDate.getTime());
 		//this.getTitleList();
 		this.getTopicTitle();
+		
 	},
 	filters: {
 		filterTime: function(value) {
@@ -441,6 +445,10 @@ export default {
 			this.topicCode = '';
 			this.questionId = '';
 			this.tempQuestionId = '';
+		},
+		showXianshenWin(){
+			/* 显示先声题库弹出框 */
+			this.$refs.xianshenWin.showWin();
 		}
 	}
 };
