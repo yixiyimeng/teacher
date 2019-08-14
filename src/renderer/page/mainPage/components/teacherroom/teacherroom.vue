@@ -107,7 +107,6 @@
 					</div>
 				</div>
 			</div>
-			
 		</div>
 		<!-- 结果 -->
 		<div class="resultbox " v-show="isResult">
@@ -118,7 +117,7 @@
 						<p class="score">{{ item.score }}分</p>
 					</div>
 				</div>
-				<div class="chartbox" :class="{ h70: isRank && ranklist.length > 0 }" v-show="isChart||isCorrectchart">
+				<div class="chartbox" :class="{ h70: isRank && ranklist.length > 0 }" v-show="isChart || isCorrectchart">
 					<!-- 主观题统计 -->
 					<div class="chart" style="height:90%;width: 45%;float: left;" v-show="isChart"><div id="myChart" style="height:100%; min-height: 100px;"></div></div>
 					<!-- 正确率统计 -->
@@ -148,7 +147,7 @@
 				<!-- <a class="sendtitle" href="javascript:;" @click="sendtitle" v-show="isSendtitle">下发题目</a> -->
 				<!-- 语音测评排行榜 -->
 				<div class="rankborad" v-if="isrankboradlist">
-					<div class="item flex flex-align-center" :class="'item'+(index+1)"  v-for="(item, index) in rankboradlist" :key="index">
+					<div class="item flex flex-align-center" :class="'item' + (index + 1)" v-for="(item, index) in rankboradlist" :key="index">
 						<div class="num">{{ index + 1 }}</div>
 						<div class="imgbox"><img src="../../assets/1.png" /></div>
 						<div class="flex-1 ml20">
@@ -311,9 +310,9 @@
 </template>
 
 <script>
-	function fixedZero(val) {
-		return val * 1 < 10 ? `0${val}` : val;
-	}
+function fixedZero(val) {
+	return val * 1 < 10 ? `0${val}` : val;
+}
 import { notice, progressbox, dropmenu, search, load, board, timeswiper } from '@/page/mainPage/components';
 import { IndexMixin } from '@/page/mainPage/mixins/index';
 import { mapState, mapGetters } from 'vuex';
@@ -431,7 +430,7 @@ export default {
 			countDownTime: '',
 			iscountDown: false,
 			showcountDown: false,
-			isrankboradlist:false,//是否显示语音测评结果
+			isrankboradlist: false, //是否显示语音测评结果
 			rankboradlist: [
 				{
 					stuCode: 'ba12a945d8eb4d9ca372938fc9dafdc8',
@@ -495,7 +494,13 @@ export default {
 		},
 		countDownList() {
 			//return `${fixedZero(h)}:${fixedZero(m)}:${fixedZero(s)}`;
-			return fixedZero(Math.floor((this.countDownTime / 60 / 60) % 24)) + ':' + fixedZero(Math.floor((this.countDownTime / 60) % 60)) + ':' + fixedZero(Math.floor(this.countDownTime % 60));
+			return (
+				fixedZero(Math.floor((this.countDownTime / 60 / 60) % 24)) +
+				':' +
+				fixedZero(Math.floor((this.countDownTime / 60) % 60)) +
+				':' +
+				fixedZero(Math.floor(this.countDownTime % 60))
+			);
 		}
 	},
 	created() {
@@ -1010,7 +1015,7 @@ export default {
 			if (judgetype) {
 				param.questionType = judgetype;
 			}
-			
+
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/' + url,
@@ -1161,8 +1166,8 @@ export default {
 						$me.getSubjectiveResult();
 					}
 					/* 显示语音测评结果 */
-					if($me.subjecttitle == 7){
-						$me.getHighScores()
+					if ($me.subjecttitle == 7) {
+						$me.getHighScores();
 					}
 					/* 判断倒计时 */
 
@@ -1267,7 +1272,7 @@ export default {
 						ischeck: false
 					};
 				});
-			var defaultcolor = ['#FF999A','#59ADF3', '#AF89D6', '#af89d6'];
+			var defaultcolor = ['#FF999A', '#59ADF3', '#AF89D6', '#af89d6'];
 			$me.colorList = [];
 			if (title && title.length > 0) {
 				$me.colorList = title.map((item, i) => {
@@ -1277,7 +1282,7 @@ export default {
 						if (title[i] == ($me.trueAnswer == 'F' ? '×' : $me.trueAnswer == 'E' ? '√' : $me.trueAnswer) && ($me.subjecttitle == 1 || $me.subjecttitle == 2)) {
 							return '#ff999a';
 						}
-						if(item=='未作答'){
+						if (item == '未作答') {
 							return '#AF89D6';
 						}
 						return '#59ADF3';
@@ -1440,7 +1445,7 @@ export default {
 				// 					},
 				// 					data: title
 				// 				},
-				color: [ '#FF999A', '#59ADF3','#AF89D6', '#af89d6'],
+				color: ['#FF999A', '#59ADF3', '#AF89D6', '#af89d6'],
 				series: [
 					{
 						name: '正确率',
@@ -1511,7 +1516,7 @@ export default {
 				title: [],
 				data: []
 			};
-			$me.isrankboradlist=false;
+			$me.isrankboradlist = false;
 		},
 		/* 切换语言测评类型 */
 		changeTitleType(obj) {
@@ -1601,7 +1606,7 @@ export default {
 				// 					},
 				// 					data: title
 				// 				},
-				color: [ '#FF999A', '#59ADF3','#AF89D6', '#af89d6'],
+				color: ['#FF999A', '#59ADF3', '#AF89D6', '#af89d6'],
 				series: [
 					{
 						name: '主观题统计',
@@ -1856,27 +1861,26 @@ export default {
 					if ($me.iscountDown) {
 						$me.timeDown();
 					}
-					
 				} else {
 					$me.$toast.center(da.data.message);
 				}
 			});
 		},
 		/* 语音测评统计 */
-		getHighScores(){
+		getHighScores() {
 			const $me = this;
 			$me.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/statistics/getHighScores'
 			}).then(da => {
 				if (da.data.ret == 'success') {
-					$me.isrankboradlist=true;
-					$me.rankboradlist=da.data.data;
+					$me.isrankboradlist = true;
+					$me.rankboradlist = da.data.data;
 				} else {
 					$me.$toast.center(da.data.message);
 				}
 			});
-			},
+		},
 		/* 设置倒计时 */
 		countDown(time) {
 			this.countDownTime = time;
@@ -1887,14 +1891,20 @@ export default {
 		},
 		/* 开始计时 */
 		timeDown() {
-			this.showcountDown=false;
-			this.timer = setInterval(() => {
-				this.countDownTime--;
-				if (this.countDownTime == 0) {
-					clearInterval(this.timer);
-					this.stopRace();
-				}
-			}, 1000);
+			this.showcountDown = false;
+			if (this.countDownTime > 0) {
+				this.timer = setInterval(() => {
+					this.countDownTime--;
+					if (this.countDownTime <= 0) {
+						this.countDownTime=0;
+						clearInterval(this.timer);
+						this.stopRace();
+					}
+				}, 1000);
+			}else{
+				this.countDownTime=0;
+				this.stopRace();
+			}
 		},
 		checkcountDown() {
 			if (this.isAnswering) {
