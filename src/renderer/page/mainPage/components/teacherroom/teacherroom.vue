@@ -50,7 +50,9 @@
 					<!-- {{namelist}} -->
 					<li v-for="(item, index) in selectNamelist">
 						<img src="../../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
-						<span style="vertical-align: middle;">{{ item.stuName }}</span>
+						<span style="vertical-align: middle;">{{ item.stuName }}
+						<template v-if="subjecttitle==3">({{item.answer}})</template>
+						</span>
 					</li>
 				</ul>
 			</div>
@@ -302,10 +304,10 @@
 						<label>题目</label>
 						<!-- <search :searchList="xianshenglist" placeholdertxt="请选择题目"  class="flex-1"
 						 :selectValue="XStalkName" label="word"></search> -->
-						<v-select :options="xianshenglist" v-model="XStalkName" placeholder="选择时间段筛选试卷" class="flex-1" style="padding-right: 20px;"
+						<v-select :options="xianshenglist" v-model="XStalkName" placeholder="请选择题目" class="flex-1" style="padding-right: 20px;"
 						 :label="XSquestionType==0?'word':'text'">
 							<template slot="no-options">
-								没有筛选到试卷
+								没有筛选到题目
 							</template>
 						</v-select>
 					</div>
