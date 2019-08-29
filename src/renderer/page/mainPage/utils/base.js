@@ -17,6 +17,7 @@ export const alltxtlist = {
 	],
 	"chinese": ["你好", "再见", "床前明月光", "朝辞白帝彩云间", "你叫什么名字", "你多大了", "谢谢", "生日快乐", "早上好 ", "你在做什么"]
 };
+
 // export const htmlescpe = new RegExp("[%--`~!@#$^&*()=|{}':;',\\[\\].<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
 export const htmlescpe = new RegExp("[%--`~!@#$^&*()=|{}':;',\\[\\]<>/?~！@#￥……&*（）——|{}【】‘；：”“'。，、？]");
 //export const allenglish = new RegExp("^[a-zA-Z\x21-\x2f\x3a-\x40\x5b-\x60\x7B-\x7F]|\s+$");
