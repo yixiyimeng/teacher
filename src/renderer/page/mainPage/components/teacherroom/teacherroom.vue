@@ -227,14 +227,14 @@
 					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
 						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
 							<span class="ant-radio">
-								<input type="radio" name="talkquestionType" value="7" v-model="talkquestionType" />
+								<input type="radio" name="talkquestionType" :value="7" v-model="talkquestionType" />
 								<span class="ant-radio-inner"></span>
 							</span>
 							<span>英文识别</span>
 						</label>
 						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
 							<span class="ant-radio">
-								<input type="radio" name="talkquestionType" value="8" v-model="talkquestionType" />
+								<input type="radio" name="talkquestionType" :value="8" v-model="talkquestionType" />
 								<span class="ant-radio-inner"></span>
 							</span>
 							<span>中文识别</span>
@@ -260,19 +260,19 @@
 						<span>上传题目</span>
 					</div>
 				</div>
-				<div class="fromcontrol flex" v-if="subjecttitle == 8">
+				<div class="fromcontrol flex"  v-if="subjecttitle == 8">
 					<label>题目类型</label>
 					<div style="display:inline-block; font-size:20px;vertical-align: top;">
 						<label style="width:5em;text-align:left" class="ant-radio-wrapper">
 							<span class="ant-radio">
-								<input type="radio" name="iPhoneType" value="0" v-model="iPhoneType" />
+								<input type="radio" name="iPhoneType" :value="0" v-model="iPhoneType" />
 								<span class="ant-radio-inner"></span>
 							</span>
 							<span>抢麦</span>
 						</label>
 						<label style="width:8em;text-align:left" class="ant-radio-wrapper">
 							<span class="ant-radio">
-								<input type="radio" name="iPhoneType" value="1" v-model="iPhoneType" />
+								<input type="radio" name="iPhoneType" :value="1" v-model="iPhoneType" />
 								<span class="ant-radio-inner"></span>
 							</span>
 							<span>群发麦克风</span>
@@ -285,14 +285,14 @@
 					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
 						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
 							<span class="ant-radio">
-								<input type="radio" name="XSquestionType" value="0" v-model="XSquestionType" @change="changeXSquestionType" />
+								<input type="radio" name="XSquestionType" :value="0" v-model="XSquestionType" @change="changeXSquestionType" />
 								<span class="ant-radio-inner"></span>
 							</span>
 							<span>英文单词</span>
 						</label>
 						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
 							<span class="ant-radio">
-								<input type="radio" name="XSquestionType" value="1" v-model="XSquestionType" @change="changeXSquestionType" />
+								<input type="radio" name="XSquestionType" :value="1" v-model="XSquestionType" @change="changeXSquestionType" />
 								<span class="ant-radio-inner"></span>
 							</span>
 							<span>英文句子</span>
@@ -435,7 +435,7 @@
 				},
 				reftitletypelist: [], //语言测评数组
 				talkName: '', //语言测评题目
-				talkquestionType: '', //语言识别
+				talkquestionType: 7, //语言识别
 				isparticlesbox: false, //是否显示开始动画
 				isSendtitle: false, //是否显示下发题目
 				chartDate: {
@@ -1704,7 +1704,7 @@
 					$me.onesubjectitle = $me.subjectitleList[0];
 				} else {
 					$me.subjecttitle = '6';
-					$me.talkquestionType = '7';
+					$me.talkquestionType = 7;
 				}
 			},
 			/* 切换普通题型 */
@@ -1718,7 +1718,7 @@
 				this.subjecttitle = obj.value;
 				const $me = this;
 				if ($me.subjecttitle == 6) {
-					$me.talkquestionType = '7';
+					$me.talkquestionType = 7;
 				} else if ($me.subjecttitle == 7) {
 					$me.reftitletype = '1';
 					$me.onetitletype = $me.titletypeList[0];
@@ -1731,8 +1731,8 @@
 				} else if ($me.subjecttitle == 8) {
 					$me.iPhoneType = 0;
 				} else if ($me.subjecttitle == 9) {
-					this.XSquestionType == 0
-					this.xianshenglist = this.selectWordList;
+					$me.XSquestionType = 0;
+					$me.xianshenglist = $me.selectWordList;
 				}
 			},
 			/* 主观题统计 */
@@ -2188,7 +2188,7 @@
 	.sound>span {
 		margin-right: 15px;
 		background-repeat: no-repeat;
-		background-image: url(//fanyi.bdstatic.com/static/translation/sprite/images/normal/index-sc413d90635_65ba9b0.png);
+		background-image: url(../../assets/index.png);
 		background-position: 0 -1046px;
 		height: 17px;
 		width: 19px;
@@ -2197,8 +2197,8 @@
 	}
 
 	.sound.active {
-		background-image: url(//fanyi.bdstatic.com/static/translation/img/translate/output/sound2x_d6f553d.gif);
-		background-image: url(//fanyi.bdstatic.com/static/translation/img/translate/output/sound1x_a31f763.gif)\9;
+		background-image: url(../../assets/notice.gif);
+		background-image: url(../../assets/notice2.gif)\9;
 		-webkit-background-size: 22px 21px;
 		-moz-background-size: 22px 21px;
 		background-size: 22px 21px;
