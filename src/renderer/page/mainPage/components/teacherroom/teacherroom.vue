@@ -97,8 +97,8 @@
 			<!-- 语音文本显示 -->
 			<transition name="bounce">
 				<div class="reftext " v-if="isreftext">
-					<div>{{ reftext }}</div>
-					<span @click="startAudio" class="sound" :class="{active:isPlay}" v-if="subjecttitle == 9"><span></span></span>
+					<div>{{ reftext }}<span @click="startAudio" class="sound" :class="{active:isPlay}" v-if="subjecttitle == 9"><span></span></span></div>
+					
 				</div>
 			</transition>
 			<!-- <div class=" bounceInDown animated" v-if="isreftext" >
