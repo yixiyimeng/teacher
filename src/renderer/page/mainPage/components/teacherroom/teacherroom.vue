@@ -2183,6 +2183,7 @@
 		padding: 1px 0 0 7px;
 		display: inline-block;
 		cursor: pointer;
+		vertical-align: middle;
 	}
 
 	.sound>span {
@@ -2192,9 +2193,8 @@
 		background-position: 0 -1046px;
 		height: 17px;
 		width: 19px;
-		display: inline-block;
-
-	}
+		display:block;
+		}
 
 	.sound.active {
 		background-image: url(../../assets/notice.gif);
