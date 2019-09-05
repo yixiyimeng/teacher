@@ -181,7 +181,10 @@
 	list-style: none;
 	background: #fff;border-radius: 5px;
 }
-
+.vs__dropdown-menu ul{
+	display: inline-block;
+	min-width: 100%;
+}
 .vs__no-options {
 	text-align: center;
 }
@@ -415,7 +418,8 @@
 		</div>
 
 		<!-- <transition :name="transition"> -->
-			<ul ref="dropdownMenu" v-if="dropdownOpen" class="vs__dropdown-menu slideDown animated" role="listbox" @mousedown="onMousedown" @mouseup="onMouseUp">
+		<div  ref="dropdownMenu" v-if="dropdownOpen" class="vs__dropdown-menu slideDown animated" role="listbox" @mousedown="onMousedown" @mouseup="onMouseUp">
+			<ul>
 				<li
 					role="option"
 					v-for="(option, index) in filteredOptions"
@@ -429,6 +433,7 @@
 				</li>
 				<li v-if="!filteredOptions.length" class="vs__no-options" @mousedown.stop=""><slot name="no-options">Sorry, no matching options.</slot></li>
 			</ul>
+			</div>
 		<!-- </transition> -->
 	</div>
 </template>

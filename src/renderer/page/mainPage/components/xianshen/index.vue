@@ -364,6 +364,7 @@
 						console.log(da.data)
 						if (da.data.ret == 'success') {
 							this.wordList = []
+								this.isSlectWord=false;//是否选中单词
 							if (da.data.data && da.data.data.length > 0) {
 								this.wordList = da.data.data.map(item => {
 									item.cancel = false;
@@ -377,7 +378,7 @@
 
 					})
 			},
-			/* 获取单词 */
+			/* 获取句子*/
 			getSentence(unitId, lessonsId) {
 				var param = {
 					unit_id: unitId,
@@ -394,7 +395,8 @@
 					.then(da => {
 						console.log(da.data)
 						if (da.data.ret == 'success') {
-							// this.sentenceList = da.data.data;
+						this.isSlectSen=false; //是否选择句子
+						
 							this.sentenceList = []
 							if (da.data.data && da.data.data.length > 0) {
 								this.sentenceList = da.data.data.map(item => {
@@ -414,6 +416,7 @@
 				this.getWord(this.groupobj.group_id, this.lessonsobj.lessons_id);
 				this.getSentence(this.groupobj.group_id, this.lessonsobj.lessons_id);
 				this.showlesson = false;
+			
 			},
 			submit() {
 				this.isShowWin = false;

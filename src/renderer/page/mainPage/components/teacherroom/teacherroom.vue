@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<audio id="music" :src="platformpath + '/teacher-platform/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
+		<audio id="music" :src="platformpath + '/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" :src="xsAudioUrl" crossOrigin="anonymous" preload ended></audio>
 		<div class="bottommenu">
 			<!-- <a href="javascript:;" class="prev">
@@ -51,7 +51,7 @@
 					<li v-for="(item, index) in selectNamelist">
 						<img src="../../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
 						<span style="vertical-align: middle;">{{ item.stuName }}
-						<template v-if="subjecttitle==3">({{item.answer}})</template>
+							<template v-if="subjecttitle==3">({{item.answer}})</template>
 						</span>
 					</li>
 				</ul>
@@ -97,10 +97,11 @@
 			<!-- 语音文本显示 -->
 			<transition name="bounce">
 				<div class="reftext " v-if="isreftext">
-					<div>{{ reftext }}<span @click="startAudio" class="sound" :class="{active:isPlay}" v-if="subjecttitle == 9"><span></span></span></div>
+					<div class="txt">{{ reftext }}</div>
 					
 				</div>
 			</transition>
+			<div class="soundbox" v-if="isreftext"><span @click="startAudio" class="sound" :class="{active:isPlay}" v-if="subjecttitle == 9"><span></span></span></div>
 			<!-- <div class=" bounceInDown animated" v-if="isreftext" >
 				
 			</div> -->
@@ -260,7 +261,7 @@
 						<span>上传题目</span>
 					</div>
 				</div>
-				<div class="fromcontrol flex"  v-if="subjecttitle == 8">
+				<div class="fromcontrol flex" v-if="subjecttitle == 8">
 					<label>题目类型</label>
 					<div style="display:inline-block; font-size:20px;vertical-align: top;">
 						<label style="width:5em;text-align:left" class="ant-radio-wrapper">
@@ -375,6 +376,7 @@
 	} from '@/page/mainPage/utils/base';
 	import $ from '@/page/mainPage/assets/js/jquery-vendor';
 	import '@/page/mainPage/assets/js/jquery.danmu';
+	import echarts from 'echarts'
 	export default {
 		mixins: [IndexMixin],
 		components: {
@@ -583,8 +585,10 @@
 		},
 
 		mounted() {
-			this.myChart = echarts.init($('#myChart')[0]);
-			this.myCorrectChart = echarts.init($('#myCorrectChart')[0]); //初始化echart
+			this.$nextTick(() => {
+				this.myChart = echarts.init($('#myChart')[0]);
+				this.myCorrectChart = echarts.init($('#myCorrectChart')[0]); //初始化echart
+			})
 			const $me = this;
 			/* 设置count的宽度 */
 			const w = parseInt($('.couten').width() / 200) * 200;
@@ -1304,7 +1308,7 @@
 							$me.getSubjectiveResult();
 						}
 						/* 显示语音测评结果 */
-						if ($me.subjecttitle == 7||$me.subjecttitle == 9) {
+						if ($me.subjecttitle == 7 || $me.subjecttitle == 9) {
 							$me.getHighScores();
 						}
 						/* 判断倒计时 */
@@ -1532,6 +1536,9 @@
 						}
 					];
 				}
+				if(!$me.myCorrectChart){
+					$me.myCorrectChart = echarts.init($('#myCorrectChart')[0]);
+				}
 				$me.myCorrectChart.setOption(option);
 				setTimeout(function() {
 					$me.myCorrectChart.resize();
@@ -1612,6 +1619,9 @@
 					}]
 				};
 				option.series[0].data = myoption;
+				if(!$me.myChart){
+					$me.myChart = echarts.init($('#myChart')[0]);
+				}
 				$me.myChart.setOption(option);
 				//console.log(option)
 				setTimeout(function() {
@@ -1781,6 +1791,9 @@
 					}]
 				};
 				option.series[0].data = myoption;
+				if(!$me.myChart){
+					$me.myChart = echarts.init($('#myChart')[0]);
+				}
 				$me.myChart.setOption(option);
 				setTimeout(function() {
 					$me.myChart.resize();
@@ -2177,6 +2190,22 @@
 		animation: bounceInDown .5s reverse;
 	}
 
+	.soundbox {
+		border: 2px solid rgba(24, 114, 255, 0.9);
+		background: #fff;
+		position: fixed;
+		top: 5px;
+		left: 50%;
+		transform: translateX(-50%);
+		border-radius: 100%;
+		width: 45px;
+		height: 45px;
+		text-align: center;
+		padding-top: 11px;
+		box-sizing: border-box;
+		z-index: 999;
+	}
+
 	.sound {
 		width: 21px;
 		height: 21px;
@@ -2193,8 +2222,8 @@
 		background-position: 0 -1046px;
 		height: 17px;
 		width: 19px;
-		display:block;
-		}
+		display: block;
+	}
 
 	.sound.active {
 		background-image: url(../../assets/notice.gif);
