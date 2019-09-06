@@ -1,7 +1,7 @@
 <template>
 	<div>
-		<audio id="music" :src="platformpath + '/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
-		<audio id="xsmusic" :src="xsAudioUrl" crossOrigin="anonymous" preload ended></audio>
+		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
+		<audio id="xsmusic"  ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<div class="bottommenu">
 			<!-- <a href="javascript:;" class="prev">
 				<i></i>
@@ -98,10 +98,11 @@
 			<transition name="bounce">
 				<div class="reftext " v-if="isreftext">
 					<div class="txt">{{ reftext }}</div>
-					
+
 				</div>
 			</transition>
-			<div class="soundbox" v-if="isreftext"><span @click="startAudio" class="sound" :class="{active:isPlay}" v-if="subjecttitle == 9"><span></span></span></div>
+			<div class="soundbox" v-if="isreftext&&subjecttitle == 9"><span @click="startAudio" class="sound" :class="{active:isPlay}"
+				 v-if="subjecttitle == 9"><span></span></span></div>
 			<!-- <div class=" bounceInDown animated" v-if="isreftext" >
 				
 			</div> -->
@@ -1045,6 +1046,8 @@
 							return;
 						}
 						this.xsAudioUrl = "https://data.caidouenglish.com/" + $me.XStalkName.sound_eng_url;
+						this.$refs.xsmusic.src=this.xsAudioUrl;
+						this.$refs.xsmusic.load();
 						param = {
 							type: $me.XSquestionType == 0 ? 1 : 2,
 							refText: $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text
@@ -1536,9 +1539,7 @@
 						}
 					];
 				}
-				if(!$me.myCorrectChart){
-					$me.myCorrectChart = echarts.init($('#myCorrectChart')[0]);
-				}
+				$me.myCorrectChart = echarts.init($('#myCorrectChart')[0]);
 				$me.myCorrectChart.setOption(option);
 				setTimeout(function() {
 					$me.myCorrectChart.resize();
@@ -1619,9 +1620,10 @@
 					}]
 				};
 				option.series[0].data = myoption;
-				if(!$me.myChart){
-					$me.myChart = echarts.init($('#myChart')[0]);
-				}
+				// if(!$me.myChart){
+				// 	$me.myChart = echarts.init($('#myChart')[0]);
+				// }
+				$me.myChart = echarts.init($('#myChart')[0]);
 				$me.myChart.setOption(option);
 				//console.log(option)
 				setTimeout(function() {
@@ -1791,9 +1793,7 @@
 					}]
 				};
 				option.series[0].data = myoption;
-				if(!$me.myChart){
-					$me.myChart = echarts.init($('#myChart')[0]);
-				}
+				$me.myChart = echarts.init($('#myChart')[0]);
 				$me.myChart.setOption(option);
 				setTimeout(function() {
 					$me.myChart.resize();
