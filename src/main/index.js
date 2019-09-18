@@ -33,7 +33,8 @@ const subwinURL = process.env.NODE_ENV === 'development' ? 'http://localhost:908
 /**
  * Create main window
  */
-let iswinsm=true;
+let iswinsm = true;
+
 function createWindow() {
 	mainWindow = new BrowserWindow({
 		height: 1080,
@@ -42,17 +43,17 @@ function createWindow() {
 		titleBarStyle: 'hidden-inset',
 		frame: false,
 		transparent: true,
-		fullscreenable: true,
-		fullscreen: true,
-		simpleFullscreen: true,
+		// fullscreenable: true,
+		// fullscreen: true,
+		// simpleFullscreen: true,
 		resizable: false,
 		hasShadow: false,
 		webPreferences: {
 			webSecurity: false
 		},
-		id: 'mainWindow'
-		// 		maximizable: false,
-		// 		minimizable: false 
+		id: 'mainWindow',
+		// maximizable: false,
+		// minimizable: false
 	});
 	mainWindow.loadURL(winURL);
 	/* 打开悬浮窗口 */
@@ -64,11 +65,13 @@ function createWindow() {
 		e.preventDefault();
 		if (mainWindow.isMinimized()) {
 			mainWindow.show();
-			mainWindow.setFullScreen(true);
+			mainWindow.maximize();
+			 // mainWindow.setFullScreen(true);
 		}
 		mainWindow.webContents.send('isexitApp');
 	});
-	mainWindow.setFullScreen(true); //设置全屏
+	mainWindow.maximize();
+	// mainWindow.setFullScreen(true); //设置全屏
 	// mainWindow.setAlwaysOnTop(true);
 	/* 窗口退出最小化的时候，通知页面，暂停弹幕 */
 	mainWindow.on('minimize', (e) => {
@@ -78,7 +81,8 @@ function createWindow() {
 	});
 	/* 在窗口从最小化恢复的时候触发,通知页面，恢复弹幕 */
 	mainWindow.on('restore', (e) => {
-		mainWindow.setFullScreen(true);
+		mainWindow.maximize();
+		// mainWindow.setFullScreen(true);
 		mainWindow.webContents.send('isminimizeApp', false);
 		win.webContents.send('isminimizeAppsub', false);
 
@@ -97,7 +101,8 @@ function createWindow() {
 	})
 	globalShortcut.register('SHIFT+M', () => {
 		mainWindow.show();
-		mainWindow.setFullScreen(true);
+		// mainWindow.setFullScreen(true);
+		mainWindow.maximize();
 		//mainWindow.webContents.openDevTools({mode:'bottom'})
 	})
 
@@ -167,7 +172,8 @@ function createTray() {
 	tray.on('double-click', () => {
 		// mainWindow.isVisible() ? mainWindow.hide() : {mainWindow.show();mainWindow.setFullScreen(true);}
 		mainWindow.show();
-		mainWindow.setFullScreen(true);
+		// mainWindow.setFullScreen(true);
+		mainWindow.maximize();
 	})
 }
 
@@ -182,7 +188,8 @@ function onOpenAppClick() {
 	// 		sendMusicList(musicPaths);
 	// 	}
 	mainWindow.show();
-	mainWindow.setFullScreen(true);
+	// mainWindow.setFullScreen(true);
+	mainWindow.maximize();
 }
 
 function onExitAppClick() {
@@ -237,7 +244,8 @@ app.on('ready', () => {
 		mainWindow.webContents.send('isexitApp');
 		if (mainWindow.isMinimized()) {
 			mainWindow.show();
-			mainWindow.setFullScreen(true);
+			mainWindow.maximize();
+			// mainWindow.setFullScreen(true);
 		}
 	});
 	/* 是否上传题目 */
@@ -271,13 +279,13 @@ app.on('ready', () => {
 
 	});
 	ipcMain.on('lgwin', () => {
-		iswinsm=false;
+		iswinsm = false;
 		win.setSize(70, 220);
-		
+
 	})
 
 	ipcMain.on('smwin', () => {
-		iswinsm=true;
+		iswinsm = true;
 		win.setSize(70, 60)
 	})
 
