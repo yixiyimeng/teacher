@@ -82,6 +82,7 @@ function createWindow() {
 	/* 在窗口从最小化恢复的时候触发,通知页面，恢复弹幕 */
 	mainWindow.on('restore', (e) => {
 		mainWindow.maximize();
+		win.moveTop();
 		// mainWindow.setFullScreen(true);
 		mainWindow.webContents.send('isminimizeApp', false);
 		win.webContents.send('isminimizeAppsub', false);
@@ -103,6 +104,7 @@ function createWindow() {
 		mainWindow.show();
 		// mainWindow.setFullScreen(true);
 		mainWindow.maximize();
+		win.moveTop()
 		//mainWindow.webContents.openDevTools({mode:'bottom'})
 	})
 
@@ -174,6 +176,7 @@ function createTray() {
 		mainWindow.show();
 		// mainWindow.setFullScreen(true);
 		mainWindow.maximize();
+		win.moveTop()
 	})
 }
 
@@ -190,6 +193,7 @@ function onOpenAppClick() {
 	mainWindow.show();
 	// mainWindow.setFullScreen(true);
 	mainWindow.maximize();
+	win.moveTop()
 }
 
 function onExitAppClick() {
