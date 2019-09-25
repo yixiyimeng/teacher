@@ -1,7 +1,6 @@
 <template>
 	<div id="suspension">
-		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" @touchstart="setbgwin" @touchend="setsmwin"
-		 :class="{active:ishover}">
+		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}">
 			<a href="javascript:;" class="kjbtn">
 				<div class="la-ball-scale-multiple">
 					<div></div>
@@ -58,12 +57,14 @@
 			});
 			/* 添加触碰事件 */
 			document.addEventListener('touchstart', function(e) {
-				biasX = e.x;
-				biasY = e.y;
+				console.log('触摸开始',e)
+				biasX = e.screenX;
+				biasY = e.screenY;
 				document.addEventListener('touchmove', moveEvent);
 			});
 
 			document.addEventListener('touchend', function() {
+				console.log('触摸结束',e)
 				biasX = 0;
 				biasY = 0;
 				document.removeEventListener('touchmove', moveEvent);
@@ -117,13 +118,16 @@
 		methods: {
 			minApp: function() {
 				this.$electron.ipcRenderer.send('minApp');
+				this.setsmwin();
 			},
 			maxApp: function() {
 				this.$electron.ipcRenderer.send('maxApp');
+				this.setsmwin();
 			},
 			exitBtn: function() {
 				/* 退出直播间 */
 				this.$electron.ipcRenderer.send('isexitdirebro');
+				this.setsmwin();
 			},
 			uploadTitle() {
 				/*上传题目*/
@@ -137,10 +141,8 @@
 				this.$electron.ipcRenderer.send('lgwin');
 			},
 			setsmwin() {
-				this.ishover = false;
-				this.$electron.ipcRenderer.send('smwin');
-
-
+				// this.ishover = false;
+				// this.$electron.ipcRenderer.send('smwin');
 			}
 		}
 	};
