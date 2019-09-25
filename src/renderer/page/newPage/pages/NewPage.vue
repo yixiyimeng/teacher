@@ -69,7 +69,9 @@
 				biasY = 0;
 				document.removeEventListener('touchmove', touchmoveEvent);
 			});
+
 			function touchmoveEvent(e) {
+				e.preventDefault();
 				win.setPosition(e.touches[0].screenX - biasX, e.touches[0].screenY - biasY);
 			}
 
