@@ -69,8 +69,6 @@
 				biasY = 0;
 				document.removeEventListener('touchmove', touchmoveEvent);
 			});
-
-			
 			function touchmoveEvent(e) {
 				win.setPosition(e.touches[0].screenX - biasX, e.touches[0].screenY - biasY);
 			}
@@ -146,8 +144,8 @@
 				this.$electron.ipcRenderer.send('lgwin');
 			},
 			setsmwin() {
-				// this.ishover = false;
-				// this.$electron.ipcRenderer.send('smwin');
+				this.ishover = false;
+				this.$electron.ipcRenderer.send('smwin');
 			}
 		}
 	};
