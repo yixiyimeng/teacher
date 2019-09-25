@@ -34,50 +34,53 @@
 			let win = this.$electron.remote.getCurrentWindow();
 			let biasX = 0;
 			let biasY = 0;
+			let TbiasX = 0;
+			let TbiasY = 0;
 			let that = this;
-			document.addEventListener('mousedown', function(e) {
-				switch (e.button) {
-					case 0:
-						/* 单击左键 */
-						biasX = e.x;
-						biasY = e.y;
-						document.addEventListener('mousemove', moveEvent);
-						break;
-					case 2:
-						/* 单击右键 */
-						that.$electron.ipcRenderer.send('createSuspensionMenu');
-						break;
-				}
-			});
-
-			document.addEventListener('mouseup', function() {
-				biasX = 0;
-				biasY = 0;
-				document.removeEventListener('mousemove', moveEvent);
-			});
-			/* 添加触碰事件 */
-			document.addEventListener('touchstart', function(e) {
-				console.log('触摸开始', e)
-				biasX = e.touches[0].screenX;
-				biasY = e.touches[0].screenY;
-				document.addEventListener('touchmove', touchmoveEvent);
-			});
-
-			document.addEventListener('touchend', function(e) {
-				console.log('触摸结束', e)
-				biasX = 0;
-				biasY = 0;
-				document.removeEventListener('touchmove', touchmoveEvent);
-			});
-
-			function touchmoveEvent(e) {
-				e.preventDefault();
-				win.setPosition(e.touches[0].screenX - biasX, e.touches[0].screenY - biasY);
-			}
-
-			function moveEvent(e) {
-				win.setPosition(e.screenX - biasX, e.screenY - biasY);
-			}
+// 			document.addEventListener('mousedown', function(e) {
+// 				switch (e.button) {
+// 					case 0:
+// 						/* 单击左键 */
+// 						biasX = e.x;
+// 						biasY = e.y;
+// 						document.addEventListener('mousemove', moveEvent);
+// 						break;
+// 					case 2:
+// 						/* 单击右键 */
+// 						that.$electron.ipcRenderer.send('createSuspensionMenu');
+// 						break;
+// 				}
+// 			});
+// 
+// 			document.addEventListener('mouseup', function() {
+// 				biasX = 0;
+// 				biasY = 0;
+// 				document.removeEventListener('mousemove', moveEvent);
+// 			});
+// 			/* 添加触碰事件 */
+// 			document.addEventListener('touchstart', function(e) {
+// 				console.log('触摸开始', e)
+// 				TbiasX = e.touches[0].screenX;
+// 				TbiasY = e.touches[0].screenY;
+// 
+// 			});
+// 
+// 			document.addEventListener('touchend', function(e) {
+// 				console.log('触摸结束', e)
+// 				TbiasX = 0;
+// 				TbiasY = 0;
+// 				// document.removeEventListener('touchmove', touchmoveEvent);
+// 			});
+// 			document.addEventListener('touchmove', touchmoveEvent);
+// 
+// 			function touchmoveEvent(e) {
+// 				e.preventDefault();
+// 				win.setPosition(e.touches[0].screenX - TbiasX, e.touches[0].screenY - TbiasY);
+// 			}
+// 
+// 			function moveEvent(e) {
+// 				win.setPosition(e.screenX - biasX, e.screenY - biasY);
+// 			}
 		},
 		created() {
 			const _this = this;

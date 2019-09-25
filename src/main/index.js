@@ -133,12 +133,13 @@ function createSuspensionWindow() {
 		maxHeight: 220,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前
+		movable:true
 	});
 	const size = screen.getPrimaryDisplay().workAreaSize; //获取显示器的宽高
 	const winSize = win.getSize(); //获取窗口宽高
 
 	//设置窗口的位置 注意x轴要桌面的宽度 - 窗口的宽度
-	win.setPosition(size.width - winSize[0], 40);
+	win.setPosition(size.width - winSize[0], size.height-winSize[1]-40);
 	win.loadURL(subwinURL);
 
 	win.once('ready-to-show', () => {
