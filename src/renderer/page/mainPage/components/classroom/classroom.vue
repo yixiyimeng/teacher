@@ -153,7 +153,7 @@ export default {
 			handler(newName, oldName) {
 				if (this.selectsubject && this.selectsubject.name) {
 					this.sendInfo.subjectCode = this.selectsubject.value;
-					this.sendInfo.subjectName = this.selectclass.name;
+					this.sendInfo.subjectName = this.selectsubject.name;
 					if (this.sendInfo.classCode && this.sendInfo.subjectCode) {
 						this.getTitleList();
 					}

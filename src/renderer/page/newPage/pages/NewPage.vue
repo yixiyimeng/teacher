@@ -34,53 +34,74 @@
 			let win = this.$electron.remote.getCurrentWindow();
 			let biasX = 0;
 			let biasY = 0;
-			let TbiasX = 0;
-			let TbiasY = 0;
 			let that = this;
-// 			document.addEventListener('mousedown', function(e) {
-// 				switch (e.button) {
-// 					case 0:
-// 						/* 单击左键 */
-// 						biasX = e.x;
-// 						biasY = e.y;
-// 						document.addEventListener('mousemove', moveEvent);
-// 						break;
-// 					case 2:
-// 						/* 单击右键 */
-// 						that.$electron.ipcRenderer.send('createSuspensionMenu');
-// 						break;
-// 				}
-// 			});
-// 
-// 			document.addEventListener('mouseup', function() {
-// 				biasX = 0;
-// 				biasY = 0;
-// 				document.removeEventListener('mousemove', moveEvent);
-// 			});
-// 			/* 添加触碰事件 */
-// 			document.addEventListener('touchstart', function(e) {
-// 				console.log('触摸开始', e)
-// 				TbiasX = e.touches[0].screenX;
-// 				TbiasY = e.touches[0].screenY;
-// 
-// 			});
-// 
-// 			document.addEventListener('touchend', function(e) {
-// 				console.log('触摸结束', e)
-// 				TbiasX = 0;
-// 				TbiasY = 0;
-// 				// document.removeEventListener('touchmove', touchmoveEvent);
-// 			});
-// 			document.addEventListener('touchmove', touchmoveEvent);
-// 
-// 			function touchmoveEvent(e) {
-// 				e.preventDefault();
-// 				win.setPosition(e.touches[0].screenX - TbiasX, e.touches[0].screenY - TbiasY);
-// 			}
-// 
-// 			function moveEvent(e) {
-// 				win.setPosition(e.screenX - biasX, e.screenY - biasY);
-// 			}
+			document.addEventListener('mousedown', function(e) {
+				switch (e.button) {
+					case 0:
+						/* 单击左键 */
+						biasX = e.x;
+						biasY = e.y;
+						document.addEventListener('mousemove', moveEvent);
+						break;
+					case 2:
+						/* 单击右键 */
+						that.$electron.ipcRenderer.send('createSuspensionMenu');
+						break;
+				}
+			});
+
+			document.addEventListener('mouseup', function() {
+				biasX = 0;
+				biasY = 0;
+				document.removeEventListener('mousemove', moveEvent);
+			});
+			// 			/* 添加触碰事件 */
+			// 			document.addEventListener('touchstart', function(e) {
+			// 				console.log('触摸开始',e)
+			// 				biasX = e.screenX;
+			// 				biasY = e.screenY;
+			// 				document.addEventListener('touchmove', moveEvent);
+			// 			});
+			// 
+			// 			document.addEventListener('touchend', function() {
+			// 				console.log('触摸结束',e)
+			// 				biasX = 0;
+			// 				biasY = 0;
+			// 				document.removeEventListener('touchmove', moveEvent);
+			// 			});
+
+			function moveEvent(e) {
+				win.setPosition(e.screenX - biasX, e.screenY - biasY);
+			}
+			document.addEventListener('touchstart', touch, false);
+			document.addEventListener('touchmove', touch, false);
+			document.addEventListener('touchend', touch, false);
+
+			function touch(event) {
+				var event = event || window.event;
+
+				var oInp = document.getElementById("inp");
+
+				switch (event.type) {
+					case "touchstart":
+						 biasX = event.touches[0].clientX;
+						 biasY =event.touches[0].clientY;
+						break;
+					case "touchend":
+						// oInp.innerHTML = "<br>Touch end (" + event.changedTouches[0].clientX + "," + event.changedTouches[0].clientY + ")"; 
+						biasX = 0;
+						biasY = 0;
+						break;
+					case "touchmove":
+						event.preventDefault();
+						// oInp.innerHTML = "<br>Touch moved (" + event.touches[0].clientX + "," + event.touches[0].clientY + ")"; 
+						//biasX = event.touches[0].clientX;
+						//biasY =event.touches[0].clientY;
+						win.setPosition(event.touches[0].screenX-biasX, event.touches[0].e.screenY- biasY);
+						break;
+				}
+
+			}
 		},
 		created() {
 			const _this = this;
@@ -149,8 +170,8 @@
 				this.$electron.ipcRenderer.send('lgwin');
 			},
 			setsmwin() {
-				this.ishover = false;
-				this.$electron.ipcRenderer.send('smwin');
+				// this.ishover = false;
+				// this.$electron.ipcRenderer.send('smwin');
 			}
 		}
 	};

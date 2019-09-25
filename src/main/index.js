@@ -120,7 +120,7 @@ function createWindow() {
 function createSuspensionWindow() {
 	win = new BrowserWindow({
 		width: 70, //悬浮窗口的宽度 比实际DIV的宽度要多2px 因为有1px的边框
-		height: 60, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
+		 height: 60, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
 		type: 'toolbar', //创建的窗口类型为工具栏窗口
 		frame: false, //要创建无边框窗口
 		resizable: true, //禁止窗口大小缩放
@@ -130,16 +130,15 @@ function createSuspensionWindow() {
 		},
 		useContentSize: true,
 		maxWidth: 70,
-		maxHeight: 220,
+		 maxHeight: 220,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前
-		movable:true
 	});
 	const size = screen.getPrimaryDisplay().workAreaSize; //获取显示器的宽高
 	const winSize = win.getSize(); //获取窗口宽高
 
 	//设置窗口的位置 注意x轴要桌面的宽度 - 窗口的宽度
-	win.setPosition(size.width - winSize[0], size.height-winSize[1]-40);
+	win.setPosition(size.width - winSize[0], size.height - winSize[1]-260);
 	win.loadURL(subwinURL);
 
 	win.once('ready-to-show', () => {
@@ -293,7 +292,7 @@ app.on('ready', () => {
 	ipcMain.on('lgwin', () => {
 		iswinsm = false;
 		win.setSize(70, 220);
-		})
+	})
 
 	ipcMain.on('smwin', () => {
 		iswinsm = true;
