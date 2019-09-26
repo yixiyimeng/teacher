@@ -57,20 +57,20 @@
 				document.removeEventListener('mousemove', moveEvent);
 			});
 			// 			/* 添加触碰事件 */
-			document.addEventListener('touchstart', function(e) {
-				console.log('触摸开始', e)
-				// biasX = e.touches[0].clientX;
-				// biasY = e.touches[0].clientY;
-				e.preventDefault()
-				document.addEventListener('touchmove', touchmoveEvent);
-			});
-
-			document.addEventListener('touchend', function(e) {
-				console.log('触摸结束', e)
-				biasX = 0;
-				biasY = 0;
-				document.removeEventListener('touchmove', moveEvent);
-			});
+// 			document.addEventListener('touchstart', function(e) {
+// 				console.log('触摸开始', e)
+// 				// biasX = e.touches[0].clientX;
+// 				// biasY = e.touches[0].clientY;
+// 				e.preventDefault()
+// 				document.addEventListener('touchmove', touchmoveEvent);
+// 			});
+// 
+// 			document.addEventListener('touchend', function(e) {
+// 				console.log('触摸结束', e)
+// 				biasX = 0;
+// 				biasY = 0;
+// 				document.removeEventListener('touchmove', moveEvent);
+// 			});
 
 			function moveEvent(e) {
 				win.setPosition(e.screenX - biasX, e.screenY - biasY);
