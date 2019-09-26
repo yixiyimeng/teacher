@@ -36,6 +36,7 @@
 			let biasY = 0;
 			let that = this;
 			document.addEventListener('mousedown', function(e) {
+				e.preventDefault();
 				switch (e.button) {
 					case 0:
 						/* 单击左键 */
@@ -58,8 +59,9 @@
 			// 			/* 添加触碰事件 */
 			document.addEventListener('touchstart', function(e) {
 				console.log('触摸开始', e)
-				biasX = e.touches[0].clientX;
-				biasY = e.touches[0].clientY;
+				// biasX = e.touches[0].clientX;
+				// biasY = e.touches[0].clientY;
+				e.preventDefault()
 				document.addEventListener('touchmove', touchmoveEvent);
 			});
 
