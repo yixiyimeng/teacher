@@ -1,7 +1,7 @@
 <template>
 	<div id="suspension">
-		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}">
-			<a href="javascript:;" class="kjbtn">
+		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin":class="{active:ishover}">
+			<a href="javascript:;" class="kjbtn"  @click="toggleSetwin" >
 				<div class="la-ball-scale-multiple">
 					<div></div>
 					<div></div>
@@ -77,7 +77,7 @@
 			}
 
 			function touchmoveEvent(e) {
-				win.setPosition(e.touches[0].screenX - biasX, e.touches[0].screenY - biasY);
+				win.setPosition(e.touches[0].screenX, e.touches[0].screenY);
 			}
 		},
 		created() {
@@ -149,6 +149,14 @@
 			setsmwin() {
 				this.ishover = false;
 				this.$electron.ipcRenderer.send('smwin');
+			},
+			toggleSetwin(e){
+				e.preventDefault();
+				if(this.ishover){
+					this.setsmwin();
+				}else{
+					this.setbgwin();
+				}
 			}
 		}
 	};
