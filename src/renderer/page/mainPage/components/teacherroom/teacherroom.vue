@@ -224,7 +224,7 @@
 					</li>
 				</ul>
 
-				<div class="fromcontrol flex" v-if="subjecttitle == 6">
+				<div class="fromcontrol flex" v-show="subjecttitle == 6">
 					<label>题目类型</label>
 					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
 						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
@@ -243,26 +243,25 @@
 						</label>
 					</div>
 				</div>
-				<div class="fromcontrol flex" v-if="subjecttitle == 7">
-					<label>题目类型</label>
-
-					<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1"
-					 :selectValue="onetitletype"></search>
-				</div>
-				<div class="flex flex-align-center" v-if="subjecttitle == 7">
-					<div class="fromcontrol flex flex-1">
-						<label>题目</label>
-						<div class="flex-1" style="margin-right: 60px;">
-							<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
-							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
+					<div class="fromcontrol flex" v-show="subjecttitle == 7" >
+						<label>题目类型</label>
+						<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1"
+						 :selectValue="onetitletype"></search>
+					</div>
+					<div class="flex flex-align-center" v-show="subjecttitle == 7">
+						<div class="fromcontrol flex flex-1">
+							<label>题目</label>
+							<div class="flex-1" style="margin-right: 60px;">
+								<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
+								<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
+							</div>
+						</div>
+						<div class="uploadbox">
+							<input type="file" name="" value="" id="upload" @change="uploadfile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+							<span>上传题目</span>
 						</div>
 					</div>
-					<div class="uploadbox">
-						<input type="file" name="" value="" id="upload" @change="uploadfile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-						<span>上传题目</span>
-					</div>
-				</div>
-				<div class="fromcontrol flex" v-if="subjecttitle == 8">
+				<div class="fromcontrol flex" v-show="subjecttitle == 8">
 					<label>题目类型</label>
 					<div style="display:inline-block; font-size:20px;vertical-align: top;">
 						<label style="width:5em;text-align:left" class="ant-radio-wrapper">
@@ -282,7 +281,7 @@
 					</div>
 				</div>
 				<!-- 跟读测评 题目类型 -->
-				<div class="fromcontrol flex" v-if="subjecttitle == 9">
+				<div class="fromcontrol flex" v-show="subjecttitle == 9">
 					<label>题目类型</label>
 					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
 						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
@@ -301,7 +300,7 @@
 						</label>
 					</div>
 				</div>
-				<div class="flex flex-align-center" v-if="subjecttitle == 9">
+				<div class="flex flex-align-center" v-show="subjecttitle == 9">
 					<div class="fromcontrol flex flex-1">
 						<label>题目</label>
 						<!-- <search :searchList="xianshenglist" placeholdertxt="请选择题目"  class="flex-1"
