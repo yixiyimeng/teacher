@@ -599,6 +599,7 @@
 				width: w,
 				left: l
 			});
+			document.getElementById('music').load();
 			var audio = document.getElementById('xsmusic');
 			if (audio) {
 				audio.loop = false;
