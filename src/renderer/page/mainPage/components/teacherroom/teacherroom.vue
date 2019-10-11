@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
-		<audio id="xsmusic"  ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
+		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<div class="bottommenu">
 			<!-- <a href="javascript:;" class="prev">
 				<i></i>
@@ -243,24 +243,24 @@
 						</label>
 					</div>
 				</div>
-					<div class="fromcontrol flex" v-show="subjecttitle == 7" >
-						<label>题目类型</label>
-						<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1"
-						 :selectValue="onetitletype"></search>
-					</div>
-					<div class="flex flex-align-center" v-show="subjecttitle == 7">
-						<div class="fromcontrol flex flex-1">
-							<label>题目</label>
-							<div class="flex-1" style="margin-right: 60px;">
-								<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
-								<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
-							</div>
-						</div>
-						<div class="uploadbox">
-							<input type="file" name="" value="" id="upload" @change="uploadfile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
-							<span>上传题目</span>
+				<div class="fromcontrol flex" v-show="subjecttitle == 7">
+					<label>题目类型</label>
+					<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1"
+					 :selectValue="onetitletype"></search>
+				</div>
+				<div class="flex flex-align-center" v-show="subjecttitle == 7">
+					<div class="fromcontrol flex flex-1">
+						<label>题目</label>
+						<div class="flex-1" style="margin-right: 60px;">
+							<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
+							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
 						</div>
 					</div>
+					<div class="uploadbox">
+						<input type="file" name="" value="" id="upload" @change="uploadfile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+						<span>上传题目</span>
+					</div>
+				</div>
 				<div class="fromcontrol flex" v-show="subjecttitle == 8">
 					<label>题目类型</label>
 					<div style="display:inline-block; font-size:20px;vertical-align: top;">
@@ -1046,7 +1046,7 @@
 							return;
 						}
 						this.xsAudioUrl = "https://data.caidouenglish.com/" + $me.XStalkName.sound_eng_url;
-						this.$refs.xsmusic.src=this.xsAudioUrl;
+						this.$refs.xsmusic.src = this.xsAudioUrl;
 						this.$refs.xsmusic.load();
 						param = {
 							type: $me.XSquestionType == 0 ? 1 : 2,
@@ -1437,7 +1437,7 @@
 					color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
 					grid: {
 						x: 110,
-						y: 55,
+						y: 20,
 						x2: 25,
 						y2: 45
 					},
@@ -1456,7 +1456,7 @@
 							borderRadius: 4,
 							borderColor: '#5793f3',
 							borderWidth: 1,
-							padding: [4, 10, 4, 10],
+							padding: [3, 10, 3, 10],
 							interval: 0
 						}
 						/* ,
@@ -1470,28 +1470,15 @@
 							}
 						},
 						axisLabel: {
-							formatter: ['{b|a}{value}人'].join('\n'),
+							formatter: ['{value}人'].join('\n'),
 							fontSize: fontSize > 24 ? 20 : fontSize,
 							backgroundColor: '#fff',
 							color: '#5793f3',
 							borderRadius: 4,
 							borderColor: '#5793f3',
 							borderWidth: 1,
-							padding: [4, 10, 4, 5],
-							rich: {
-								a: {
-									color: 'red',
-									lineHeight: 10
-								},
-								b: {
-									backgroundColor: {
-										image: '../../static/img/mf.png'
-									},
-									height: 30,
-									widht: 30,
-									color: 'transparent'
-								}
-							}
+							padding: [3, 10, 3, 10],
+
 						},
 						minInterval: 1
 					},
@@ -1597,7 +1584,7 @@
 					series: [{
 						name: '正确率',
 						type: 'pie',
-						radius: ['30%', '70%'],
+						radius: ['35%', '80%'],
 						avoidLabelOverlap: false,
 						label: {
 							normal: {
@@ -2133,6 +2120,13 @@
 		width: 600px;
 		margin-left: -300px;
 		z-index: 999;
+		padding-top: 10%;
+	}
+
+	@media screen and (max-height:720px) {
+		.modbox.subject {
+			padding-top: 6%;
+		}
 	}
 
 	.modbox.subject .startBtn {

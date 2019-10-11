@@ -152,7 +152,8 @@ export default {
 	width: 100%;
 	transition: all 0.8s ease;
 	z-index: 1;
-	top: 0
+	top: 0;
+	height: 100%;
 }
 .slide-right-enter-active,
 .slide-right-leave-active,
