@@ -2,17 +2,20 @@
 	<div>
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
+		<!-- 工具箱 -->
+		<toolbar></toolbar>
 		<div class="bottommenu">
-			<!-- <a href="javascript:;" class="prev">
-				<i></i>
-			</a> -->
 			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
 			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
 			<a href="javascript:;" class="send" @click="sendtitle" v-show="isSendtitle"></a>
+			<a href="javascript:;" class="prev" @click="prevQuestion" v-show="isSubject && !isAddSubject">
+				<i></i>
+			</a>
 			<a href="javascript:;" class="next" @click="nextQuestion" v-show="isSubject && !isAddSubject">
 				<!-- <span>下一题</span> -->
 				<i></i>
 			</a>
+
 		</div>
 		<!-- 正确答案 -->
 		<board :trueAnswer="trueAnswer" v-show="isSendtitle && trueAnswer" :class="[isSendtitle ? 'fadeIn' : 'fadeOut']"></board>
@@ -357,7 +360,8 @@
 		search,
 		load,
 		board,
-		timeswiper
+		timeswiper,
+		toolbar
 	} from '@/page/mainPage/components';
 	import vSelect from '@/page/mainPage/components/vue-select';
 	import {
@@ -387,7 +391,8 @@
 			load,
 			board,
 			timeswiper,
-			vSelect
+			vSelect,
+			toolbar
 		},
 		data() {
 			return {
@@ -545,7 +550,10 @@
 			...mapState(['platformpath', 'interactiopath', 'foundationpath', 'isminimizeAppState', 'directBroadcastCode',
 				'selectWordList', 'selectSentenceList'
 			]),
-			...mapGetters(['getisminimizeApp']),
+			...mapGetters(['getisminimizeApp', 'onEvent']),
+			// alertCont() {
+			// 	return this.$store.getters.onEvent();
+			// },
 			checkbindStu() {
 				if (this.namelist && this.namelist.length > 0) {
 					return this.namelist.filter(item => item.checked).length;
@@ -582,6 +590,7 @@
 			this.$electron.ipcRenderer.send('onlinedirebro', true);
 			this.getNamelist('bingingCard/getAllBingdCardInfo');
 			this.getjson();
+
 		},
 
 		mounted() {
@@ -607,6 +616,8 @@
 					$me.isPlay = false;
 				}, false);
 			}
+			/* 接受websock   */
+		  this.onmessage();
 		},
 		watch: {
 			isshowNamelist: function(newval, oldval) {
@@ -660,6 +671,13 @@
 				deep: true
 				// 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
 				// immediate: true
+			},
+			onEvent: {
+				handler(newName, oldName) {
+					if (newName && newName != oldName)
+						console.log("112121111newName:" + JSON.stringify(newName));
+				},
+				immediate: true
 			}
 		},
 		methods: {
@@ -1210,6 +1228,19 @@
 					}
 					//$me.isparticlesbox = true;
 				}
+			},
+			clearView(){
+				/* 是否教鞭切换发题是，清屏页面 */
+				const $me = this;
+				$me.clear();
+				$me.isStop = false;
+				$me.isAnswering = false; 
+				/*清空弹幕*/
+				$('#danmu').data('danmuList', {});
+				$('#danmu').danmu('danmuStop');
+				/* 清空红包 */
+				$me.delredenvelope();
+				document.getElementById('music').pause();
 			},
 			stopRace() {
 				/* 点击结束答题 */
@@ -2016,6 +2047,28 @@
 					}
 				});
 			},
+			/* 上一题 */
+			prevQuestion() {
+				const $me = this;
+				$me.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/common/prevQuestion'
+				}).then(da => {
+					if (da.data.ret == 'success') {
+						console.log('上一题' + JSON.stringify(da));
+						/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
+						$me.trueAnswer = da.data.data.trueAnswer;
+						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
+						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
+						$me.startVIew();
+						if ($me.iscountDown) {
+							$me.timeDown();
+						}
+					} else {
+						$me.$toast.center(da.data.message);
+					}
+				});
+			},
 			/* 语音测评统计 */
 			getHighScores() {
 				const $me = this;
@@ -2097,6 +2150,269 @@
 				if (document.getElementById('xsmusic')) {
 					document.getElementById('xsmusic').play();
 					$me.isPlay = true;
+				}
+			},
+			onmessage() {
+				let $me = this;
+				/* 连接websock */
+				this.$store.dispatch('STAFF_WEBSOCKET')
+				console.log(this.$store.getters.STAFF_UPDATE);
+				this.$store.getters.STAFF_UPDATE.onmessage = function(evt) {
+					var received_msg = evt.data;
+					console.log(received_msg)
+					if (received_msg != '连接成功') {
+						var msg = JSON.parse(received_msg);
+						var obj = msg.data;
+						switch (msg.reqType) {
+							case 0:
+								{
+									var time = $('#danmu').data('nowTime') + 1;
+									/*当渲染弹幕过多的时候,延迟处理弹幕*/
+									if ($('#danmu .danmaku').length > 500) {
+										time += 200; //2000毫秒。
+									}
+									var answer = '';
+									/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
+									if (msg.businessType == 1 || msg.businessType == 2 || msg.businessType == 3) {
+										answer = obj.answer;
+									} else if (msg.businessType == 4) {
+										answer = obj.answer == 'E' ? '✔' : '✖';
+									} else if (msg.businessType == 5) {
+										answer = obj.answer == 'E' ? '懂' : '不懂';
+									}
+									if (msg.businessType == 6) {
+										/*抢红包*/
+										$me.addredenvelope(msg.data);
+									} else {
+										$('#danmu').danmu('addDanmu', [{
+											text: obj.stuName,
+											color: 'white',
+											size: 0,
+											position: 0,
+											time: time
+										}]);
+									}
+									break;
+								}
+							case 1:
+								{
+									/*刷新名单*/
+									for (var i = 0; i < msg.urlPaths.length; i++) {
+										if (msg.urlPaths[i].method == 'getNamelist') {
+											$me.getNamelist(msg.urlPaths[i].url);
+										} else if (msg.urlPaths[i].method == 'getprogress') {
+											$me.getprogress(urlPath);
+										}
+									}
+									break;
+								}
+							case 4:
+								{
+									if (msg.order == 'START_BUSINESS_TYPE_10') {
+										var obj = msg.data;
+										$me.stuName = obj.stuName;
+										$me.ismicrophone = true;
+									}
+									break;
+								}
+							case 6:
+								{
+									$me.chartDate.title.push(msg.data.className);
+									$me.chartDate.agreeNumber.push(msg.data.agreeNumber);
+									$me.chartDate.disagreeNumber.push(msg.data.disagreeNumber);
+									$me.chartDate.unAnswerNum.push(msg.data.unAnswerNum);
+									var option = [{
+											name: '懂',
+											type: 'bar',
+											stack: '主观题',
+											barWidth: 60,
+											data: $me.chartDate.agreeNumber,
+											label: {
+												normal: {
+													show: true,
+													position: 'inside',
+													color: '#fff',
+													formatter: function(param) {
+														return param.value > 0 ? param.value + '人' : '';
+													},
+													textStyle: {
+														fontSize: 24
+													}
+												}
+											}
+										},
+										{
+											name: '不懂',
+											type: 'bar',
+											stack: '主观题',
+											barWidth: 60,
+											data: $me.chartDate.disagreeNumber,
+											label: {
+												normal: {
+													show: true,
+													position: 'inside',
+													color: '#fff',
+													formatter: function(param) {
+														return param.value > 0 ? param.value + '人' : '';
+													},
+													textStyle: {
+														fontSize: 24
+													}
+												}
+											}
+										},
+										{
+											name: '未作答',
+											type: 'bar',
+											stack: '主观题',
+											barWidth: 60,
+											data: $me.chartDate.unAnswerNum,
+											label: {
+												normal: {
+													show: true,
+													position: 'inside',
+													color: '#fff',
+													formatter: function(param) {
+														return param.value > 0 ? param.value + '人' : '';
+													},
+													textStyle: {
+														fontSize: 24
+													}
+												}
+											}
+										}
+									];
+									$me.getChartData(option, $me.chartDate.title);
+									break;
+								}
+							case 7:
+								{
+									/* 语音测评 */
+									$me.ismicrophone = false;
+									var obj = msg.data;
+
+									var time = $('#danmu').data('nowTime') + 1;
+									/*当渲染弹幕过多的时候,延迟处理弹幕*/
+									if ($('#danmu .danmaku').length > 500) {
+										time += 200; //2000毫秒。
+									}
+									var answer = obj.score;
+									$('#danmu').danmu('addDanmu', [{
+										text: obj.stuName + '(' + answer + ')',
+										color: 'white',
+										size: 0,
+										position: 0,
+										time: time
+									}]);
+									break;
+								}
+							case 8:
+								{
+									/* 语言解析 */
+									$me.ismicrophone = false;
+									var obj = msg.data;
+									if (obj.ret == 'success') {
+										$me.txtlist.push(obj.data);
+										$me.$nextTick(function() {
+											$('.txtlist').animate({
+												scrollTop: $('.txtlist')[0].scrollHeight
+											}, 400);
+										});
+									}
+									break;
+								}
+							case 9:
+								{
+									var obj = msg.data;
+									var stuName = obj.stuName;
+									$me.stuName = obj.stuName;
+									$me.isparticlesbox = false;
+									$me.ismicrophone = true;
+									break;
+								}
+							case 11:
+								{
+									var obj = msg.data;
+									$me.stuName = obj.stuName;
+									break;
+								}
+							case 12:
+								{
+									/* 网络连接断开 */
+									$me.$toast('网络连接断开');
+									break;
+								}
+							case 13:
+								{
+									/* 网络连接连接 */
+									$me.$toast('网络连接成功');
+									break;
+								}
+							case 14:
+								{
+									/* 网络连接连接 */
+									$me.$toast('USB连接断开');
+									break;
+								}
+							case 15:
+								{
+									/* 网络连接连接 */
+									$me.$toast('USB连接成功');
+									break;
+								}
+							case 16:
+								{
+									/* 随机抽查人 */
+									var obj = msg.data;
+									$me.stuName = obj.stuName;
+									console.log($me.stuName);
+									break;
+								}
+							case 17:
+								{
+									/* 显示软件 */
+									$me.$electron.ipcRenderer.send('maxApp');
+									break;
+								}
+							case 18:
+								{
+									/* 隐藏软件 */
+									$me.$electron.ipcRenderer.send('minApp');
+									break;
+								}
+							case 19:
+								{
+									/* 停止答题 */
+									if ($me.isAnswering) {
+										$me.stopRace();
+									}
+									break;
+								}
+							case 20:
+								{
+									/*下一题 */
+									$me.nextQuestion();
+									$me.clearView();
+									break;
+								}
+							case 21:
+								{
+									/*上一题 */
+									$me.prevQuestion();
+									$me.clearView();
+									break;
+								}
+							default:
+								{
+									$me.$toast(msg.data);
+									break;
+								}
+						}
+					} else {
+						$('#danmu').data('danmuList', {});
+						$('#danmu').danmu('danmuStop');
+						$('#danmu').danmu('danmuStart');
+					}
 				}
 			}
 		}

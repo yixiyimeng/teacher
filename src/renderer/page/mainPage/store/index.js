@@ -2,7 +2,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import {
-	urlPath
+	urlPath,
+	urlwsPath
 } from '@/page/mainPage/utils/base';
 
 Vue.use(Vuex);
@@ -21,11 +22,15 @@ export default new Vuex.Store({
 		foundationpath: '', //信息管理地址
 		interactiopath: '', //数据管理地址
 		isShowbg: true,
-		isminimizeAppState: false,//最小化
-		isstartClass:'',//直播间code
-		selectWordList:[],
-		selectSentenceList:[]
-		
+		isminimizeAppState: false, //最小化
+		isstartClass: '', //直播间code
+		selectWordList: [],
+		selectSentenceList: [],
+		websock: null,
+		eventlist: [],
+		alertCont: [],
+		danmuinfolist: []
+
 	},
 	getters: {
 		GET_WEBPATH: (state) => {
@@ -37,6 +42,30 @@ export default new Vuex.Store({
 		getisminimizeApp: (state) => {
 			return state.isminimizeAppState
 		},
+		STAFF_UPDATE(state) {
+			return state.websock
+		},
+		onEvent(state) {
+			return function() {
+				if (state.eventlist.length > 0) {
+					let result = state.eventlist[0];
+					state.eventlist.splice(0, 1);
+					return result;
+				}
+				return null;
+			}
+		},
+		onalertCont(state) {
+			return function() {
+				if (state.alertCont.length > 0) {
+					let result = state.alertCont[0];
+					state.alertCont.splice(0, 1);
+					return result;
+				}
+				return null;
+			}
+		}
+
 	},
 	mutations: {
 		SET_WEBPATH: (state, webpath) => {
@@ -60,6 +89,13 @@ export default new Vuex.Store({
 		},
 		SET_selectSentenceList: (state, selectSentenceList) => {
 			state.selectSentenceList = selectSentenceList
+		},
+		STAFF_UPDATEWEBSOCKET(state, websock) {
+			/* 更新websock */
+			state.websock = websock
+		},
+		SET_danmuinfolist: (state, danmuinfolist) => {
+			state.danmuinfolist = danmuinfolist;
 		},
 	},
 	actions: {
@@ -85,6 +121,45 @@ export default new Vuex.Store({
 				})
 			})
 		},
+		STAFF_WEBSOCKET({
+			commit
+		}) {
+			let that = this;
+			commit('STAFF_UPDATEWEBSOCKET', new WebSocket(urlwsPath + 'teacher-client/websocket'))
+			// 只有定义了onopen方法，才能继续实现接收消息，即在使用的地方调用onmessage方法。
+			this.state.websock.onopen = function() {
 
+			}
+			that.state.websock.onmessage = function(evt) {
+				var received_msg = evt.data;
+				var data = '';
+				if (received_msg == '连接成功') {
+					data = received_msg;
+					that.state.eventlist.push({
+						timeStr: new Date().getTime(),
+						data: received_msg
+					})
+					that.state.alertCont.push({
+						timeStr: new Date().getTime(),
+						data: received_msg
+					})
+				} else {
+					var msg = JSON.parse(received_msg);
+					if (msg.reqType == 3) {
+						that.state.alertCont.push({
+							timeStr: new Date().getTime(),
+							data: msg
+						})
+					} else {
+						that.state.eventlist.push({
+							timeStr: new Date().getTime(),
+							data: msg
+						})
+					}
+				}
+
+			}
+
+		}
 	}
 });

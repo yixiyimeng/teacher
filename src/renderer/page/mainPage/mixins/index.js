@@ -47,7 +47,7 @@ export const IndexMixin = {
 		setInterval((n)=>{
 			 $('#danmu').data('danmuList', {});
 		 },5000) */
-		this.getAnswer();
+		// this.getAnswer();
 	},
 	destroyed() {
 		if (this.ws) {

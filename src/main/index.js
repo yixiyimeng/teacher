@@ -66,7 +66,7 @@ function createWindow() {
 		if (mainWindow.isMinimized()) {
 			mainWindow.show();
 			mainWindow.maximize();
-			 // mainWindow.setFullScreen(true);
+			// mainWindow.setFullScreen(true);
 		}
 		mainWindow.webContents.send('isexitApp');
 	});
@@ -120,7 +120,7 @@ function createWindow() {
 function createSuspensionWindow() {
 	win = new BrowserWindow({
 		width: 70, //悬浮窗口的宽度 比实际DIV的宽度要多2px 因为有1px的边框
-		 height: 60, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
+		height: 60, //悬浮窗口的高度 比实际DIV的高度要多2px 因为有1px的边框
 		type: 'toolbar', //创建的窗口类型为工具栏窗口
 		frame: false, //要创建无边框窗口
 		resizable: true, //禁止窗口大小缩放
@@ -130,7 +130,7 @@ function createSuspensionWindow() {
 		},
 		useContentSize: true,
 		maxWidth: 70,
-		 maxHeight: 220,
+		maxHeight: 220,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前
 	});
@@ -138,7 +138,7 @@ function createSuspensionWindow() {
 	const winSize = win.getSize(); //获取窗口宽高
 
 	//设置窗口的位置 注意x轴要桌面的宽度 - 窗口的宽度
-	win.setPosition(size.width - winSize[0], size.height - winSize[1]-260);
+	win.setPosition(size.width - winSize[0], size.height - winSize[1] - 260);
 	win.loadURL(subwinURL);
 
 	win.once('ready-to-show', () => {
@@ -228,93 +228,106 @@ function getTags(fullPath) {
 	})
 }
 
+const gotTheLock = app.requestSingleInstanceLock()
 
-/**
- * On ready
- * ----------------------
- * 1. create tray
- * 2. create window
- * 3. listen ,if vue is ready ,get the music path and set the music list
- */
-app.on('ready', () => {
-	createTray();
-	// new musicServer().start();
-	createWindow();
-
-	ipcMain.on("exitApp", () => {
-		if (process.platform !== 'darwin') {
-			//app.quit()
-			app.exit();
+if (!gotTheLock) {
+	app.exit()
+} else {
+	app.on('second-instance', (event, commandLine, workingDirectory) => {
+		// 当运行第二个实例时,将会聚焦到myWindow这个窗口
+		if (mainWindow) {
+			if (mainWindow.isMinimized()) mainWindow.restore()
+			// myWindow.focus()
 		}
-	});
+	})
+}
 
-	ipcMain.on('minApp', e => mainWindow.minimize());
-	ipcMain.on('maxApp', e => mainWindow.show());
-	/* 是否退出软件 */
-	ipcMain.on('isexitApp', e => {
-		mainWindow.webContents.send('isexitApp');
-		if (mainWindow.isMinimized()) {
-			mainWindow.show();
-			mainWindow.maximize();
-			// mainWindow.setFullScreen(true);
-		}
-	});
-	/* 是否上传题目 */
-	ipcMain.on('isuploadTitle', e => {
-		mainWindow.webContents.send('isuploadTitle');
-		mainWindow.show();
-		mainWindow.setFullScreen(true);
-	});
-	/* 是否退出直播间 */
-	ipcMain.on('isexitdirebro', e => {
-		mainWindow.webContents.send('exitdirebro');
-	});
-	/* 直播间状态 */
-	ipcMain.on('onlinedirebro', (e, value) => {
-		win.webContents.send('onlinedirebro', value);
-	});
-	/* 上传文件状态 */
-	ipcMain.on('uploadfile', (e, value) => {
-		win.webContents.send('isUploadfile', value);
-	});
-	ipcMain.on('showSuspensionWindow', () => {
-		if (win) {
-			if (win.isVisible()) {
-				createSuspensionWindow();
-			} else {
-				win.showInactive(); //显示但不聚焦于窗口
+	/**
+	 * On ready
+	 * ----------------------
+	 * 1. create tray
+	 * 2. create window
+	 * 3. listen ,if vue is ready ,get the music path and set the music list
+	 */
+	app.on('ready', () => {
+		createTray();
+		// new musicServer().start();
+		createWindow();
+
+		ipcMain.on("exitApp", () => {
+			if (process.platform !== 'darwin') {
+				//app.quit()
+				app.exit();
 			}
-		} else {
-			createSuspensionWindow();
-		}
+		});
+
+		ipcMain.on('minApp', e => mainWindow.minimize());
+		ipcMain.on('maxApp', e => mainWindow.show());
+		/* 是否退出软件 */
+		ipcMain.on('isexitApp', e => {
+			mainWindow.webContents.send('isexitApp');
+			if (mainWindow.isMinimized()) {
+				mainWindow.show();
+				mainWindow.maximize();
+				// mainWindow.setFullScreen(true);
+			}
+		});
+		/* 是否上传题目 */
+		ipcMain.on('isuploadTitle', e => {
+			mainWindow.webContents.send('isuploadTitle');
+			mainWindow.show();
+			mainWindow.setFullScreen(true);
+		});
+		/* 是否退出直播间 */
+		ipcMain.on('isexitdirebro', e => {
+			mainWindow.webContents.send('exitdirebro');
+		});
+		/* 直播间状态 */
+		ipcMain.on('onlinedirebro', (e, value) => {
+			win.webContents.send('onlinedirebro', value);
+		});
+		/* 上传文件状态 */
+		ipcMain.on('uploadfile', (e, value) => {
+			win.webContents.send('isUploadfile', value);
+		});
+		ipcMain.on('showSuspensionWindow', () => {
+			if (win) {
+				if (win.isVisible()) {
+					createSuspensionWindow();
+				} else {
+					win.showInactive(); //显示但不聚焦于窗口
+				}
+			} else {
+				createSuspensionWindow();
+			}
+
+		});
+		ipcMain.on('lgwin', () => {
+			iswinsm = false;
+			win.setSize(70, 220);
+		})
+
+		ipcMain.on('smwin', () => {
+			iswinsm = true;
+			win.setSize(70, 60)
+		})
 
 	});
-	ipcMain.on('lgwin', () => {
-		iswinsm = false;
-		win.setSize(70, 220);
-	})
 
-	ipcMain.on('smwin', () => {
-		iswinsm = true;
-		win.setSize(70, 60)
-	})
+	/**
+	 * On close
+	 */
+	app.on('window-all-closed', () => {
+		// 	if (process.platform !== 'darwin') {
+		// 		app.quit()
+		// 	}
+	});
 
-});
-
-/**
- * On close
- */
-app.on('window-all-closed', () => {
-	// 	if (process.platform !== 'darwin') {
-	// 		app.quit()
-	// 	}
-});
-
-/**
- * On active
- */
-app.on('activate', () => {
-	if (mainWindow === null) {
-		createWindow()
-	}
-});
+	/**
+	 * On active
+	 */
+	app.on('activate', () => {
+		if (mainWindow === null) {
+			createWindow()
+		}
+	});

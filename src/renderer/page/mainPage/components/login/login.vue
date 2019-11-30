@@ -48,16 +48,15 @@
 		mapMutations,
 		mapActions
 	} from 'vuex';
-	import html2canvas from 'html2canvas'
-	import {
-		VueCropper
-	} from 'vue-cropper'
+	// import html2canvas from 'html2canvas'
+	// import {
+	// 	VueCropper
+	// } from 'vue-cropper'
 	import {
 		dropmenu
 	} from '@/page/mainPage/components';
 	export default {
 		components: {
-			VueCropper,
 			dropmenu
 		},
 		data() {
@@ -72,14 +71,14 @@
 				isShowversion: false,
 				remark: '',
 				isRemeber: true,
-				htmlUrl: null,
-				options: {
-					img: '',
-					autoCrop: true,
-					autoCropWidth: 200,
-					autoCropHeight: 200,
-					fixedBox: true
-				},
+				// htmlUrl: null,
+				// options: {
+				// 	img: '',
+				// 	autoCrop: true,
+				// 	autoCropWidth: 200,
+				// 	autoCropHeight: 200,
+				// 	fixedBox: true
+				// },
 				loginInfolist: []
 			};
 		},
@@ -98,9 +97,9 @@
 				//TODO handle the exception
 			}
 		},
-		mounted() {
-			this.toImage();
-		},
+		// mounted() {
+		// 	this.toImage();
+		// },
 		methods: {
 			...mapActions(['getApiPath']),
 			login() {
@@ -186,20 +185,20 @@
 					this.$toast.center('请输入正确的用户名和密码');
 				}
 			},
-			toImage() {
-				// 第一个参数是需要生成截图的元素,第二个是自己需要配置的参数,宽高等
-				html2canvas(this.$refs.TopImg, {
-					backgroundColor: null
-				}).then((canvas) => {
-					let url = canvas.toDataURL('image/png');
-					this.htmlUrl = url;
-
-				})
-			},
-			realTime(data) {
-				console.log(data)
-				// this.previews = data
-			},
+// 			toImage() {
+// 				// 第一个参数是需要生成截图的元素,第二个是自己需要配置的参数,宽高等
+// 				html2canvas(this.$refs.TopImg, {
+// 					backgroundColor: null
+// 				}).then((canvas) => {
+// 					let url = canvas.toDataURL('image/png');
+// 					this.htmlUrl = url;
+// 
+// 				})
+// 			},
+// 			realTime(data) {
+// 				console.log(data)
+// 				// this.previews = data
+// 			},
 			selName(userInfo) {
 				this.username = userInfo.username;
 				this.password = userInfo.password
