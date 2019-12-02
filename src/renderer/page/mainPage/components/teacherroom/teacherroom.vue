@@ -1184,7 +1184,8 @@
 			/* 调用开始接口成功以后，页面显示 */
 			startVIew() {
 				const $me = this;
-				$me.clear();
+				// $me.clear();
+				$me.clearView();
 				$me.isAnswering = true; //开始答题
 				/*开始答题*/
 				if ($me.subjecttitle != 6 && $me.subjecttitle != 7 && $me.subjecttitle != 8 && $me.subjecttitle != 9) {
@@ -1192,8 +1193,8 @@
 				}
 				if ($me.subjecttitle != 5 && $me.subjecttitle != 8 && $me.subjecttitle != 6) {
 					/*不是抢红包,语音识别，麦克风 开始弹幕*/
-					$('#danmu').danmu('danmuStart');
 					$('#danmu').data('danmuList', {});
+					$('#danmu').danmu('danmuStart');
 				}
 				if ($me.subjecttitle == 5) {
 					if (document.getElementById('music')) {
@@ -2391,15 +2392,15 @@
 							case 20:
 								{
 									/*下一题 */
+									// $me.clearView();
 									$me.nextQuestion();
-									$me.clearView();
 									break;
 								}
 							case 21:
 								{
 									/*上一题 */
+									// $me.clearView();
 									$me.prevQuestion();
-									$me.clearView();
 									break;
 								}
 							default:
