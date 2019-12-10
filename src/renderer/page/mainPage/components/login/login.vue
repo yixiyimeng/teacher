@@ -31,9 +31,14 @@
 				</form>
 			</div>
 		</div>
-		<!-- 	<div style="height:300px; width: 100%;"><vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
-		 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox" @realTime="realTime">
-		</vue-cropper></div> -->
+		<!-- <div @click="saveImg">1233333333333333333</div>
+		<div style="height:300px; width: 100%;">
+			<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
+			 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox" @realTime="realTime">
+			</vue-cropper>
+		</div> -->
+		
+		<!-- <count-down :setTimer="20*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down> -->
 	</div>
 </template>
 
@@ -48,16 +53,17 @@
 		mapMutations,
 		mapActions
 	} from 'vuex';
-	// import html2canvas from 'html2canvas'
-	// import {
-	// 	VueCropper
-	// } from 'vue-cropper'
+	import html2canvas from 'html2canvas'
+	// import CountDown from '@/page/mainPage/components/CountDown';
+	import VueCropper from '@/page/mainPage/components/cropper/vue-cropper'
 	import {
 		dropmenu
 	} from '@/page/mainPage/components';
 	export default {
 		components: {
-			dropmenu
+			dropmenu,
+			// CountDown,
+			VueCropper
 		},
 		data() {
 			return {
@@ -71,14 +77,14 @@
 				isShowversion: false,
 				remark: '',
 				isRemeber: true,
-				// htmlUrl: null,
-				// options: {
-				// 	img: '',
-				// 	autoCrop: true,
-				// 	autoCropWidth: 200,
-				// 	autoCropHeight: 200,
-				// 	fixedBox: true
-				// },
+				htmlUrl: null,
+				options: {
+					img: '',
+					autoCrop: true,
+					autoCropWidth: 200,
+					autoCropHeight: 200,
+					fixedBox: true
+				},
 				loginInfolist: []
 			};
 		},
@@ -97,9 +103,10 @@
 				//TODO handle the exception
 			}
 		},
-		// mounted() {
-		// 	this.toImage();
-		// },
+		mounted() {
+			this.toImage();
+			// this.$refs.countdown.startCount()
+		},
 		methods: {
 			...mapActions(['getApiPath']),
 			login() {
@@ -185,23 +192,38 @@
 					this.$toast.center('请输入正确的用户名和密码');
 				}
 			},
-// 			toImage() {
-// 				// 第一个参数是需要生成截图的元素,第二个是自己需要配置的参数,宽高等
-// 				html2canvas(this.$refs.TopImg, {
-// 					backgroundColor: null
-// 				}).then((canvas) => {
-// 					let url = canvas.toDataURL('image/png');
-// 					this.htmlUrl = url;
-// 
-// 				})
-// 			},
-// 			realTime(data) {
-// 				console.log(data)
-// 				// this.previews = data
-// 			},
+			toImage() {
+				// 第一个参数是需要生成截图的元素,第二个是自己需要配置的参数,宽高等
+				html2canvas(this.$refs.TopImg, {
+					backgroundColor: null
+				}).then((canvas) => {
+					let url = canvas.toDataURL('image/png');
+					this.htmlUrl = url;
+					console.log(this.htmlUrl)
+
+				})
+			},
+			realTime(data) {
+				console.log(data)
+				// this.previews = data
+			},
+			// saveImg(){
+			// 	this.$refs.cropper.getCropData(data => {
+			// 		console.log(data)
+			// 		/* 获取头像base64 */
+			// 		var imgdata = data.split(',')[1];
+			// 		var fileType = data.split(';')[0].split('/')[1];
+			// 		
+			// 		
+			// 	
+			// 	});
+			// },
 			selName(userInfo) {
 				this.username = userInfo.username;
 				this.password = userInfo.password
+			},
+			stopCountDown() {
+				console.log('12223');
 			}
 		}
 	};

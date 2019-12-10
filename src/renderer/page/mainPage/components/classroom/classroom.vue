@@ -62,10 +62,10 @@
 						<div><a href="javascript:;" class="setbtn" @click="showitembank=!showitembank"><i></i>
 								<p>导入题库</p>
 							</a>
-							<a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
+							<a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;showXianshenWin()"><i></i>
 								<p>语音题导入</p>
 							</a>
-							<a href="javascript:;" class="setEnglishbtn"  @click="showitembank=!showitembank;showXianshenWin()"><i></i>
+							<a href="javascript:;" class="setEnglishbtn"  @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
 								<p>导入题库</p>
 							</a>
 						</div>

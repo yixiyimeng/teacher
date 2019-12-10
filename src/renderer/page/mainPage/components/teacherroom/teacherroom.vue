@@ -80,9 +80,9 @@
 		</div>
 		<!-- 显示 -->
 		<div class="activing">
-			<div id="danmu"></div>
+			<div id="danmu" :style="{zIndex:isAnswering?999:-1}"></div>
 			<!--红包-->
-			<div class="couten"></div>
+			<div class="couten" :style="{zIndex:isAnswering?999:-1}"></div>
 			<div id="audio" v-if="ismicrophone">
 				<div class="audiobox">
 					<div id="one"></div>
@@ -341,11 +341,19 @@
 				</div>
 			</div>
 		</div>
-		<div class="setcountDown">
+		<!-- <div class="setcountDown">
 			<span @click="checkshowcountDown" v-if="iscountDown">{{ countDownList }}</span>
 			<div class="checkbox" :class="{ active: iscountDown }" @click="checkcountDown"></div>
 		</div>
 		<timeswiper @countDown="countDown" @cancelcountDown="cancelcountDown" v-if="iscountDown && showcountDown" class="countDownbox"></timeswiper>
+		 -->
+		<count-down v-if="isCountDown&&isAnswering" :setTimer="20*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down>
+		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;">
+			<iframe :src="resourceUrl" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+		</div>
+		<div style="position: absolute; left: 0; bottom: 0;">
+			<img :src="imgUrl" alt="" style="width: 200px; height: 200px;">
+		</div>
 	</div>
 </template>
 
@@ -361,6 +369,7 @@
 		load,
 		board,
 		timeswiper,
+		CountDown,
 		toolbar
 	} from '@/page/mainPage/components';
 	import vSelect from '@/page/mainPage/components/vue-select';
@@ -392,7 +401,8 @@
 			board,
 			timeswiper,
 			vSelect,
-			toolbar
+			toolbar,
+			CountDown
 		},
 		data() {
 			return {
@@ -534,7 +544,7 @@
 				colorList: [],
 				isSatrspeaker: false, //是否开启扬声器
 				countDownTime: '',
-				iscountDown: false,
+				// iscountDown: false,
 				showcountDown: false,
 				isrankboradlist: false, //是否显示语音测评结果
 				rankboradlist: [], //语音测评排名
@@ -543,12 +553,14 @@
 				XStalkName: null,
 				xsAudioUrl: '', //音频文件地址
 				isPlay: false, //是否播放音频
+				resourceUrl: 'http://www.baidu.com',
+				imgUrl:''
 			};
 		},
 		computed: {
 			// ...mapState(['platformpath', 'interactiopath', 'foundationpath'])
 			...mapState(['platformpath', 'interactiopath', 'foundationpath', 'isminimizeAppState', 'directBroadcastCode',
-				'selectWordList', 'selectSentenceList'
+				'selectWordList', 'selectSentenceList', 'isCountDown'
 			]),
 			...mapGetters(['getisminimizeApp', 'onEvent']),
 			// alertCont() {
@@ -590,6 +602,10 @@
 			this.$electron.ipcRenderer.send('onlinedirebro', true);
 			this.getNamelist('bingingCard/getAllBingdCardInfo');
 			this.getjson();
+			/* 主进程 通知是最小化 成功*/
+			this.$electron.ipcRenderer.on('iframeUrl', (event, iframeUrl) => {
+				this.resourceUrl=iframeUrl
+			});
 
 		},
 
@@ -617,7 +633,9 @@
 				}, false);
 			}
 			/* 接受websock   */
-		  this.onmessage();
+			this.onmessage();
+			/* 获取资源 */
+			this.getResource();
 		},
 		watch: {
 			isshowNamelist: function(newval, oldval) {
@@ -1171,7 +1189,8 @@
 					})
 					.then(da => {
 						$me.startVIew();
-						if ($me.iscountDown) {
+						$me.saveImgFullScreen();
+						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
 					})
@@ -1230,12 +1249,12 @@
 					//$me.isparticlesbox = true;
 				}
 			},
-			clearView(){
+			clearView() {
 				/* 是否教鞭切换发题是，清屏页面 */
 				const $me = this;
 				$me.clear();
 				$me.isStop = false;
-				$me.isAnswering = false; 
+				$me.isAnswering = false;
 				/*清空弹幕*/
 				$('#danmu').data('danmuList', {});
 				$('#danmu').danmu('danmuStop');
@@ -1351,9 +1370,9 @@
 						if ($me.countDownTime > 0) {
 							clearInterval(this.timer);
 						}
-						$me.countDownTime = 0;
-						$me.iscountDown = false;
-						$me.showcountDown = false;
+						// $me.countDownTime = 0;
+						// $me.iscountDown = false;
+						// $me.showcountDown = false;
 					})
 					.catch(function(err) {
 						$me.$loading.close();
@@ -2040,7 +2059,8 @@
 						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.startVIew();
-						if ($me.iscountDown) {
+						$me.saveImgFullScreen();
+						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
 					} else {
@@ -2062,7 +2082,8 @@
 						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.startVIew();
-						if ($me.iscountDown) {
+						$me.saveImgFullScreen();
+						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
 					} else {
@@ -2093,22 +2114,31 @@
 			cancelcountDown() {
 				this.showcountDown = false;
 			},
+			stopCountDown() {
+				console.log('12223');
+				/* 倒计时结束 */
+				this.stopRace();
+			},
 			/* 开始计时 */
 			timeDown() {
-				this.showcountDown = false;
-				if (this.countDownTime > 0) {
-					this.timer = setInterval(() => {
-						this.countDownTime--;
-						if (this.countDownTime <= 0) {
-							this.countDownTime = 0;
-							clearInterval(this.timer);
-							this.stopRace();
-						}
-					}, 1000);
-				} else {
-					this.countDownTime = 0;
-					this.stopRace();
-				}
+				this.$nextTick(() => {
+					this.$refs.countdown.startCount();
+				})
+
+				// this.showcountDown = false;
+				// if (this.countDownTime > 0) {
+				// 	this.timer = setInterval(() => {
+				// 		this.countDownTime--;
+				// 		if (this.countDownTime <= 0) {
+				// 			this.countDownTime = 0;
+				// 			clearInterval(this.timer);
+				// 			this.stopRace();
+				// 		}
+				// 	}, 1000);
+				// } else {
+				// 	this.countDownTime = 0;
+				// 	this.stopRace();
+				// }
 			},
 			checkcountDown() {
 				if (this.isAnswering) {
@@ -2415,6 +2445,38 @@
 						$('#danmu').danmu('danmuStart');
 					}
 				}
+			},
+			saveImgFullScreen() {
+				/* 全屏截图 */
+				const $me = this;
+				$me.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/common/saveImgFullScreen'
+				}).then(da => {
+					if (da.data.ret == 'success') {
+						/* 截图保存给后端 */
+						this.imgUrl='data:image/jpg;base64,'+da.data.data
+					} else {
+						$me.$toast.center(da.data.message);
+					}
+				});
+			},
+			/* 获取题库资源 */
+			getResource() {
+				const $me = this;
+				$me.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/platform/authentication',
+					data:{
+						serviceType:1//1 学科网，2组卷网 3，e卷通
+					}
+				}).then(da => {
+					if (da.data.ret == 'success') {
+						this.resourceUrl=da.data.data
+					} else {
+						$me.$toast.center(da.data.message);
+					}
+				});
 			}
 		}
 	};
@@ -2488,8 +2550,8 @@
 	.countDownbox {
 		position: fixed;
 		right: 220px;
-		bottom: 40px;
-		width: 270px;
+		top: 40px;
+		width: 160px;
 		z-index: 9999;
 	}
 

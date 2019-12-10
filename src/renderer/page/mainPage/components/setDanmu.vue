@@ -3,14 +3,14 @@
 		<div v-if="isShowmenu">
 			<div class="setdanmu-hd flex flex-pack-justify flex-align-center"><span>弹幕设置</span>
 				<!-- <a-switch size="small"  /> -->
-				<a href="javascript:;" class="close" @click="close">×</a>
+				<a href="javascript:;" class="close" @click="close"></a>
 			</div>
 			<div class="setdanmu-bd">
 				<div class="flex flex-pack-justify" v-for="(item,index) in list" :key="index">
 					<span class="flex-1 name" @click="setDetails(index)">{{item.questionTypeName}}</span>
 					<!-- <a-switch size="small" v-model="item.isOpenBarrageflag" /> -->
 					<label>
-						<input type="checkbox" style="opacity: 0;">
+						<input type="checkbox" style="opacity: 0;" v-model="item.isOpenBarrageflag">
 						<div class="ant-switch ant-switch-small">
 							<span class="ant-switch-inner"></span>
 							<div class="ant-click-animating-node"></div>
@@ -25,6 +25,13 @@
 		<div v-if="!isShowmenu">
 			<div class="setdanmu-hd flex flex-pack-justify flex-align-center"><span>单题单选题设置</span>
 				<!-- <a-switch size="small" v-model="setinfo.isOpenBarrageflag" /> -->
+				<label>
+					<input type="checkbox" style="opacity: 0;" v-model="setinfo.isOpenBarrageflag">
+					<div class="ant-switch ant-switch-small">
+						<span class="ant-switch-inner"></span>
+						<div class="ant-click-animating-node"></div>
+					</div>
+				</label>
 			</div>
 			<div class="setdanmu-bd">
 				<div>
@@ -65,7 +72,7 @@
 			<div class="setdanmu-ft">
 				<a href="javascript:;" class="defaultBtn" @click="isShowmenu=true">取消</a>
 				<!-- <a href="javascript:;" class="defaultBtn">恢复默认值</a> -->
-				<a href="javascript:;" class="saveBtn" @click="saveOneInfo">确定</a>
+				<a href="javascript:;" class="onesaveBtn" @click="saveOneInfo">确定</a>
 			</div>
 		</div>
 	</div>
@@ -90,7 +97,6 @@
 				}
 			};
 		},
-		components: {},
 		created() {
 			this.getDanmuinfo();
 		},
@@ -99,36 +105,24 @@
 		methods: {
 			/* 查询弹幕设置 */
 			getDanmuinfo() {
-				// this.$postAction(api.getDanmuinfo + '45').then(da => {
-				// 	if (da && da.ret == 'success') {
-				// 		var list = da.data;
-				// 		if (list && list.length > 0) {
-				// 			list = list.map(item => {
-				// 				item.isOpenBarrageflag = item.isOpenBarrage == 1;
-				// 				return item
-				// 			})
-				// 		}
-				// 		this.list = da.data;
-				// 		this.$store.commit('SET_danmuinfolist', this.list);
-				// 	}
-				// })
+
 				this.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/teacherHabit/queryTeacHabit/45',
 				}).then(da => {
 					console.log(da)
-						if (da.data && da.data.ret == 'success') {
-							var list = da.data.data;
-							if (list && list.length > 0) {
-								list = list.map(item => {
-									item.isOpenBarrageflag = item.isOpenBarrage == 1;
-									return item
-								})
-							}
-							this.list = list;
-							console.log(this.list)
-							this.$store.commit('SET_danmuinfolist', this.list);
+					if (da.data && da.data.ret == 'success') {
+						var list = da.data.data;
+						if (list && list.length > 0) {
+							list = list.map(item => {
+								item.isOpenBarrageflag = item.isOpenBarrage == 1;
+								return item
+							})
 						}
+						this.list = list;
+						console.log(this.list)
+						this.$store.commit('SET_danmuinfolist', this.list);
+					}
 				});
 
 			},
@@ -139,16 +133,19 @@
 				this.setinfo = Object.assign({}, obj);
 			},
 			saveOneInfo() {
-				var param = {
-					hardwareVersion: '45',
-					teacHabitDOs: [{
-						questionType: this.setinfo.questionType,
-						diaphaneity: this.setinfo.diaphaneity, //透明度
-						location: this.setinfo.location, //位置
-						isOpenBarrage: this.setinfo.isOpenBarrageflag ? 1 : 0, //是否开启弹幕
-					}]
-				}
-				this.saveInfo(param)
+				var item = {
+					questionType: this.setinfo.questionType,
+					diaphaneity: this.setinfo.diaphaneity, //透明度
+					location: this.setinfo.location, //位置
+					isOpenBarrage: this.setinfo.isOpenBarrageflag ? 1 : 0, //是否开启弹幕
+				};
+				this.list[this.setindex] = item;
+				// var param = {
+				// 	hardwareVersion: '45',
+				// 	teacHabitDOs: []
+				// }
+				// this.saveInfo(param)
+				this.saveAllinfo();
 			},
 			saveAllinfo() {
 				var list = this.list;
@@ -157,26 +154,40 @@
 						var obj = {
 							questionType: item.questionType,
 							isOpenBarrage: item.isOpenBarrageflag ? 1 : 0,
+							diaphaneity: item.diaphaneity, //透明度
+							location: item.location, //位置
 						}
 						return obj
 					})
 				}
 				var param = {
-					hardwareVersion: '44',
+					hardwareVersion: '45',
 					teacHabitDOs: list
 				}
 				this.saveInfo(param)
 			},
 			saveInfo(param) {
 
-				this.$postAction(api.setDanmuinfo, param).then(da => {
-					if (da && da.ret == 'success') {
-						this.$toast.center('修改成功!');
-						this.getDanmuinfo();
-					}
-				})
+				this.$http({
+						method: 'post',
+						url: urlPath + 'teacher-client/teacherHabit/save',
+						data: param
+					})
+					.then(da => {
+						console.log(da);
+						if (da.data && da.data.ret == 'success') {
+							this.$toast.center('修改成功!');
+							this.getDanmuinfo();
+						}
+					})
+				// this.$postAction(api.setDanmuinfo, param).then(da => {
+				// 	if (da && da.ret == 'success') {
+				// 		this.$toast.center('修改成功!');
+				// 		this.getDanmuinfo();
+				// 	}
+				// })
 			},
-			close(){
+			close() {
 				this.$emit('close')
 			}
 
@@ -192,6 +203,7 @@
 		transform: translateX(-50%);
 		background: #333;
 		border-radius: 10px;
+		overflow: hidden;
 		color: #fff;
 		width: 331px;
 		z-index: 9999;
@@ -201,11 +213,18 @@
 			padding: 0 30px;
 			border-bottom: 1px solid #666;
 			font-size: 18px;
-			.close{
-				color: #fff;
-				font-weight: bold;
-				font-size: 30px;
-				line-height: 0;
+			position: relative;
+
+			.close {
+				display: block;
+				height: 12px;
+				width: 12px;
+				background: url(../assets/close.png);
+				background-size: cover;
+				position: absolute;
+				right: 20px;
+				top: 50%;
+				transform: translateY(-50%);
 			}
 		}
 
@@ -227,20 +246,35 @@
 		}
 
 		.saveBtn,
-		.defaultBtn {
+			{
 			display: block;
 			background: #1890ff;
 			color: #fff;
 			line-height: 30px;
-			width: 221px;
+			width: 50%;
 			border-radius: 50px;
 			text-align: center;
 			margin: 20px auto 0;
 			font-size: 18px;
 		}
 
-		.defaultBtn {
+		// .defaultBtn {
+		// 	background: #999;
+		// }
+		.defaultBtn,
+		.onesaveBtn {
+			display: block;
+			width: 50% !important;
+			line-height: 51px;
+			float: left;
+			text-align: center;
+			color: #fff;
+			font-size: 18px;
 			background: #999;
+
+			&+a {
+				background: #1890ff;
+			}
 		}
 
 		.small /deep/ .ant-radio-wrapper {
@@ -253,12 +287,14 @@
 
 		.checkbox {
 			width: 100%;
+			margin-top: 20px;
 		}
 
 		.checkbox /deep/ .ant-radio-wrapper {
 			margin-right: 0;
 			width: 25%;
 			display: inline-block;
+			font-size: 14px;
 		}
 
 		/deep/ .ant-switch-checked {

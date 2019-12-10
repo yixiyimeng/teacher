@@ -1,8 +1,8 @@
 <template>
 	<div class="timeswiper clearfix">
-		<div v-if="isEditTimer">
+		<div>
 			<div class="timeswiper-hd"><span>计时器</span>
-				<a href="javascript:;" class="close"></a>
+				<a href="javascript:;" class="close" @click="cancelcountDown"></a>
 			</div>
 			<div class="swiperlist">
 				<div class="shadowMask"></div>
@@ -23,53 +23,9 @@
 					<swiper-slide v-for="(item, index) in seclist" :key="index">{{ item }}</swiper-slide>
 				</swiper>
 			</div>
-			<!-- 设置 -->
-			<!-- <div class="setgroup">
-				<div class="rang"><span>答题范围：</span>
-					<input type="text" class="txt">
-					道<span class="ml0 mr0">~</span>
-					<input type="text" class="txt">
-					道
-				</div>
-				<div class="checkedlist">
-					<div class="ant-checkbox-group">
-						<label class="ant-checkbox-group-item ant-checkbox-wrapper" v-for="(item, index) in plainOptions" :key="index">
-							<span class="ant-checkbox">
-								<input type="checkbox" :value="item.value" class="ant-checkbox-input" />
-								<span class="ant-checkbox-inner"></span>
-							</span>
-							<span>{{ item.label }}</span>
-						</label>
-					</div>
-				</div>
-			</div> -->
+
 		</div>
-		<div v-if="!isEditTimer">
-			<div class="timeswiper-hd">
-				<a href="javascript:;" class="edit" @click="isEdit=!isEdit">{{isEdit?'完成':'编辑'}}</a>
-				<span>计时器</span>
-				<a href="javascript:;" class="add"></a>
-			</div>
-			<div class="timelist">
-				<div class="flex flex-align-center flex-pack-justify" :class="{'active':item.state}" v-for="(item,index) in timelist"
-				 :key="index">
-					<!-- <a-icon type="minus-circle" class="close" v-if="isEdit" /> -->
-					<a href="javascript:;" class="close" v-if="isEdit"></a>
-					<div class="flex-1">
-						<p>{{item.time}}</p>
-						<p>{{item.label}}</p>
-					</div>
-					<label>
-						<input type="checkbox" style="opacity: 0;">
-						<div class="ant-switch ant-switch-small">
-							<span class="ant-switch-inner"></span>
-							<div class="ant-click-animating-node"></div>
-						</div>
-					</label>
-					<!-- <a-switch size="small" v-model="item.state" /> -->
-				</div>
-			</div>
-		</div>
+
 		<div class="timebtnlist clearfix">
 			<a href="javascript:;" @click="cancelcountDown">取消</a>
 			<a href="javascript:;" @click="getTime">确定</a>
@@ -154,7 +110,9 @@
 					}
 				],
 				isEdit: false,
-				isEditTimer: true
+				isEditTimer: true,
+				isCountDown: 1,
+				isShow: false
 			};
 		},
 		created() {
@@ -177,20 +135,52 @@
 				return this.$refs.mySwiper3.swiper;
 			}
 		},
+		mounted() {
+			this.show()
+		},
 		methods: {
+			show() {
+				this.isShow = true;
+				/* 回填时间 */
+				console.log(this.$store.state.countDown)
+				var time = this.$store.state.countDown;
+				const hours = 60 * 60;
+				const minutes = 60;
+
+				const h = Math.floor((time / hours) % 24);
+				const m = Math.floor((time / minutes) % 60);
+				const s = Math.floor(time % 60);
+
+				this.$nextTick(() => {
+					this.swiper.update();
+					this.swiper1.update();
+					this.swiper2.update();
+					this.swiper.slideToLoop(h, 0, false);
+					this.swiper1.slideToLoop(m, 0, false);
+					this.swiper2.slideToLoop(s, 0, false)
+				})
+
+			},
 			getTime() {
 				this.selhour = this.hourlist[this.swiper.realIndex];
 				this.selmin = this.minlist[this.swiper1.realIndex];
 				this.selsec = this.seclist[this.swiper2.realIndex];
 				let time = parseInt(this.selhour) * 60 * 60 + parseInt(this.selmin) * 60 + parseInt(this.selsec);
-				this.$emit('countDown', time)
-				localStorage.setItem('countDown',time)
+				this.$emit('cancelcountDown');
+				this.$store.commit('SET_countDown', time)
+				// localStorage.setItem('countDown', time)
 				//console.log(this.selhour + ':' + this.selmin + ':' + this.selsec);
 			},
 			cancelcountDown() {
-				this.$emit('cancelcountDown')
+				this.$emit('cancelcountDown');
+				this.isShow = false;
 			},
-			onChange() {}
+			onChange() {
+				this.isCountDown = this.isCountDown == 1 ? 0 : 1;
+				console.log(this.isCountDown);
+				// this.isCountDown=value;
+				// this.$store.commit('SET_isCountDown',value)
+			}
 
 		}
 	};
@@ -210,7 +200,7 @@
 		background: #333;
 		border-radius: 10px;
 		color: #fff;
-		width: 380px;
+		width: 330px;
 		position: fixed;
 		bottom: 240px;
 		left: 40%;
@@ -224,6 +214,13 @@
 		border-bottom: 1px solid #666;
 		font-size: 18px;
 		position: relative;
+
+		.switchbox {
+			position: absolute;
+			right: 20px;
+			top: 50%;
+			transform: translateY(-50%);
+		}
 
 		a.close {
 			display: block;
@@ -416,18 +413,19 @@
 		}
 	}
 
-	/deep/ .ant-switch {
-		background: #666;
-	}
-
-	/deep/ .ant-switch-checked {
-		background: #00de8d;
-	}
+	// 	/deep/ .ant-switch {
+	// 		background: #666;
+	// 	}
+	// 
+	// 	/deep/ .ant-switch-checked {
+	// 		background: #00de8d;
+	// 	}
 
 	.timelist {
 		&>div {
 			padding: 10px 20px;
 			border-bottom: 1px solid #666;
+
 			.close {
 				// color: #f00;
 				margin-right: 14px;
@@ -457,6 +455,4 @@
 			}
 		}
 	}
-
-	
 </style>

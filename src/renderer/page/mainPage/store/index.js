@@ -10,13 +10,6 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
-		duration: 0, // 当前歌曲总长度秒数
-		currentTime: 0, // 当前歌曲播放秒数
-		currentPoint: 0, // 当前歌曲进度条百分比 0-1
-		playStatus: false, // 当前歌曲播放状态 false-暂停 true-播放中
-		analyser: null, // 当前歌曲分析器
-		musicList: [], // 音乐播放列表
-		musicIndex: 0, // 当前播放序号
 		webpath: '', //服务器地址
 		platformpath: '', //平台地址
 		foundationpath: '', //信息管理地址
@@ -29,7 +22,9 @@ export default new Vuex.Store({
 		websock: null,
 		eventlist: [],
 		alertCont: [],
-		danmuinfolist: []
+		danmuinfolist: [],
+		countDown:localStorage.getItem('countDown')||0,
+		isCountDown:localStorage.getItem('isCountDown')||0,//是否启用倒计时
 
 	},
 	getters: {
@@ -94,9 +89,19 @@ export default new Vuex.Store({
 			/* 更新websock */
 			state.websock = websock
 		},
-		SET_danmuinfolist: (state, danmuinfolist) => {
+		SET_danmuinfolist(state, danmuinfolist){
 			state.danmuinfolist = danmuinfolist;
+			localStorage.setItem('danmuinfolist', JSON.stringify(danmuinfolist));
 		},
+		SET_countDown(state, countDown){
+			state.countDown = countDown;
+			localStorage.setItem('countDown', countDown);
+		},
+		SET_isCountDown(state, isCountDown){
+			state.isCountDown = isCountDown;
+			localStorage.setItem('isCountDown', isCountDown);
+		}
+		
 	},
 	actions: {
 		getApiPath({

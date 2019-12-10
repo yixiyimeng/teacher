@@ -292,7 +292,7 @@ a {
 	border-radius: @borderRadius;
 	background: rgba(255, 255, 255, 1);
 	border: 2px solid @baseColor;
-	height: 60px;
+	height: 64px;
 	line-height: 60px;
 	margin-top: 20px;
 	position: relative;
@@ -335,7 +335,7 @@ a {
 	border-radius: @borderRadius;
 	line-height: 60px;
 	text-align: center;
-	color: #fff;
+	color: #fff !important;
 	box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.4);
 	font-size: 26px;
 }
@@ -672,6 +672,7 @@ a {
 	width: 63px;
 	height: 63px;
 	box-shadow:0 0 10px rgba(179, 0, 39, 0.2);
+	margin: 0 10px;
 }
 // .bottommenu a.next i,
 // .bottommenu a.prev i,
@@ -725,7 +726,7 @@ a {
 .addSubject {
 	position: fixed;
 	left: 50%;
-	margin-left:60px;
+	margin-left:100px;
 	bottom: 40px;
 	background: #d09943 url(../../assets/addtitle.png) no-repeat center center;
 	background-size: 40px auto;
@@ -959,7 +960,8 @@ a {
 		font-size: 12px;
 	}
 
-	input:checked+.ant-switch {
+	input:checked+.ant-switch,
+	.checked .ant-switch{
 		background-color: #00de8d;
 	}
 
@@ -985,7 +987,8 @@ a {
 		box-shadow: 0 2px 4px 0 rgba(0, 35, 11, 0.2);
 	}
 
-	input:checked+.ant-switch::after {
+	input:checked+.ant-switch::after,
+	.checked .ant-switch::after{
 		left: 100%;
 		margin-left: -1px;
 		transform: translateX(-100%);

@@ -8,4 +8,5 @@ import load from '@/page/mainPage/components/load/load.vue';
 import timeswiper from '@/page/mainPage/components/timeswiper.vue';
 import xianshen from '@/page/mainPage/components/xianshen';
 import toolbar from '@/page/mainPage/components/toolbar.vue';
-export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar}
+import CountDown from '@/page/mainPage/components/CountDown';
+export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar,CountDown}

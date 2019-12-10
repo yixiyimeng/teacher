@@ -88,6 +88,12 @@ function createWindow() {
 		win.webContents.send('isminimizeAppsub', false);
 
 	});
+	mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
+	   console.log("abcd"+url)
+	   mainWindow.webContents.send('iframeUrl',url);
+	  event.preventDefault()
+	
+	})
 	/* 调试 */
 	globalShortcut.register('CTRL+T', () => {
 		//mainWindow.setFullScreen(false);
@@ -310,6 +316,14 @@ if (!gotTheLock) {
 		ipcMain.on('smwin', () => {
 			iswinsm = true;
 			win.setSize(70, 60)
+		})
+		ipcMain.on('new-window',function() {
+			console.log(12233);
+		         // mainWindow.loadURL(url.format({
+		         // pathname: path.join(__dirname, '/views/list.html'),
+		         // protocol: 'file:',
+		         // slashes: true
+		     // }))
 		})
 
 	});

@@ -500,7 +500,7 @@ var cyntax = {
 		top: '10%',
 		height: '80%',
 		width: '100%',
-		zindex: 100,
+		zindex: -1,
 		speed: 8000,
 		sumTime: 65535,
 		danmuLoop: false,

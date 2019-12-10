@@ -15,6 +15,9 @@ export default {
 	@import 'assets/css/animate.css';
 	@import 'assets/css/reset.css';
 	@import 'assets/css/toast.css';
+	html,body{
+		background: rgba(0, 0, 0, 0) !important;
+	}
 	body {
 		font-family: 'Microsoft YaHei';
 		-webkit-app-region: no-drag;
