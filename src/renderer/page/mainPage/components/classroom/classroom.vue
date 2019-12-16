@@ -58,14 +58,14 @@
 					<a href="javascript:;" class="returnback mt20" @click="returnback()">返回</a>
 					<a href="javascript:;" class="loginBtn mt20 flex-1" @click="sendClass()">确定</a>
 					<!-- <a href="javascript:;" class="setEnglish mt20" @click="showXianshenWin()"></a> -->
-					<div class="setupload mt20 flex" :class="{'active':showitembank}">
-						<div><a href="javascript:;" class="setbtn" @click="showitembank=!showitembank"><i></i>
+					<div class="setupload mt20 flex" :class="{'active':showitembank&&sendInfo.classCode && sendInfo.subjectCode}">
+						<div><a href="javascript:;" class="setbtn" @click="settest"><i></i>
 								<p>导入题库</p>
 							</a>
 							<a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;showXianshenWin()"><i></i>
 								<p>语音题导入</p>
 							</a>
-							<a href="javascript:;" class="setEnglishbtn"  @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
+							<a href="javascript:;" class="setEnglishbtn" @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
 								<p>导入题库</p>
 							</a>
 						</div>
@@ -126,7 +126,7 @@
 				isSend: false,
 				isClearquestion: false, //是否清空之前作答结果
 				isShowclear: false,
-				showitembank:false
+				showitembank: false
 			};
 		},
 		components: {
@@ -463,6 +463,13 @@
 			showXianshenWin() {
 				/* 显示先声题库弹出框 */
 				this.$refs.xianshenWin.showWin();
+			},
+			settest() {
+				if (this.sendInfo.classCode && this.sendInfo.subjectCode) {
+					this.showitembank = !this.showitembank
+				} else {
+					this.$toast.center('请先选择班级和主题');
+				}
 			}
 		}
 	};

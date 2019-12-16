@@ -9,4 +9,5 @@ import timeswiper from '@/page/mainPage/components/timeswiper.vue';
 import xianshen from '@/page/mainPage/components/xianshen';
 import toolbar from '@/page/mainPage/components/toolbar.vue';
 import CountDown from '@/page/mainPage/components/CountDown';
-export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar,CountDown}
+import audiotxt from '@/page/mainPage/components/audiotxt';
+export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar,CountDown,audiotxt}

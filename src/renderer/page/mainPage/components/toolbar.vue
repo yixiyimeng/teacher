@@ -1,7 +1,7 @@
 <template>
-	<div class="toolbox">
+	<div class="toolbox" ref="TopImg">
 
-		<a href="javascript:;" class="settoolbar" ref="TopImg" @click="isShow=!isShow;type=0"></a>
+		<!-- <a href="javascript:;" class="settoolbar" ref="TopImg" @click="isShow=!isShow;type=0"></a> -->
 		<div class="toolbar" v-if="isShow">
 			<div>
 
@@ -14,7 +14,7 @@
 					<i></i>
 					<p>电子白板</p>
 				</a>
-				<a href="javascript:;" class="printScreen" @click="saveImgFullScreen">
+				<a href="javascript:;" class="printScreen" @click.stop="saveImgFullScreen">
 					<i></i>
 					<p>截图</p>
 				</a>
@@ -37,7 +37,7 @@
 				</a>
 			</div>
 		</div>
-		<div class="printScreenbox" v-if="type==3">
+		<div class="printScreenbox" v-show="type==3">
 			<div style="height:100%; width: 100%;">
 				<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
 				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox">
@@ -88,10 +88,29 @@
 			timeswiper,
 			VueCropper
 		},
+		mounted() {
+			document.addEventListener('click', e => {
+				if (this.$refs.TopImg) {
+					if (!this.$refs.TopImg.contains(e.target)) {
+						this.isShow = false;
+						this.type=0;
+					}
+				} else {
+
+				}
+				/* */
+			});
+		},
 		methods: {
 			...mapMutations(['SET_isCountDown']),
 			close: function() {
 				this.type = 0
+			},
+			showSet() {
+				this.isShow = true
+			},
+			hide() {
+				this.isShow = false
 			},
 			show(type) {
 				const $me = this;
@@ -121,16 +140,17 @@
 			saveImgFullScreen() {
 				/* 全屏截图 */
 				const $me = this;
-				$me.isShow = false;
-				$me.type=3;
-				html2canvas(this.$refs.TopImg, {
-					backgroundColor: null
-				}).then((canvas) => {
-					let url = canvas.toDataURL('image/png');
-					this.htmlUrl = url;
-					console.log(this.htmlUrl)
 
-				})
+				$me.type = 3;
+				$me.isShow = false;
+// 				html2canvas(this.$refs.TopImg, {
+// 					backgroundColor: null
+// 				}).then((canvas) => {
+// 					let url = canvas.toDataURL('image/png');
+// 					this.htmlUrl = url;
+// 					console.log(this.htmlUrl)
+// 
+// 				})
 				// $me.$http({
 				// 	method: 'post',
 				// 	url: urlPath + 'teacher-client/common/saveImgFullScreen'
@@ -146,7 +166,7 @@
 			saveImg() {
 				this.$refs.cropper.getCropData(data => {
 					console.log(data)
-					this.type=0;
+					this.type = 0;
 				})
 			}
 
@@ -171,18 +191,18 @@
 	}
 
 	.toolbar {
-		left: 50%;
-		transform: translateX(-100%);
-		margin-left: -180px;
+		left: 230px;
+		// transform: translateX(-100%);
+		// margin-left: -180px;
 		position: fixed;
 		bottom: 40px;
-		z-index: 9999;
+		z-index: 99999;
 
 		// display:none;
 		&:before {
 			content: '';
 			display: block;
-			right: -8px;
+			left: -8px;
 			bottom: 20px;
 			position: absolute;
 			height: 30px;
@@ -196,7 +216,7 @@
 		&:after {
 			content: '';
 			display: block;
-			right: 0;
+			left: 0;
 			bottom: 10px;
 			position: absolute;
 			height: 50px;

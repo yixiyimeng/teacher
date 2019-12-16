@@ -3,7 +3,7 @@
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<!-- 工具箱 -->
-		<toolbar></toolbar>
+		<toolbar ref="toolbar"></toolbar>
 		<div class="bottommenu">
 			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
 			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
@@ -22,15 +22,18 @@
 		<!-- 添加题目 -->
 		<a href="javascript:;" class="addSubject" @click="isAddSubject = !isAddSubject" v-show="isSubject"></a>
 		<!-- 绑定名单 -->
+
 		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
 			<div class="namelistbox-bd">
 				<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist">×</a>
 				<ul class="clearfix">
 					<!-- {{namelist}} -->
-					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
+					<li v-for="(item, index) in namelist" :class="{ active: item.checked }" class="active">
 						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
 						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
+						<span class="notice"></span>
+						<span class="play"></span>
 						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" style="opacity: .6;" />
 					</li>
 				</ul>
@@ -63,20 +66,13 @@
 		<load :isprogress="isprogress" :rate="rate"></load>
 		<!-- 显示答案 -->
 		<notice :titlename="titlename" class="animated fast" :class="[titlename ? 'slideInDown' : 'slideOutUp']"></notice>
-		<div class="namelist">
-			<div class="setting-drawer-index-handle" @click="isshowNamelist = !isshowNamelist" title="名单"><img src="../../assets/userlist.png"
-				 alt="" /></div>
-			<div class="swiper-container" style="height: 100%; overflow: auto;">
-				<ul class="clearfix">
-					<li v-for="(item, index) in namelist" style="cursor: pointer;" title="解绑">
-						<i :class="item.state == 0 ? 'warn' : 'success'"></i>
-						<span>{{ item.stuName }}</span>
-						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" style="width: 20px; height: 20px;" @click="unBindOneStu(item)" />
-					</li>
-				</ul>
-			</div>
-			<div @click="unBindAllStu" class="setting-drawer-index-handle unbind" title="解绑"><img src="../../assets/jiebang.png"
-				 alt="" /></div>
+
+		<!-- 左侧菜单 -->
+		<div class="leftmenu">
+			<a href="javascript:;" @click="isshowNamelist = !isshowNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
+			<a href="javascript:;" @click="isshowResource = !isshowResource" :class="{'active':isshowResource}"><i class="icon2"></i>组卷题库</a>
+			<a href="javascript:;"><i class="icon3"></i>资源课件</a>
+			<a href="javascript:;" @click.stop="showSet"><i class="icon4"></i>工具箱</a>
 		</div>
 		<!-- 显示 -->
 		<div class="activing">
@@ -99,13 +95,17 @@
 			</div>
 			<!-- 语音文本显示 -->
 			<transition name="bounce">
-				<div class="reftext " v-if="isreftext">
+				<!-- <div class="reftext " v-if="isreftext">
 					<div class="txt">{{ reftext }}</div>
 
-				</div>
+				</div> -->
+				<audiotxt v-if="isreftext" :reftext="reftext" :questionType="XSquestionType"></audiotxt>
 			</transition>
-			<div class="soundbox" v-if="isreftext&&subjecttitle == 9"><span @click="startAudio" class="sound" :class="{active:isPlay}"
-				 v-if="subjecttitle == 9"><span></span></span></div>
+			<div class="soundbox" v-if="isreftext&&subjecttitle == 9"><span @click="startAudio" class="sound" 
+				 v-if="subjecttitle == 9">
+				 <img src="../../assets/play.png" alt="" v-if="!isPlay">
+				 <img src="../../assets/play.gif" alt="" v-if="isPlay"></span>
+			</div>
 			<!-- <div class=" bounceInDown animated" v-if="isreftext" >
 				
 			</div> -->
@@ -347,13 +347,14 @@
 		</div>
 		<timeswiper @countDown="countDown" @cancelcountDown="cancelcountDown" v-if="iscountDown && showcountDown" class="countDownbox"></timeswiper>
 		 -->
-		<count-down v-if="isCountDown&&isAnswering" :setTimer="20*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down>
-		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;">
+		<count-down v-if="isCountDown&&isAnswering" :setTimer="countDown*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down>
+		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-if="isshowResource">
 			<iframe :src="resourceUrl" frameborder="0" style="width: 100%; height: 100%;"></iframe>
 		</div>
-		<div style="position: absolute; left: 0; bottom: 0;">
+		<!-- <div style="position: absolute; left: 0; bottom: 0;">
 			<img :src="imgUrl" alt="" style="width: 200px; height: 200px;">
-		</div>
+		</div> -->
+		
 	</div>
 </template>
 
@@ -370,7 +371,8 @@
 		board,
 		timeswiper,
 		CountDown,
-		toolbar
+		toolbar,
+		audiotxt
 	} from '@/page/mainPage/components';
 	import vSelect from '@/page/mainPage/components/vue-select';
 	import {
@@ -402,7 +404,8 @@
 			timeswiper,
 			vSelect,
 			toolbar,
-			CountDown
+			CountDown,
+			audiotxt
 		},
 		data() {
 			return {
@@ -419,6 +422,7 @@
 				isCorrectchart: false,
 				ismicrophone: false, //麦克风
 				isreftext: false, //语音测评
+				reftext: '',
 				isanalysis: false, //语音解析
 				txtlist: [], //语音解析文本
 				onlinedirectBroadcastCode: '', //直播间code
@@ -554,13 +558,15 @@
 				xsAudioUrl: '', //音频文件地址
 				isPlay: false, //是否播放音频
 				resourceUrl: 'http://www.baidu.com',
-				imgUrl:''
+				isshowResource: false, //是否显示注册地址
+				imgUrl: '',
+
 			};
 		},
 		computed: {
 			// ...mapState(['platformpath', 'interactiopath', 'foundationpath'])
 			...mapState(['platformpath', 'interactiopath', 'foundationpath', 'isminimizeAppState', 'directBroadcastCode',
-				'selectWordList', 'selectSentenceList', 'isCountDown'
+				'selectWordList', 'selectSentenceList', 'isCountDown','countDown'
 			]),
 			...mapGetters(['getisminimizeApp', 'onEvent']),
 			// alertCont() {
@@ -604,7 +610,7 @@
 			this.getjson();
 			/* 主进程 通知是最小化 成功*/
 			this.$electron.ipcRenderer.on('iframeUrl', (event, iframeUrl) => {
-				this.resourceUrl=iframeUrl
+				this.resourceUrl = iframeUrl
 			});
 
 		},
@@ -1089,6 +1095,15 @@
 							refText: $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text
 							//uuid: $me.uuid
 						};
+						/* 设置已作答*/
+						if (this.XSquestionType == 0) {
+							if ($me.XStalkName.word) {
+								var index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
+								this.selectWordList[index].isPlayed = true;
+							}
+							// 
+						}
+
 					}
 				}
 				$me.Answerstar(param);
@@ -1262,7 +1277,7 @@
 				$me.delredenvelope();
 				document.getElementById('music').pause();
 			},
-			stopRace() {
+			stopRace(isNext) {
 				/* 点击结束答题 */
 				const $me = this;
 				$me.clear();
@@ -1279,11 +1294,13 @@
 					$me.Answerstop();
 				} else if ($me.subjecttitle == 5) {
 					$me.redWarslist(urlPath);
+				} else if ($me.subjecttitle == 9) {
+					$me.Answerstop(isNext);
 				} else {
 					$me.getspeedlist(urlPath);
 				}
 			},
-			Answerstop() {
+			Answerstop(isNext) {
 				/* 结束答题 */
 				var url = '';
 				const $me = this;
@@ -1361,9 +1378,37 @@
 						if ($me.subjecttitle == 4) {
 							$me.getSubjectiveResult();
 						}
-						/* 显示语音测评结果 */
-						if ($me.subjecttitle == 7 || $me.subjecttitle == 9) {
+						if ($me.subjecttitle == 7) {
 							$me.getHighScores();
+						}
+						/*如果不直接进入下一题语音 显示语音测评结果 */
+						if ($me.subjecttitle == 9) {
+							if (isNext != 1) {
+								$me.getHighScores();
+							} else {
+								// $me.XStalkName=$me.XStalkName
+								if ($me.XSquestionType == 0) {
+									if ($me.XStalkName) {
+										var index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
+										
+										if (index < $me.selectWordList.length - 1) {
+											$me.XStalkName = $me.selectWordList[index + 1];
+											$me.startRace();
+										} else {
+											$me.getHighScores();
+										}
+									}
+								} else {
+									var index = this.selectSentenceList.findIndex(item => item.text == $me.XStalkName.text);
+									if (index < this.selectSentenceList.length - 1) {
+										$me.XStalkName = this.selectSentenceList[index + 1];
+										$me.startRace();
+									} else {
+										$me.getHighScores();
+									}
+								}
+								
+							}
 						}
 						/* 判断倒计时 */
 
@@ -1690,7 +1735,7 @@
 				$me.isChart = false; //显示主观题统计
 				$me.isCorrectchart = false; //正确率统计
 				$me.ismicrophone = false; //麦克风
-				$me.isreftext = false; //语音测评
+				// $me.isreftext = false; //语音测评
 				$me.isanalysis = false; //语音解析
 				$me.txtlist = []; //语音解析文本
 				$me.isSubject = false; //是否显示题目
@@ -2057,6 +2102,7 @@
 						/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
 						$me.trueAnswer = da.data.data.trueAnswer;
 						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
+						$me.subjectType=0;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.startVIew();
 						$me.saveImgFullScreen();
@@ -2081,6 +2127,7 @@
 						$me.trueAnswer = da.data.data.trueAnswer;
 						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
+						$me.subjectType=0;
 						$me.startVIew();
 						$me.saveImgFullScreen();
 						if ($me.isCountDown == 1) {
@@ -2100,6 +2147,7 @@
 				}).then(da => {
 					if (da.data.ret == 'success') {
 						$me.isrankboradlist = true;
+						$me.isreftext = false;
 						$me.rankboradlist = da.data.data;
 					} else {
 						$me.$toast.center(da.data.message);
@@ -2107,17 +2155,17 @@
 				});
 			},
 			/* 设置倒计时 */
-			countDown(time) {
-				this.countDownTime = time;
-				this.showcountDown = false;
-			},
-			cancelcountDown() {
-				this.showcountDown = false;
-			},
+			// countDown(time) {
+			// 	this.countDownTime = time;
+			// 	this.showcountDown = false;
+			// },
+			// cancelcountDown() {
+			// 	this.showcountDown = false;
+			// },
 			stopCountDown() {
-				console.log('12223');
+				// console.log('12223');
 				/* 倒计时结束 */
-				this.stopRace();
+				this.stopRace(1);
 			},
 			/* 开始计时 */
 			timeDown() {
@@ -2455,7 +2503,7 @@
 				}).then(da => {
 					if (da.data.ret == 'success') {
 						/* 截图保存给后端 */
-						this.imgUrl='data:image/jpg;base64,'+da.data.data
+						this.imgUrl = 'data:image/jpg;base64,' + da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
 					}
@@ -2467,16 +2515,21 @@
 				$me.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/platform/authentication',
-					data:{
-						serviceType:1//1 学科网，2组卷网 3，e卷通
+					data: {
+						serviceType: 1 //1 学科网，2组卷网 3，e卷通
 					}
 				}).then(da => {
 					if (da.data.ret == 'success') {
-						this.resourceUrl=da.data.data
+						this.resourceUrl = da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
 					}
 				});
+			},
+			showSet() {
+				/* 打开工具箱 */
+				this.$refs.toolbar.showSet();
+
 			}
 		}
 	};
@@ -2574,21 +2627,26 @@
 		width: 45px;
 		height: 45px;
 		text-align: center;
-		padding-top: 11px;
+		padding-top: 7px;
+		padding-left: 7px;
+		/* padding-top: 11px; */
 		box-sizing: border-box;
-		z-index: 999;
+		z-index: 9999;
 	}
 
 	.sound {
-		width: 21px;
+		/* width: 21px;
 		height: 21px;
 		padding: 1px 0 0 7px;
-		display: inline-block;
+		display: inline-block; */
 		cursor: pointer;
 		vertical-align: middle;
 	}
-
-	.sound>span {
+.sound  img{
+	display: block;
+	width: 30px;
+}
+	/* .sound>span {
 		margin-right: 15px;
 		background-repeat: no-repeat;
 		background-image: url(../../assets/index.png);
@@ -2596,9 +2654,9 @@
 		height: 17px;
 		width: 19px;
 		display: block;
-	}
+	} */
 
-	.sound.active {
+	/* .sound.active {
 		background-image: url(../../assets/notice.gif);
 		background-image: url(../../assets/notice2.gif)\9;
 		-webkit-background-size: 22px 21px;
@@ -2607,9 +2665,65 @@
 		background-repeat: no-repeat;
 		background-position: 7px -2px;
 
-	}
+	} */
 
 	.sound.active>span {
 		background: none;
+	}
+
+	.leftmenu {
+		position: fixed;
+		bottom: 40px;
+		left: 10px;
+
+	}
+
+	.leftmenu>a {
+		display: block;
+		width: 197px;
+		height: 60px;
+		border: 5px solid #fff;
+		background: #1890ff;
+		border-radius: 3px;
+		color: #fff;
+		text-align: left;
+		padding-left: 20px;
+		font-size: 24px;
+		line-height: 50px;
+		box-shadow: 0 0 10px rgba(0, 0, 0, .2);
+	}
+
+	.leftmenu>a+a {
+		margin-top: 5px;
+	}
+
+	.leftmenu>a.active {
+		background: #005fb6;
+	}
+
+	.leftmenu>a i {
+		display: inline-block;
+		height: 30px;
+		width: 30px;
+		background: no-repeat center center;
+		margin-right: 10px;
+		vertical-align: middle;
+		margin-top: -3px;
+	}
+
+	.leftmenu>a i.icon1 {
+		background-image: url(../../assets/icon21.png);
+	}
+
+	.leftmenu>a i.icon2 {
+		background-image: url(../../assets/icon22.png);
+	}
+
+	.leftmenu>a i.icon3 {
+		background-image: url(../../assets/icon23.png);
+	}
+
+	.leftmenu>a i.icon4 {
+		background-image: url(../../assets/icon27.png);
 	}
 </style>
