@@ -196,7 +196,9 @@
 			this.rangetime[1] = parseDay(todayDate.getTime());
 			//this.getTitleList();
 			this.getTopicTitle();
-
+			this.$store.commit('SET_selectWordList', []);
+			this.$store.commit('SET_selectSentenceList', []);
+			
 		},
 		filters: {
 			filterTime: function(value) {
@@ -350,7 +352,7 @@
 
 				if ($me.selectsubject && $me.selectsubject.name) {
 					$me.sendInfo.subjectCode = $me.selectsubject.value;
-					$me.sendInfo.subjectName = $me.selectclass.name;
+					$me.sendInfo.subjectName = $me.selectsubject.name;
 				} else {
 					this.$toast.center('请选择科目');
 					return false;

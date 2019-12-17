@@ -1,6 +1,6 @@
 <template>
 	<div id="suspension">
-		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin":class="{active:ishover}">
+		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}">
 			<a href="javascript:;" class="kjbtn"  @click="toggleSetwin" >
 				<div class="la-ball-scale-multiple">
 					<div></div>

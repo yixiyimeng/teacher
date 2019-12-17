@@ -9,7 +9,7 @@
 					</div> -->
 				</div>
 				<div class="questionlist">
-					<span :class="{'active':item.isPlayed}" v-for="(item,index) in question" :key="index">{{item.word}}</span>
+					<span :class="{'active':item.isPlayed}" v-for="(item,index) in question" :key="index">{{item.word||item.text}}</span>
 				</div>
 				<span class="more" @click="showmore=!showmore"><i></i></span>
 			</div>

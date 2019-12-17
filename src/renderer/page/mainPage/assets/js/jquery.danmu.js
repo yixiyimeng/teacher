@@ -260,7 +260,8 @@ var cyntax = {
 			"left": this.options.left,
 			"top": this.options.top,
 			"width": this.options.width,
-			"height": this.options.height,
+			"bottom": this.options.bottom,
+			// "height": this.options.height,
 			"z-index": this.options.zindex,
 			"color": options.defaultFontColor,
 			"overflow": "hidden"
@@ -499,6 +500,7 @@ var cyntax = {
 		left: 0,
 		top: '10%',
 		height: '80%',
+		bottom:'10%',
 		width: '100%',
 		zindex: -1,
 		speed: 8000,
@@ -564,6 +566,38 @@ var cyntax = {
 		$("#" + this.id + ' .danmaku').css("opacity", arg);
 		this.$element.data("opacity", arg);
 
+	};
+	Danmu.prototype.setLocation = function(type) {
+		var top='10%',bottom='10%'
+		switch(type){
+			case 'full':{
+				top='10%';
+				bottom='10%';
+				break;
+			}
+			case 'up':{
+				top='10%';
+				bottom='50%';
+				break;
+			}
+			case 'center':{
+				top='30%';
+				bottom='30%';
+				break;
+			}
+			case 'down':{
+				top='50%';
+				bottom='10%';
+				break;
+			}
+			
+		}
+		$("#" + this.id + ' .danmaku').css({
+			top,
+			bottom
+		});
+		this.$element.data("location", type);
+	
 	};
 
 

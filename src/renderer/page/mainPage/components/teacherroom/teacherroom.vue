@@ -70,8 +70,9 @@
 		<!-- 左侧菜单 -->
 		<div class="leftmenu">
 			<a href="javascript:;" @click="isshowNamelist = !isshowNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
-			<a href="javascript:;" @click="isshowResource = !isshowResource" :class="{'active':isshowResource}"><i class="icon2"></i>组卷题库</a>
-			<a href="javascript:;"><i class="icon3"></i>资源课件</a>
+			<a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a>
+			<a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon3"></i>组卷网</a>
+			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>e卷通</a>
 			<a href="javascript:;" @click.stop="showSet"><i class="icon4"></i>工具箱</a>
 		</div>
 		<!-- 显示 -->
@@ -101,10 +102,9 @@
 				</div> -->
 				<audiotxt v-if="isreftext" :reftext="reftext" :questionType="XSquestionType"></audiotxt>
 			</transition>
-			<div class="soundbox" v-if="isreftext&&subjecttitle == 9"><span @click="startAudio" class="sound" 
-				 v-if="subjecttitle == 9">
-				 <img src="../../assets/play.png" alt="" v-if="!isPlay">
-				 <img src="../../assets/play.gif" alt="" v-if="isPlay"></span>
+			<div class="soundbox" v-if="isreftext&&subjecttitle == 9"><span @click="startAudio" class="sound" v-if="subjecttitle == 9">
+					<img src="../../assets/play.png" alt="" v-if="!isPlay">
+					<img src="../../assets/play.gif" alt="" v-if="isPlay"></span>
 			</div>
 			<!-- <div class=" bounceInDown animated" v-if="isreftext" >
 				
@@ -348,13 +348,15 @@
 		<timeswiper @countDown="countDown" @cancelcountDown="cancelcountDown" v-if="iscountDown && showcountDown" class="countDownbox"></timeswiper>
 		 -->
 		<count-down v-if="isCountDown&&isAnswering" :setTimer="countDown*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down>
-		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-if="isshowResource">
+		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-if="isshowResource!=0">
 			<iframe :src="resourceUrl" frameborder="0" style="width: 100%; height: 100%;"></iframe>
 		</div>
-		<!-- <div style="position: absolute; left: 0; bottom: 0;">
-			<img :src="imgUrl" alt="" style="width: 200px; height: 200px;">
-		</div> -->
+		<div style="position: absolute; left: 0; bottom: 0; z-index: 99999;">
+			<!-- <img src="D:\Users\zkxl\Desktop\邹鹿希 420822201704254529.jpg" alt="" style="width: 200px; height: 200px;"> -->
 		
+		<audio id="xsmusic" src="D:\Users\zkxl\Desktop\1.mp3" ref="xsmusic" crossOrigin="anonymous" preload ended controls="controls"></audio>
+		</div>
+
 	</div>
 </template>
 
@@ -558,7 +560,8 @@
 				xsAudioUrl: '', //音频文件地址
 				isPlay: false, //是否播放音频
 				resourceUrl: 'http://www.baidu.com',
-				isshowResource: false, //是否显示注册地址
+				resourceUrllist: [],
+				isshowResource: 0, //是否显示注册地址
 				imgUrl: '',
 
 			};
@@ -566,7 +569,7 @@
 		computed: {
 			// ...mapState(['platformpath', 'interactiopath', 'foundationpath'])
 			...mapState(['platformpath', 'interactiopath', 'foundationpath', 'isminimizeAppState', 'directBroadcastCode',
-				'selectWordList', 'selectSentenceList', 'isCountDown','countDown'
+				'selectWordList', 'selectSentenceList', 'isCountDown', 'countDown', 'danmuinfolist'
 			]),
 			...mapGetters(['getisminimizeApp', 'onEvent']),
 			// alertCont() {
@@ -602,6 +605,7 @@
 		},
 		created() {
 			this.sendInfo = JSON.parse(this.$route.query.sendInfo);
+
 			//console.log(this.$route.query.sendInfo)
 			// this.onlinedirectBroadcastCode = this.sendInfo.directBroadcastCode;
 			this.$store.commit('SET_startClass', true);
@@ -641,7 +645,10 @@
 			/* 接受websock   */
 			this.onmessage();
 			/* 获取资源 */
-			this.getResource();
+
+			this.getResource(1);
+			this.getResource(2);
+			this.getResource(3);
 		},
 		watch: {
 			isshowNamelist: function(newval, oldval) {
@@ -696,13 +703,13 @@
 				// 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
 				// immediate: true
 			},
-			onEvent: {
-				handler(newName, oldName) {
-					if (newName && newName != oldName)
-						console.log("112121111newName:" + JSON.stringify(newName));
-				},
-				immediate: true
-			}
+			// onEvent: {
+			// 	handler(newName, oldName) {
+			// 		if (newName && newName != oldName)
+			// 			console.log("112121111newName:" + JSON.stringify(newName));
+			// 	},
+			// 	immediate: true
+			// }
 		},
 		methods: {
 			exitBtn() {
@@ -1096,13 +1103,17 @@
 							//uuid: $me.uuid
 						};
 						/* 设置已作答*/
-						if (this.XSquestionType == 0) {
-							if ($me.XStalkName.word) {
-								var index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
+						if (param.refText) {
+							var index = -1;
+							if (this.XSquestionType == 0) {
+								index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
 								this.selectWordList[index].isPlayed = true;
+							} else {
+								index = this.selectSentenceList.findIndex(item => item.text == $me.XStalkName.text);
+								this.selectSentenceList[index].isPlayed = true;
 							}
-							// 
 						}
+
 
 					}
 				}
@@ -1229,6 +1240,7 @@
 					/*不是抢红包,语音识别，麦克风 开始弹幕*/
 					$('#danmu').data('danmuList', {});
 					$('#danmu').danmu('danmuStart');
+					/* 设置弹幕位置和透明度 */
 				}
 				if ($me.subjecttitle == 5) {
 					if (document.getElementById('music')) {
@@ -1387,27 +1399,24 @@
 								$me.getHighScores();
 							} else {
 								// $me.XStalkName=$me.XStalkName
-								if ($me.XSquestionType == 0) {
-									if ($me.XStalkName) {
-										var index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
-										
-										if (index < $me.selectWordList.length - 1) {
-											$me.XStalkName = $me.selectWordList[index + 1];
-											$me.startRace();
-										} else {
-											$me.getHighScores();
-										}
+								if ($me.XStalkName) {
+									var index = -1;
+									var len = 0;
+									if ($me.XSquestionType == 0) {
+										index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
+										len = $me.selectWordList.length - 1;
+									} else {
+										var index = this.selectSentenceList.findIndex(item => item.text == $me.XStalkName.text);
+										len = $me.selectSentenceList.length - 1;
 									}
-								} else {
-									var index = this.selectSentenceList.findIndex(item => item.text == $me.XStalkName.text);
-									if (index < this.selectSentenceList.length - 1) {
-										$me.XStalkName = this.selectSentenceList[index + 1];
+									if (index < len) {
+										$me.XStalkName = $me.XSquestionType == 0 ? $me.selectWordList[index + 1] : $me.selectSentenceList[index + 1];
 										$me.startRace();
 									} else {
 										$me.getHighScores();
 									}
 								}
-								
+
 							}
 						}
 						/* 判断倒计时 */
@@ -2102,7 +2111,7 @@
 						/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
 						$me.trueAnswer = da.data.data.trueAnswer;
 						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
-						$me.subjectType=0;
+						$me.subjectType = 0;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.startVIew();
 						$me.saveImgFullScreen();
@@ -2127,7 +2136,7 @@
 						$me.trueAnswer = da.data.data.trueAnswer;
 						$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
-						$me.subjectType=0;
+						$me.subjectType = 0;
 						$me.startVIew();
 						$me.saveImgFullScreen();
 						if ($me.isCountDown == 1) {
@@ -2510,17 +2519,17 @@
 				});
 			},
 			/* 获取题库资源 */
-			getResource() {
+			getResource(type) {
 				const $me = this;
 				$me.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/platform/authentication',
 					data: {
-						serviceType: 1 //1 学科网，2组卷网 3，e卷通
+						serviceType: type //1 学科网，2组卷网 3，e卷通
 					}
 				}).then(da => {
 					if (da.data.ret == 'success') {
-						this.resourceUrl = da.data.data
+						this.resourceUrllist[type - 1] = da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
 					}
@@ -2530,7 +2539,40 @@
 				/* 打开工具箱 */
 				this.$refs.toolbar.showSet();
 
-			}
+			},
+			showResource(type) {
+				/* 显示资源网 */
+				if (this.isshowResource == type) {
+					this.isshowResource = 0
+				} else {
+					this.isshowResource = type
+				}
+				if (this.isshowResource != 0) {
+					this.resourceUrl = this.resourceUrllist[type - 1]
+				}
+			},
+			getDanmuinfo() {
+				/* 查询弹幕设置 */
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/teacherHabit/queryTeacHabit/45',
+				}).then(da => {
+					console.log(da)
+					if (da.data && da.data.ret == 'success') {
+						var list = da.data.data;
+						if (list && list.length > 0) {
+							list = list.map(item => {
+								item.isOpenBarrageflag = item.isOpenBarrage == 1;
+								return item
+							})
+						}
+						this.list = list;
+						// console.log(this.list)
+						this.$store.commit('SET_danmuinfolist', this.list);
+					}
+				});
+
+			},
 		}
 	};
 </script>
@@ -2642,10 +2684,12 @@
 		cursor: pointer;
 		vertical-align: middle;
 	}
-.sound  img{
-	display: block;
-	width: 30px;
-}
+
+	.sound img {
+		display: block;
+		width: 30px;
+	}
+
 	/* .sound>span {
 		margin-right: 15px;
 		background-repeat: no-repeat;
@@ -2675,6 +2719,7 @@
 		position: fixed;
 		bottom: 40px;
 		left: 10px;
+		z-index: 999;
 
 	}
 

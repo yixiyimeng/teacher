@@ -2,7 +2,7 @@
 	<div class="toolbox" ref="TopImg">
 
 		<!-- <a href="javascript:;" class="settoolbar" ref="TopImg" @click="isShow=!isShow;type=0"></a> -->
-		<div class="toolbar" v-if="isShow">
+		<div class="toolbar" v-if="isShow" >
 			<div>
 
 				<a href="javascript:;" class="countDown" @click.stop="show(2)">
@@ -40,7 +40,7 @@
 		<div class="printScreenbox" v-show="type==3">
 			<div style="height:100%; width: 100%;">
 				<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
-				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox">
+				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox" >
 				</vue-cropper>
 			</div>
 			<div class="optionbtn">
@@ -50,12 +50,14 @@
 		</div>
 		<setDanmu @close="close" v-if="isShow&&type==1"></setDanmu>
 		<timeswiper ref="timeswiper" @cancelcountDown="close" v-if="isShow&&type==2"></timeswiper>
+		<draw></draw>
 	</div>
 </template>
 
 <script>
 	import setDanmu from '@/page/mainPage/components/setDanmu.vue';
 	import timeswiper from '@/page/mainPage/components/timeswiper';
+	import draw from '@/page/mainPage/components/draw';
 	import VueCropper from '@/page/mainPage/components/cropper/vue-cropper'
 	import {
 		urlPath,
@@ -76,7 +78,7 @@
 					autoCrop: true,
 					autoCropWidth: 200,
 					autoCropHeight: 200,
-					fixedBox: true
+					fixedBox: false
 				},
 			}
 		},
@@ -86,7 +88,8 @@
 		components: {
 			setDanmu,
 			timeswiper,
-			VueCropper
+			VueCropper,
+			draw
 		},
 		mounted() {
 			document.addEventListener('click', e => {
@@ -98,7 +101,7 @@
 				} else {
 
 				}
-				/* */
+				
 			});
 		},
 		methods: {
@@ -151,17 +154,18 @@
 // 					console.log(this.htmlUrl)
 // 
 // 				})
-				// $me.$http({
-				// 	method: 'post',
-				// 	url: urlPath + 'teacher-client/common/saveImgFullScreen'
-				// }).then(da => {
-				// 	if (da.data.ret == 'success') {
-				// 		/* 截图保存给后端 */
-				// 		$me.htmlUrl='data:image/jpg;base64,'+da.data.data;
-				// 	} else {
-				// 		$me.$toast.center(da.data.message);
-				// 	}
-				// });
+				$me.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/common/saveImgFullScreen'
+				}).then(da => {
+					if (da.data.ret == 'success') {
+						/* 截图保存给后端 */
+						$me.htmlUrl='data:image/jpg;base64,'+da.data.data;
+						// console.log(this.htmlUrl)
+					} else {
+						$me.$toast.center(da.data.message);
+					}
+				});
 			},
 			saveImg() {
 				this.$refs.cropper.getCropData(data => {

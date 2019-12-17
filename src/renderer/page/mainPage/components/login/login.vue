@@ -173,6 +173,7 @@
 									teacherCode: da.data.data.userId,
 									teacherName: da.data.data.name
 								};
+								localStorage.setItem('sendInfo',JSON.stringify($me.sendInfo))
 								$me.$router.push({
 									//页面跳转
 									path: 'classroom',

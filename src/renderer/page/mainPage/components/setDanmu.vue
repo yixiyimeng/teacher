@@ -7,7 +7,7 @@
 			</div>
 			<div class="setdanmu-bd">
 				<div class="flex flex-pack-justify" v-for="(item,index) in list" :key="index">
-					<span class="flex-1 name" @click="setDetails(index)">{{item.questionTypeName}}</span>
+					<span class="flex-1 name" @click.stop="setDetails(index)">{{item.questionTypeName}}</span>
 					<!-- <a-switch size="small" v-model="item.isOpenBarrageflag" /> -->
 					<label>
 						<input type="checkbox" style="opacity: 0;" v-model="item.isOpenBarrageflag">
@@ -39,7 +39,7 @@
 					<div>
 						<a-radio-group v-model="setinfo.location" class="checkbox">
 							<a-radio value="up">上</a-radio>
-							<a-radio value="centre">中</a-radio>
+							<a-radio value="center">中</a-radio>
 							<a-radio value="down">下</a-radio>
 							<a-radio value="full">全屏</a-radio>
 						</a-radio-group>
@@ -82,6 +82,10 @@
 	import {
 		urlPath
 	} from '@/page/mainPage/utils/base';
+	import {
+		mapState
+
+	} from 'vuex';
 	export default {
 		data() {
 			return {
@@ -98,7 +102,11 @@
 			};
 		},
 		created() {
-			this.getDanmuinfo();
+			// this.getDanmuinfo();
+			this.list=this.danmuinfolist;
+		},
+		computed: {
+			...mapState(['danmuinfolist']),
 		},
 		mounted() {},
 		beforeDestroy() {},
@@ -133,13 +141,13 @@
 				this.setinfo = Object.assign({}, obj);
 			},
 			saveOneInfo() {
-				var item = {
-					questionType: this.setinfo.questionType,
-					diaphaneity: this.setinfo.diaphaneity, //透明度
-					location: this.setinfo.location, //位置
-					isOpenBarrage: this.setinfo.isOpenBarrageflag ? 1 : 0, //是否开启弹幕
-				};
-				this.list[this.setindex] = item;
+				// var item = {
+				// 	questionType: this.setinfo.questionType,
+				// 	diaphaneity: this.setinfo.diaphaneity, //透明度
+				// 	location: this.setinfo.location, //位置
+				// 	isOpenBarrage: this.setinfo.isOpenBarrageflag ? 1 : 0, //是否开启弹幕
+				// };
+				this.list[this.setindex] = this.setinfo;
 				// var param = {
 				// 	hardwareVersion: '45',
 				// 	teacHabitDOs: []
@@ -177,6 +185,7 @@
 						console.log(da);
 						if (da.data && da.data.ret == 'success') {
 							this.$toast.center('修改成功!');
+							this.isShowmenu=true;
 							this.getDanmuinfo();
 						}
 					})

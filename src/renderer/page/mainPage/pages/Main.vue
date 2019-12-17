@@ -87,6 +87,13 @@
 				});
 				setTimeout(function() {
 					$me.$router.go(-1); //返回上一层
+					// $me.$router.push({
+					// 	path: 'classroom',
+					// 	query: {
+					// 		sendInfo: localStorage.getItem('sendInfo')
+					// 	}
+					// });
+
 					$me.$loading.close();
 				}, 5000);
 
@@ -113,11 +120,11 @@
 					this.transitionName = 'slide-right';
 				}
 			},
-			
+
 			alertCont: {
 				handler(newName, oldName) {
-					if(newName&&newName!=oldName)
-					console.log("123343newName:" + JSON.stringify(newName));
+					if (newName && newName != oldName)
+						console.log("123343newName:" + JSON.stringify(newName));
 				},
 				immediate: true
 			}
