@@ -2,7 +2,7 @@
 	<div class="toolbox" ref="TopImg">
 
 		<!-- <a href="javascript:;" class="settoolbar" ref="TopImg" @click="isShow=!isShow;type=0"></a> -->
-		<div class="toolbar" v-if="isShow" >
+		<div class="toolbar" v-if="isShow">
 			<div>
 
 				<a href="javascript:;" class="countDown" @click.stop="show(2)">
@@ -10,9 +10,10 @@
 					<p>倒计时</p>
 					<div class="state" @click.stop="onChange" :class="{'active':isCountDown==1}"></div>
 				</a>
-				<a href="javascript:;" class="whiteblock">
+				<a href="javascript:;" class="whiteblock" @click.stop="show(4)">
 					<i></i>
 					<p>电子白板</p>
+					<div class="state" :class="{'active':type==4}"></div>
 				</a>
 				<a href="javascript:;" class="printScreen" @click.stop="saveImgFullScreen">
 					<i></i>
@@ -40,17 +41,17 @@
 		<div class="printScreenbox" v-show="type==3">
 			<div style="height:100%; width: 100%;">
 				<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
-				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox" >
+				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox">
 				</vue-cropper>
 			</div>
 			<div class="optionbtn">
-				<a href="javascript:;" @click="type=0">取消</a>
+				<a href="javascript:;" @click="type=0;$emit('close')">取消</a>
 				<a href="javascript:;" class="savebtn" @click="saveImg">保存</a>
 			</div>
 		</div>
 		<setDanmu @close="close" v-if="isShow&&type==1"></setDanmu>
 		<timeswiper ref="timeswiper" @cancelcountDown="close" v-if="isShow&&type==2"></timeswiper>
-		<draw></draw>
+		<draw ref="draw" v-if="type==4"></draw>
 	</div>
 </template>
 
@@ -96,12 +97,13 @@
 				if (this.$refs.TopImg) {
 					if (!this.$refs.TopImg.contains(e.target)) {
 						this.isShow = false;
-						this.type=0;
+						this.type = 0;
+						this.$emit('close')
 					}
 				} else {
 
 				}
-				
+
 			});
 		},
 		methods: {
@@ -132,6 +134,13 @@
 								// $me.$refs.timeswiper.show();
 								break;
 							}
+						case 4:
+							{
+								$me.isShow = false;
+								this.$emit('close')
+								break;
+							}
+
 					}
 				}
 
@@ -146,21 +155,21 @@
 
 				$me.type = 3;
 				$me.isShow = false;
-// 				html2canvas(this.$refs.TopImg, {
-// 					backgroundColor: null
-// 				}).then((canvas) => {
-// 					let url = canvas.toDataURL('image/png');
-// 					this.htmlUrl = url;
-// 					console.log(this.htmlUrl)
-// 
-// 				})
+				// 				html2canvas(this.$refs.TopImg, {
+				// 					backgroundColor: null
+				// 				}).then((canvas) => {
+				// 					let url = canvas.toDataURL('image/png');
+				// 					this.htmlUrl = url;
+				// 					console.log(this.htmlUrl)
+				// 
+				// 				})
 				$me.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/common/saveImgFullScreen'
 				}).then(da => {
 					if (da.data.ret == 'success') {
 						/* 截图保存给后端 */
-						$me.htmlUrl='data:image/jpg;base64,'+da.data.data;
+						$me.htmlUrl = 'data:image/jpg;base64,' + da.data.data;
 						// console.log(this.htmlUrl)
 					} else {
 						$me.$toast.center(da.data.message);
@@ -171,6 +180,7 @@
 				this.$refs.cropper.getCropData(data => {
 					console.log(data)
 					this.type = 0;
+					this.$emit('close')
 				})
 			}
 
@@ -261,18 +271,7 @@
 						box-shadow: 3px 3px 10px rgba(119, 177, 154, .5);
 					}
 
-					div.state {
-						height: 20px;
-						width: 20px;
-						position: absolute;
-						background: url(../assets/off1.png) no-repeat center center;
-						left: 45px;
-						top: 50px;
 
-						&.active {
-							background-image: url(../assets/on1.png)
-						}
-					}
 				}
 
 				&.rollCall {
@@ -320,6 +319,19 @@
 						background-color: #3970af;
 						background-image: url(../assets/icon19.png);
 						box-shadow: 3px 3px 10px rgba(87, 119, 166, .5);
+					}
+				}
+
+				div.state {
+					height: 20px;
+					width: 20px;
+					position: absolute;
+					background: url(../assets/off1.png) no-repeat center center;
+					left: 45px;
+					top: 50px;
+
+					&.active {
+						background-image: url(../assets/on1.png)
 					}
 				}
 			}

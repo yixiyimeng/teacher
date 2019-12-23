@@ -10,4 +10,5 @@ import xianshen from '@/page/mainPage/components/xianshen';
 import toolbar from '@/page/mainPage/components/toolbar.vue';
 import CountDown from '@/page/mainPage/components/CountDown';
 import audiotxt from '@/page/mainPage/components/audiotxt';
-export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar,CountDown,audiotxt}
+import audiolist from '@/page/mainPage/components/audiolist';
+export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar,CountDown,audiotxt,audiolist}

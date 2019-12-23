@@ -1,9 +1,9 @@
 <template>
-	<div>
+	<div style="height: 100%; overflow: hidden;">
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<!-- 工具箱 -->
-		<toolbar ref="toolbar"></toolbar>
+		<toolbar ref="toolbar" @close="isshowSet=false"></toolbar>
 		<div class="bottommenu">
 			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
 			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
@@ -29,7 +29,7 @@
 				<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist">×</a>
 				<ul class="clearfix">
 					<!-- {{namelist}} -->
-					<li v-for="(item, index) in namelist" :class="{ active: item.checked }" class="active">
+					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
 						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
 						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
 						<span class="notice"></span>
@@ -73,7 +73,7 @@
 			<a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a>
 			<a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon3"></i>组卷网</a>
 			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>e卷通</a>
-			<a href="javascript:;" @click.stop="showSet"><i class="icon4"></i>工具箱</a>
+			<a href="javascript:;" @click.stop="showSet" :class="{'active':isshowSet}"><i class="icon4"></i>工具箱</a>
 		</div>
 		<!-- 显示 -->
 		<div class="activing">
@@ -351,11 +351,7 @@
 		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-if="isshowResource!=0">
 			<iframe :src="resourceUrl" frameborder="0" style="width: 100%; height: 100%;"></iframe>
 		</div>
-		<div style="position: absolute; left: 0; bottom: 0; z-index: 99999;">
-			<!-- <img src="D:\Users\zkxl\Desktop\邹鹿希 420822201704254529.jpg" alt="" style="width: 200px; height: 200px;"> -->
-		
-		<audio id="xsmusic" src="D:\Users\zkxl\Desktop\1.mp3" ref="xsmusic" crossOrigin="anonymous" preload ended controls="controls"></audio>
-		</div>
+		<audiolist :selectWordList="selectWordList"></audiolist>
 
 	</div>
 </template>
@@ -374,7 +370,8 @@
 		timeswiper,
 		CountDown,
 		toolbar,
-		audiotxt
+		audiotxt,
+		audiolist
 	} from '@/page/mainPage/components';
 	import vSelect from '@/page/mainPage/components/vue-select';
 	import {
@@ -407,7 +404,8 @@
 			vSelect,
 			toolbar,
 			CountDown,
-			audiotxt
+			audiotxt,
+			audiolist
 		},
 		data() {
 			return {
@@ -559,10 +557,11 @@
 				XStalkName: null,
 				xsAudioUrl: '', //音频文件地址
 				isPlay: false, //是否播放音频
-				resourceUrl: 'http://www.baidu.com',
+				resourceUrl: null,
 				resourceUrllist: [],
 				isshowResource: 0, //是否显示注册地址
 				imgUrl: '',
+				isshowSet:false,//是否打开设置弹框
 
 			};
 		},
@@ -646,9 +645,9 @@
 			this.onmessage();
 			/* 获取资源 */
 
-			this.getResource(1);
-			this.getResource(2);
-			this.getResource(3);
+			// this.getResource(1);
+			// this.getResource(2);
+			// this.getResource(3);
 		},
 		watch: {
 			isshowNamelist: function(newval, oldval) {
@@ -1108,10 +1107,13 @@
 							if (this.XSquestionType == 0) {
 								index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
 								this.selectWordList[index].isPlayed = true;
+								this.$store.commit('SET_selectWordList', this.selectWordList);
 							} else {
 								index = this.selectSentenceList.findIndex(item => item.text == $me.XStalkName.text);
 								this.selectSentenceList[index].isPlayed = true;
+								this.$store.commit('SET_selectSentenceList', this.selectSentenceList);
 							}
+							
 						}
 
 
@@ -1416,8 +1418,10 @@
 										$me.getHighScores();
 									}
 								}
+								
 
 							}
+							this.getVoiceRecord($me.XStalkName.word||$me.XStalkName.text)
 						}
 						/* 判断倒计时 */
 
@@ -2529,7 +2533,8 @@
 					}
 				}).then(da => {
 					if (da.data.ret == 'success') {
-						this.resourceUrllist[type - 1] = da.data.data
+						// this.resourceUrllist[type - 1] = da.data.data
+						this.resourceUrl=da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
 					}
@@ -2537,19 +2542,25 @@
 			},
 			showSet() {
 				/* 打开工具箱 */
-				this.$refs.toolbar.showSet();
+				this.isshowSet=!this.isshowSet
+				if(this.isshowSet){
+					this.$refs.toolbar.showSet();
+				}else{
+					this.$refs.toolbar.hide();
+				}
 
 			},
 			showResource(type) {
 				/* 显示资源网 */
+				this.getResource(type)
 				if (this.isshowResource == type) {
 					this.isshowResource = 0
 				} else {
 					this.isshowResource = type
 				}
-				if (this.isshowResource != 0) {
-					this.resourceUrl = this.resourceUrllist[type - 1]
-				}
+				// if (this.isshowResource != 0) {
+				// 	this.resourceUrl = this.resourceUrllist[type - 1]
+				// }
 			},
 			getDanmuinfo() {
 				/* 查询弹幕设置 */
@@ -2573,6 +2584,31 @@
 				});
 
 			},
+			/* 查询语言答题记录 */
+			getVoiceRecord(word){
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/voiceAnswer/getVoiceRecord',
+					headers: {
+						'Content-Type': 'application/json; charset=UTF-8'
+					},
+					data: word
+				}).then(da => {
+					console.log(da)
+					if (da.data && da.data.ret == 'success') {
+						var list = da.data.data;
+						if (list && list.length > 0) {
+							list = list.map(item => {
+								item.isOpenBarrageflag = item.isOpenBarrage == 1;
+								return item
+							})
+						}
+						this.list = list;
+						// console.log(this.list)
+						this.$store.commit('SET_danmuinfolist', this.list);
+					}
+				});
+			}
 		}
 	};
 </script>
