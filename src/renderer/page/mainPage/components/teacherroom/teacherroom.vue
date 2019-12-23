@@ -1421,7 +1421,7 @@
 								
 
 							}
-							this.getVoiceRecord($me.XStalkName.word||$me.XStalkName.text)
+							// this.getVoiceRecord($me.XStalkName.word||$me.XStalkName.text)
 						}
 						/* 判断倒计时 */
 
@@ -2584,31 +2584,7 @@
 				});
 
 			},
-			/* 查询语言答题记录 */
-			getVoiceRecord(word){
-				this.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/voiceAnswer/getVoiceRecord',
-					headers: {
-						'Content-Type': 'application/json; charset=UTF-8'
-					},
-					data: word
-				}).then(da => {
-					console.log(da)
-					if (da.data && da.data.ret == 'success') {
-						var list = da.data.data;
-						if (list && list.length > 0) {
-							list = list.map(item => {
-								item.isOpenBarrageflag = item.isOpenBarrage == 1;
-								return item
-							})
-						}
-						this.list = list;
-						// console.log(this.list)
-						this.$store.commit('SET_danmuinfolist', this.list);
-					}
-				});
-			}
+			
 		}
 	};
 </script>

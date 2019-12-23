@@ -3,11 +3,11 @@
 		<audio ref="playmusic"  crossOrigin="anonymous" preload ended></audio>
 		<div class="rightbar" :class="{active:isShow}">
 			<div class="flex flex-v">
-				<div class="title">已读12题</div>
+				<div class="title">已读{{hsselectWordList.length}}题</div>
 			
 				<div class="list flex-1" v-if="hsselectWordList&&hsselectWordList.length>0">
 					<p v-for="(item,index) in hsselectWordList" :key="index">
-						<i class="num">{{index+1}}</i><span v-if='item'>{{item.word}}</span><span class="notice" :class="{'active':item.isplaying}"
+						<i class="num"  @click="getVoiceRecord(item.word)">{{index+1}}</i><span v-if='item' @click="getVoiceRecord(item.word)">{{item.word}}</span><span class="notice" :class="{'active':item.isplaying}"
 						 @click="play(item.sound_eng_url,index)"></span></p>
 				</div>
 			</div>
@@ -22,7 +22,7 @@
 						<li v-for="(item, index) in namelist">
 							<div class="name">{{ item.stuName }}</div>
 							<div>
-								<p><i class="num">1</i><span class="play"></span></p>
+								<p v-for="(path,subindex) in item.filePaths" :key='subindex'><i class="num">1</i><span class="play" @click="payAudio(path)"></span></p>
 							</div>
 						</li>
 					</ul>
@@ -39,19 +39,24 @@
 		mapState,
 		mapGetters
 	} from 'vuex';
+	import {
+		urlPath,
+	
+	} from '@/page/mainPage/utils/base';
 	export default {
 		data() {
 			return {
 				isshowNamelist: false,
-				namelist: 10,
+				namelist: [],
 				isShow: false,
 				hsselectWordList: [],
-				playnum: -1
+				playnum: -1,
+				
 
 			}
 		},
 		computed: {
-			// ...mapState(['selectWordList', 'selectSentenceList']),
+			// ...mapState(['urlPath']),
 
 		},
 		props:{
@@ -114,8 +119,34 @@
 				this.$refs.playmusic.load();
 				if (this.$refs.playmusic) {
 					this.$refs.playmusic.play();
-
+				
 				}
+			},
+			payAudio(xsAudioUrl){
+				this.$refs.playmusic.src =xsAudioUrl;
+				this.$refs.playmusic.load();
+				if (this.$refs.playmusic) {
+					this.$refs.playmusic.play();
+				
+				}
+			},
+			/* 查询语言答题记录 */
+			getVoiceRecord(word){
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/voiceAnswer/getVoiceRecord',
+					headers: {
+						'Content-Type': 'application/json; charset=UTF-8'
+					},
+					data: word
+				}).then(da => {
+					console.log(da)
+					if (da.data && da.data.ret == 'success') {
+						this.namelist = da.data.data[0].studentVoices;
+						this.isshowNamelist=true;
+						
+					}
+				});
 			}
 		}
 	}
@@ -141,7 +172,7 @@
 
 		50% {
 			opacity: 1;
-			transform: scale(1.1);
+			transform: scale(1.01);
 		}
 
 		100% {
@@ -239,6 +270,7 @@
 
 		.list p {
 			padding: 10px 30px;
+			cursor: pointer;
 		}
 
 		.list .num+span {
@@ -255,8 +287,7 @@
 		width: 20px;
 		height: 20px;
 		background: url(../assets/icon24.png) no-repeat center center;
-
-		cursor: pointer;
+		
 	}
 
 	.notice {
