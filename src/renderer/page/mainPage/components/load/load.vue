@@ -3,8 +3,8 @@
 		<div class="progressbar" :class="{ active: isprogress }">
 			<div class="bar"><span :style="{width:rate*5.28+'px'}"></span></div>
 			<div class="num" :style="{left: (rate*5.28-22)+'px'}">{{rate}}%</div>
-			<div class="answerNum">答题人数12</div>
-			<div class="totalNum">总人数100</div>
+			<div class="answerNum">答题人数{{answerNumber}}</div>
+			<div class="totalNum">总人数{{totalNumber}}</div>
 			<!-- <div class="label" :style="{left: (rate*5.28-2)+'px'}">
 				<span></span>
 				<div class="perc">{{rate}}%</div>
@@ -23,7 +23,9 @@
 		},
 		props: {
 			isprogress: Boolean,
-			rate: Number
+			rate: Number,
+			totalNumber:Number,
+			answerNumber:Number
 		},
 		watch: {
 

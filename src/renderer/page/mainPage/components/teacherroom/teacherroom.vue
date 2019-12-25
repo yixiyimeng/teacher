@@ -32,8 +32,8 @@
 					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
 						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
 						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
-						<span class="notice"></span>
-						<span class="play"></span>
+						<!-- <span class="notice"></span>
+						<span class="play"></span> -->
 						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" style="opacity: .6;" />
 					</li>
 				</ul>
@@ -63,7 +63,7 @@
 				</ul>
 			</div>
 		</div>
-		<load :isprogress="isprogress" :rate="rate"></load>
+		<load :isprogress="isprogress" :rate="rate" :answerNumber="answerNumber" :totalNumber="totalNumber"></load>
 		<!-- 显示答案 -->
 		<notice :titlename="titlename" class="animated fast" :class="[titlename ? 'slideInDown' : 'slideOutUp']"></notice>
 
@@ -218,7 +218,7 @@
 				</div>
 			</div>
 			<!-- 語音 -->
-			<div class="talkroom flex-1 mb20" v-if="subjectType == 1" style="width: 500px;">
+			<div class="talkroom flex-1 " v-if="subjectType == 1">
 				<ul class="subjectitlebox flex flex-pack-justify">
 					<li v-for="item in yysubjectitleList" class="flex-1" :key="item.value" :class="{ active: item.value == subjecttitle }"
 					 @click="chooseSubjecttitle(item)">
@@ -341,17 +341,13 @@
 				</div>
 			</div>
 		</div>
-		<!-- <div class="setcountDown">
-			<span @click="checkshowcountDown" v-if="iscountDown">{{ countDownList }}</span>
-			<div class="checkbox" :class="{ active: iscountDown }" @click="checkcountDown"></div>
-		</div>
-		<timeswiper @countDown="countDown" @cancelcountDown="cancelcountDown" v-if="iscountDown && showcountDown" class="countDownbox"></timeswiper>
-		 -->
-		<count-down v-if="isCountDown&&isAnswering" :setTimer="countDown*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down>
+		<count-down v-if="isCountDown" v-show="isAnswering" :setTimer="countDown*1000" @stopCountDown="stopCountDown" ref="countdown"></count-down>
 		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-if="isshowResource!=0">
-			<iframe :src="resourceUrl" frameborder="0" style="width: 100%; height: 100%;"></iframe>
+			<iframe :src="resourceUrllist[0]" frameborder="0" style="width: 100%; height: 100%;" v-if="isshowResource==1"></iframe>
+			<iframe :src="resourceUrllist[1]" frameborder="0" style="width: 100%; height: 100%;" v-if="isshowResource==2"></iframe>
+			<iframe :src="resourceUrllist[2]" frameborder="0" style="width: 100%; height: 100%;" v-if="isshowResource==3"></iframe>
 		</div>
-		<audiolist :selectWordList="selectWordList"></audiolist>
+		<audiolist :selectWordList="audiohistorylist"></audiolist>
 
 	</div>
 </template>
@@ -511,7 +507,7 @@
 				alltxtlist: {},
 				iPhoneType: 0, //麦克风类型
 				isprogress: false, //是否显示进度条，
-				rate: 50,
+				rate: 0,
 				isAnswering: false, //是否正在答题
 				isunbind: false, //是否解绑
 				ubindParams: {}, //解绑参数
@@ -561,7 +557,8 @@
 				resourceUrllist: [],
 				isshowResource: 0, //是否显示注册地址
 				imgUrl: '',
-				isshowSet:false,//是否打开设置弹框
+				isshowSet: false, //是否打开设置弹框
+				audiohistorylist: []
 
 			};
 		},
@@ -615,6 +612,8 @@
 			this.$electron.ipcRenderer.on('iframeUrl', (event, iframeUrl) => {
 				this.resourceUrl = iframeUrl
 			});
+			/* 获取弹幕信息 */
+			this.getDanmuinfo();
 
 		},
 
@@ -645,9 +644,9 @@
 			this.onmessage();
 			/* 获取资源 */
 
-			// this.getResource(1);
-			// this.getResource(2);
-			// this.getResource(3);
+			this.getResource(1);
+			this.getResource(2);
+			this.getResource(3);
 		},
 		watch: {
 			isshowNamelist: function(newval, oldval) {
@@ -1113,7 +1112,7 @@
 								this.selectSentenceList[index].isPlayed = true;
 								this.$store.commit('SET_selectSentenceList', this.selectSentenceList);
 							}
-							
+
 						}
 
 
@@ -1239,10 +1238,61 @@
 					$me.isprogress = true; //显示进度条
 				}
 				if ($me.subjecttitle != 5 && $me.subjecttitle != 8 && $me.subjecttitle != 6) {
-					/*不是抢红包,语音识别，麦克风 开始弹幕*/
-					$('#danmu').data('danmuList', {});
-					$('#danmu').danmu('danmuStart');
-					/* 设置弹幕位置和透明度 */
+
+					/* 先获取弹幕的样式 */
+					if (this.danmuinfolist && this.danmuinfolist.length > 0) {
+						let num = 0;
+						switch ($me.subjecttitle) {
+							case '1':
+								{
+									num = 1;
+									break;
+								}
+							case '2':
+								{
+									num = 4;
+									break;
+								}
+							case '3':
+								{
+									num = 2;
+									break;
+								}
+							case '4':
+								{
+									num = 5;
+									break;
+								}
+							case '7':
+								{
+
+								}
+							case '9':
+								{
+									num = 7
+									break;
+								}
+						}
+						console.log(num)
+						let index = this.danmuinfolist.findIndex(item => item.questionType == num);
+						console.log(index)
+						if (index > 0) {
+							let danmuinfo = this.danmuinfolist[index];
+							if (danmuinfo.isOpenBarrageflag) {
+								/*不是抢红包,语音识别，麦克风 开始弹幕*/
+								$('#danmu').data('danmuList', {});
+								$('#danmu').danmu('danmuStart');
+								/* 设置弹幕位置和透明度 */
+								$('#danmu').danmu('setOpacity', danmuinfo.diaphaneity / 100);
+								$('#danmu').danmu('setLocation', danmuinfo.location);
+
+
+							}
+						}
+
+
+					}
+
 				}
 				if ($me.subjecttitle == 5) {
 					if (document.getElementById('music')) {
@@ -1303,6 +1353,10 @@
 				/* 清空红包 */
 				$me.delredenvelope();
 				document.getElementById('music').pause();
+				/* 清空倒计时 */
+				if (this.isCountDown) {
+					this.$refs.countdown.clearCount();
+				}
 				if ($me.subjecttitle == 4 || $me.subjecttitle == 6 || $me.subjecttitle == 7 || $me.subjecttitle == 8) {
 					//查询主观题统计----从webscoket返回
 					$me.Answerstop();
@@ -1397,6 +1451,15 @@
 						}
 						/*如果不直接进入下一题语音 显示语音测评结果 */
 						if ($me.subjecttitle == 9) {
+							/* 判断有没有 */
+							let wordtxt = $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text;
+							if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == wordtxt)) || $me.audiohistorylist
+								.length == 0) {
+								$me.audiohistorylist.push({
+									wordtxt: wordtxt,
+									sound_eng_url: $me.XStalkName.sound_eng_url
+								});
+							}
 							if (isNext != 1) {
 								$me.getHighScores();
 							} else {
@@ -1418,10 +1481,11 @@
 										$me.getHighScores();
 									}
 								}
-								
+
 
 							}
-							// this.getVoiceRecord($me.XStalkName.word||$me.XStalkName.text)
+
+							// this.getVoiceRecord()
 						}
 						/* 判断倒计时 */
 
@@ -1491,6 +1555,7 @@
 					var list = da.data.data;
 					var title = [],
 						data = [],
+						dataShadow = [],
 						percentage = [];
 					if (list && list.length > 0) {
 						list.forEach(item => {
@@ -1499,11 +1564,16 @@
 							percentage.push(item.percentage);
 						});
 					}
+					let max = Math.max(...data);
+					dataShadow = data.map(item => {
+						return max
+					})
 					//var title = Object.keys(list);
 					//var data = title.map(item => list[item]);
 					$me.getCorrectChartData({
 						title,
 						data,
+						dataShadow,
 						percentage
 					});
 				});
@@ -1515,6 +1585,7 @@
 				$me.isCorrectchart = true;
 				var title = myoption.title;
 				var mydata = myoption.data;
+				var dataShadow = myoption.dataShadow
 				var percentage = myoption.percentage;
 				$me.checklist = title
 					.filter(item => item != '未作答')
@@ -1592,6 +1663,17 @@
 						minInterval: 1
 					},
 					series: [{
+						data: dataShadow,
+						type: 'bar',
+						barWidth: 80,
+						barGap: '-100%',
+						itemStyle: {
+							normal: {
+								color: 'rgba(0,0,0,0.01)',
+								barBorderRadius: [8, 8, 0, 0]
+							}
+						}
+					}, {
 						data: mydata,
 						type: 'bar',
 						barWidth: 80,
@@ -1758,6 +1840,8 @@
 				// $me.isparticlesbox = false;
 				$me.isprogress = false; //隐藏进度条
 				$me.rate = 0;
+				$me.answerNumber = 0;
+				$me.totalNumber = 0;
 				$me.settrueanswer = '';
 				$me.chartDate = {
 					title: [],
@@ -2533,8 +2617,8 @@
 					}
 				}).then(da => {
 					if (da.data.ret == 'success') {
-						// this.resourceUrllist[type - 1] = da.data.data
-						this.resourceUrl=da.data.data
+						this.resourceUrllist[type - 1] = da.data.data
+						// this.resourceUrl = da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
 					}
@@ -2542,17 +2626,17 @@
 			},
 			showSet() {
 				/* 打开工具箱 */
-				this.isshowSet=!this.isshowSet
-				if(this.isshowSet){
+				this.isshowSet = !this.isshowSet
+				if (this.isshowSet) {
 					this.$refs.toolbar.showSet();
-				}else{
+				} else {
 					this.$refs.toolbar.hide();
 				}
 
 			},
 			showResource(type) {
 				/* 显示资源网 */
-				this.getResource(type)
+				// this.getResource(type)
 				if (this.isshowResource == type) {
 					this.isshowResource = 0
 				} else {
@@ -2584,14 +2668,31 @@
 				});
 
 			},
-			
+			// getVoiceRecord(){
+			// 	this.$http({
+			// 		method: 'post',
+			// 		url: urlPath + 'teacher-client/voiceAnswer/getVoiceRecord',
+			// 		headers: {
+			// 			'Content-Type': 'application/json; charset=UTF-8'
+			// 		}
+			// 	}).then(da => {
+			// 		console.log(da)
+			// 		if (da.data && da.data.ret == 'success') {
+			// 			this.audiohistorylist= da.data.data;
+			// 		} else {
+			// 			this.$toast.center(da.data.message);
+			// 		}
+			// 	});
+			// }
+
 		}
 	};
 </script>
 
 <style scoped="scoped">
-	.commonroom {
-		width: 500px;
+	.commonroom,
+	.talkroom {
+		width: 520px;
 		margin-bottom: 20px;
 	}
 

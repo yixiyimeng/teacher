@@ -592,7 +592,7 @@ var cyntax = {
 			}
 			
 		}
-		$("#" + this.id + ' .danmaku').css({
+		$("#" + this.id).css({
 			top,
 			bottom
 		});

@@ -15,10 +15,10 @@
 					<p>电子白板</p>
 					<div class="state" :class="{'active':type==4}"></div>
 				</a>
-				<a href="javascript:;" class="printScreen" @click.stop="saveImgFullScreen">
+				<!-- <a href="javascript:;" class="printScreen" @click.stop="saveImgFullScreen">
 					<i></i>
 					<p>截图</p>
-				</a>
+				</a> -->
 				<a href="javascript:;" class="rollCall">
 					<i></i>
 					<p>点名</p>

@@ -104,7 +104,7 @@
 			}
 		},
 		mounted() {
-			this.toImage();
+			// this.toImage();
 			// this.$refs.countdown.startCount()
 		},
 		methods: {

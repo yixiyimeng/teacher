@@ -7,7 +7,9 @@ export const IndexMixin = {
 		return {
 			namelist: [],
 			win: 100,
-			list: [],
+			redenvelopelist: [],
+			answerNumber:0,
+			totalNumber:0,
 		}
 	},
 	computed: {
@@ -151,18 +153,19 @@ export const IndexMixin = {
 			var time = new Date().getTime();
 			var rate = 1;
 			var deybottom = 0;
-			if (this.list[Left] && $('.li' + this.list[Left]).length > 0) {
+			console.log(this.redenvelopelist[Left]);
+			if (this.redenvelopelist[Left] && $('.li' + this.redenvelopelist[Left]).length > 0) {
 				try {
 					var reg = /matrix.((.+([, ]+)?){6})./g;
 
-					var str = $('.li' + this.list[Left]).css("transform");
+					var str = $('.li' + this.redenvelopelist[Left]).css("transform");
 					console.log(str);
 					var arr = reg.exec(str);
 					var newarr = arr[1].split(/[, ]+/g);
 					console.log(newarr[5]);
 					var leftbottom = parseFloat(newarr[5]);
 					if (leftbottom > 0) {
-						var oldflytypehight = parseInt($('.li' + this.list[Left]).css('height')) < 160 ? 160 : parseInt($('.li' + this.list[
+						var oldflytypehight = parseInt($('.li' + this.redenvelopelist[Left]).css('height')) < 160 ? 160 : parseInt($('.li' + this.list[
 							Left]).css('height'));
 						// deybottom = leftbottom - oldflytypehight;
 						deybottom = leftbottom;
@@ -175,7 +178,7 @@ export const IndexMixin = {
 
 			}
 			console.log('deybottom' + deybottom);
-			this.list[Left] = time;
+			this.redenvelopelist[Left] = time;
 			$(".couten").append("<li class='li" + time + "' ><a href='javascript:;'><p class='num'>+" + info.score +
 				"</p><div class='imgbox'></div><p>" + info.stuName + "</p></a></li>");
 			var h = $(".li" + time).height() + deybottom + 40;

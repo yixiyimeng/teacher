@@ -8,10 +8,10 @@
 						<img src="../assets/play.gif" alt="" v-if="isplay">
 					</div> -->
 				</div>
-				<div class="questionlist">
+				<!-- <div class="questionlist">
 					<span :class="{'active':item.isPlayed}" v-for="(item,index) in question" :key="index">{{item.word||item.text}}</span>
 				</div>
-				<span class="more" @click="showmore=!showmore"><i></i></span>
+				<span class="more" @click="showmore=!showmore"><i></i></span> -->
 			</div>
 
 
