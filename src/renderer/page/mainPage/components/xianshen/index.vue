@@ -734,7 +734,7 @@
 				font-size: 16px;
 				padding: 10px 0;
 				line-height: 20px;
-				height: 20px;
+				// height: 20px;
 				margin-bottom: 10px;
 
 				&>div {

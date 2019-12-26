@@ -3,9 +3,9 @@ import axios from 'axios';
 import App from './App';
 import router from './router';
 import store from './store';
-import './assets/css/style.css';
 import Toast from 'vue2-toast';
 import './Antcomponents'
+import './assets/css/style.css';
 // import Antd from 'ant-design-vue';
 // import 'ant-design-vue/dist/antd.css';
 // Vue.use(Antd);

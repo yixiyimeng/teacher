@@ -21,6 +21,9 @@ export default {
 	body {
 		font-family: 'Microsoft YaHei';
 		-webkit-app-region: no-drag;
+		ul{
+			margin: 0;
+		}
 	}
 	
 	.download,.exitappWin {
