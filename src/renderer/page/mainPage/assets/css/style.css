@@ -496,8 +496,8 @@ select {
 	position: fixed;
 	top: 0;
 	bottom: 20%;
-	left: 0;
-	right: 0;
+	left: 220px;
+	right: 220px;
 	z-index: 999;
 	/* display:none; */
 }
@@ -840,9 +840,9 @@ select {
 	background-image: url(../rank3.png)
 }
 .rankborad .item .imgbox img{
-	width:48px;
+	width:50px;
 	padding-top: 30px;
-	padding-left: 2px;
+	padding-left: 3px;
 }.rankborad .item .num{
 	/* background: url(../icon.png) no-repeat top center; */
 	width: 25px;

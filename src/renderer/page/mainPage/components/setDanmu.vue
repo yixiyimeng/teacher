@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		<div v-if="!isShowmenu">
-			<div class="setdanmu-hd flex flex-pack-justify flex-align-center"><span>单题单选题设置</span>
+			<div class="setdanmu-hd flex flex-pack-justify flex-align-center"><span>{{setinfo.questionTypeName}}设置</span>
 				<!-- <a-switch size="small" v-model="setinfo.isOpenBarrageflag" /> -->
 				<label>
 					<input type="checkbox" style="opacity: 0;" v-model="setinfo.isOpenBarrageflag">
@@ -187,6 +187,7 @@
 							this.$toast.center('修改成功!');
 							this.isShowmenu=true;
 							this.getDanmuinfo();
+							this.close();
 						}
 					})
 				// this.$postAction(api.setDanmuinfo, param).then(da => {

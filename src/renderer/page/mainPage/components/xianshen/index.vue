@@ -69,7 +69,7 @@
 					</div>
 				</div>
 			</div>
-			
+
 		</div>
 		<div class="ft">
 			<div class="tip">
@@ -126,7 +126,7 @@
 								<div class="mate-version">
 									<span v-for="(item,index) in mateVersionList" @click="getGrade(item)" :key="index" :class="{hover:chosemate.materials.materials_id==item.materials_id}">{{item.materials}}</span>
 								</div>
-								
+
 							</div>
 						</div>
 						<div class="mate-choose-list mate-list-grade clearfix"><label>年级</label>
@@ -179,13 +179,14 @@
 				selectSentenceList: [],
 				selectWordList: [],
 				isSlectWord: false, //是否选中单词
-				isSlectSen: false //是否选择句子
+				isSlectSen: false ,//是否选择句子
+				groupName:null//单元名称
 
 			}
 
 		},
 		created() {
-			
+
 		},
 		computed: {
 			wordLen: function() {
@@ -206,7 +207,7 @@
 		methods: {
 			showWin() {
 				this.isShowWin = true;
-				this.isFirst=true;
+				// this.isFirst = true;
 				this.getTextbooks();
 			},
 			/* 查询教程 */
@@ -304,6 +305,7 @@
 							this.unitList = da.data.data;
 							if (this.unitList && this.unitList.length > 0) {
 								this.getLessons(this.unitList[0])
+								this.groupName=this.unitList[0].group
 							}
 
 						} else {
@@ -316,6 +318,7 @@
 			changeUnit(obj) {
 				this.getLessons(obj);
 				this.showUnitlist = false;
+				this.groupName=obj.group
 			},
 			/* 查询课时 */
 			getLessons(group) {
@@ -364,7 +367,7 @@
 						console.log(da.data)
 						if (da.data.ret == 'success') {
 							this.wordList = []
-								this.isSlectWord=false;//是否选中单词
+							this.isSlectWord = false; //是否选中单词
 							if (da.data.data && da.data.data.length > 0) {
 								this.wordList = da.data.data.map(item => {
 									item.cancel = false;
@@ -395,8 +398,8 @@
 					.then(da => {
 						console.log(da.data)
 						if (da.data.ret == 'success') {
-						this.isSlectSen=false; //是否选择句子
-						
+							this.isSlectSen = false; //是否选择句子
+
 							this.sentenceList = []
 							if (da.data.data && da.data.data.length > 0) {
 								this.sentenceList = da.data.data.map(item => {
@@ -416,7 +419,7 @@
 				this.getWord(this.groupobj.group_id, this.lessonsobj.lessons_id);
 				this.getSentence(this.groupobj.group_id, this.lessonsobj.lessons_id);
 				this.showlesson = false;
-			
+
 			},
 			submit() {
 				this.isShowWin = false;
@@ -428,10 +431,31 @@
 					this.selectSentenceList = this.sentenceList.filter(item => !item.cancel);
 					this.$store.commit('SET_selectSentenceList', this.selectSentenceList);
 				}
-				
+				let list=[];
+				if(this.selectWordList&&this.selectWordList.length>0){
+					this.selectWordList.forEach(item=>{
+						list.push({
+							sound_eng_url:item.sound_eng_url,
+							word:item.word
+						})
+					})
+					
+				}
+				if(this.selectSentenceList&&this.selectSentenceList.length>0){
+					this.selectSentenceList.forEach(item=>{
+						list.push({
+							sound_eng_url:item.sound_eng_url,
+							word:item.text
+						})
+					})
+					
+				}
+				/* 传递单元名称 和选中数组 */
+				this.$emit('showGroup',this.groupName,list);
+
 			},
 			cancel() {
-				this.isSlectWord=false;
+				this.isSlectWord = false;
 				/* 清空作业栏 */
 				if (this.wordList && this.wordList.length > 0) {
 					this.wordList.forEach(item => {
@@ -439,7 +463,7 @@
 						return item
 					});
 				}
-				this.isSlectSen=false;
+				this.isSlectSen = false;
 				if (this.sentenceList && this.sentenceList.length > 0) {
 					this.sentenceList.forEach(item => {
 						item.cancel = false;
@@ -461,6 +485,7 @@
 		background: #1890ff;
 		border-radius: 10px;
 		padding: 10px 8px;
+		z-index: 9999;
 
 		.hd {
 			border-radius: 10px;

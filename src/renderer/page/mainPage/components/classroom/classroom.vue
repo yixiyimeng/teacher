@@ -62,9 +62,9 @@
 						<div><a href="javascript:;" class="setbtn" @click="settest"><i></i>
 								<p>导入题库</p>
 							</a>
-							<a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;showXianshenWin()"><i></i>
+							<!-- <a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;showXianshenWin()"><i></i>
 								<p>语音题导入</p>
-							</a>
+							</a> -->
 							<a href="javascript:;" class="setEnglishbtn" @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
 								<p>导入题库</p>
 							</a>
@@ -77,7 +77,7 @@
 				 v-if="isCloseUpload"></upload>
 			</div>
 		</div>
-		<xianshen ref="xianshenWin"></xianshen>
+		
 	</div>
 </template>
 
@@ -91,8 +91,7 @@
 	} from '@/page/mainPage/utils/base';
 	import {
 		search,
-		dropmenu,
-		xianshen
+		dropmenu
 	} from '@/page/mainPage/components';
 	import vSelect from '@/page/mainPage/components/vue-select';
 	import DatePicker from 'vue2-datepicker';
@@ -135,7 +134,7 @@
 			DatePicker,
 			upload,
 			dropmenu,
-			xianshen
+			
 		},
 		computed: {
 			...mapState(['platformpath', 'interactiopath', 'foundationpath'])

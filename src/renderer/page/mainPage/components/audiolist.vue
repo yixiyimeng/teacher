@@ -1,34 +1,63 @@
 <template>
 	<div>
+		<!-- <audiotxt v-if="isshowNamelist" :reftext="reftext"></audiotxt> -->
 		<audio ref="playmusic" crossOrigin="anonymous" preload ended></audio>
-		<div class="rightbar" :class="{active:isShow}" v-if="selectWordList.length>0">
+		<div class="rightbar" :class="{active:isShow}" v-if="selectWordList.length>0||hasNotplay.length>0">
 			<div class="flex flex-v">
-				<div class="title">已读{{selectWordList.length}}题</div>
-				<div class="list flex-1" v-if="selectWordList&&selectWordList.length>0">
+				<div class="title flex">
+					<span class="flex-1" @click="hasRead=true" :class="{active:hasRead}">已读{{selectWordList.length}}题</span>
+					<span class="flex-1" @click="hasRead=false" :class="{active:!hasRead}">未读{{hasNotplay.length}}题</span>
+				</div>
+				<div class="list flex-1" v-if="selectWordList&&selectWordList.length>0&&hasRead">
 					<p v-for="(item,index) in selectWordList" :key="index">
-						<i class="num" @click="getVoiceRecord(item)">{{index+1}}</i><span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span><span
-						 class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span></p>
+						<span
+						 class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
+						<i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
+						<span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span></p>
+				</div>
+				<div class="list flex-1" v-if="hasNotplay&&hasNotplay.length>0&&!hasRead">
+					<p v-for="(item,index) in hasNotplay" :key="index">
+						<span
+						 class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
+						 <i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
+						<span v-if='item' @click="getVoiceRecord(item)">{{item.word}}</span></p>
 				</div>
 			</div>
 			<div class="arrow" @click="isShow=!isShow"></div>
 		</div>
-		<transition name="bounce">
-			<div class="namelistbox" v-if="isshowNamelist">
-				<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
+
+		<div class="namelistbox" v-if="isshowNamelist">
+			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
+			<transition name="bounce">
 				<div class="namelistbox-bd">
 					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist">×</a>
 					<ul class="clearfix">
 						<li v-for="(item, index) in namelist">
-							<div class="name">{{ item.stuName }}</div>
+							<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
+								<span style="vertical-align: middle;">{{ item.stuName }}</span></div>
 							<div>
-								<p v-for="(path,subindex) in item.filePaths" :key='subindex'><i class="num">1</i><span class="play" @click="payAudio(path)"></span></p>
+								<p v-for="(path,subindex) in item.filePaths" :key='subindex'><i class="num">{{subindex+1}}</i><span class="play"
+									 @click="payAudio(path)"></span></p>
 							</div>
 						</li>
 					</ul>
 				</div>
-
+			</transition>
+		</div>
+		<div class="videobox">
+			<div class="reftext " v-if="isshowNamelist">
+				<div class="txt">
+					<div class="title">{{ reftext }}</div>
+				</div>
 			</div>
-		</transition>
+			<div class="soundbox" v-if="isshowNamelist">
+				<span @click="startAudio" class="sound">
+					<img src="../assets/play.png" alt="" v-if="!isPlay">
+					<img src="../assets/play.gif" alt="" v-if="isPlay">
+				</span>
+			</div>
+		</div>
+
 
 	</div>
 </template>
@@ -50,7 +79,11 @@
 				isShow: false,
 				hsselectWordList: [],
 				playnum: -1,
-
+				isreftex: false,
+				reftext: '',
+				sound_eng_url: null,
+				isPlay: false,
+				hasRead: true, //已读列表
 
 			}
 		},
@@ -61,7 +94,11 @@
 		props: {
 			selectWordList: {
 				type: Array,
-				default: {}
+				default: []
+			},
+			hasNotplay: {
+				type: [Array, Object],
+				default: []
 			}
 		},
 		mounted() {
@@ -71,33 +108,13 @@
 				audio.loop = false;
 				audio.addEventListener('ended', function() {
 					if ($me.playnum != -1) {
-						// $me.hsselectWordList[$me.playnum].isplaying = false;
 						$me.playnum = -1;
 					}
+					$me.isPlay = false;
 				}, false);
 			}
 		},
 		watch: {
-			// selectWordList: {
-			// 	handler(newName, oldName) {
-			// 		if (newName != oldName) {
-			// 			const $me = this;
-			// 			let list = []
-			// 			if (this.selectWordList && this.selectWordList.length > 0) {
-			// 				list = this.selectWordList.filter(item => item.isPlayed)
-			// 			}
-			// 			if (list && list.length > 0) {
-			// 				list.forEach(item => {
-			// 					item.isplaying = false
-			// 				})
-			// 			}
-			// 			$me.hsselectWordList = [...list];
-			// 		}
-			// 	},
-			// 	deep: true,
-			// 	// 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
-			// 	immediate: true
-			// },
 
 		},
 		created() {
@@ -108,24 +125,15 @@
 				this.show = !this.show
 			},
 			play(xsAudioUrl, index) {
-				// if (this.playnum != -1) {
-				// 	this.hsselectWordList[this.playnum].isplaying = false;
-				// }
 				this.playnum = index;
-				// var item = this.hsselectWordList[this.playnum];
-				// item.isplaying = true;
-				// this.$set(this.hsselectWordList, index, item);
-				this.$refs.playmusic.src = "https://data.caidouenglish.com/" + xsAudioUrl;
-				this.$refs.playmusic.load();
-				if (this.$refs.playmusic) {
-					this.$refs.playmusic.play();
-
-				}
+				this.isPlay = false;
+				this.payAudio("https://data.caidouenglish.com/" + xsAudioUrl)
 			},
 			payAudio(xsAudioUrl) {
-				this.$refs.playmusic.src = xsAudioUrl;
-				this.$refs.playmusic.load();
 				if (this.$refs.playmusic) {
+					this.$refs.playmusic.src = xsAudioUrl;
+					console.log(xsAudioUrl)
+					this.$refs.playmusic.load();
 					this.$refs.playmusic.play();
 
 				}
@@ -134,6 +142,8 @@
 			getVoiceRecord(item) {
 				// this.namelist = item.studentVoices;
 				// this.isshowNamelist = true;
+				this.reftext = item.wordtxt;
+				this.sound_eng_url = item.sound_eng_url;
 				this.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/voiceAnswer/getVoiceRecord',
@@ -146,11 +156,14 @@
 					if (da.data && da.data.ret == 'success') {
 						this.namelist = da.data.data[0].studentVoices;
 						this.isshowNamelist = true;
-
 					} else {
 						this.$toast.center(da.data.message);
 					}
 				});
+			},
+			startAudio() {
+				this.isPlay = true;
+				this.payAudio("https://data.caidouenglish.com/" + this.sound_eng_url)
 			}
 		}
 	}
@@ -225,8 +238,10 @@
 		right: 0;
 		top: 20%;
 		bottom: 20%;
-		position: absolute;
+		position: fixed;
+
 		transition: all .3s;
+		z-index: 1000;
 		transform: translateX(250px);
 
 		&.active {
@@ -238,7 +253,9 @@
 			width: 270px;
 			border-radius: 6px;
 			height: 100%;
-			opacity: 0;background: #fff;
+			opacity: 0;
+			background: #fff;
+			overflow: hidden;
 		}
 
 		&.active>.flex {
@@ -268,8 +285,13 @@
 			line-height: 40px;
 			font-size: 20px;
 			color: #1890ff;
-			padding-left: 30px;
+			text-align: center;
 			border-bottom: 1px solid #d1e9ff;
+
+			&>span.active {
+				background: #1890ff;
+				color: #fff;
+			}
 		}
 
 		.list {
@@ -311,5 +333,42 @@
 
 	.play {
 		background-image: url(../assets/icon25.png)
+	}
+
+	.videobox {
+		position: absolute;
+		z-index: 9999;
+	}
+
+	.soundbox {
+		border: 2px solid rgba(24, 114, 255, 0.9);
+		background: #fff;
+		position: fixed;
+		top: 5px;
+		left: 50%;
+		transform: translateX(-50%);
+		border-radius: 100%;
+		width: 45px;
+		height: 45px;
+		text-align: center;
+		padding-top: 7px;
+		padding-left: 7px;
+		/* padding-top: 11px; */
+		box-sizing: border-box;
+		z-index: 9999;
+	}
+
+	.sound {
+		cursor: pointer;
+		vertical-align: middle;
+	}
+
+	.sound img {
+		display: block;
+		width: 30px;
+	}
+
+	.sound.active>span {
+		background: none;
 	}
 </style>

@@ -8,8 +8,8 @@ export const IndexMixin = {
 			namelist: [],
 			win: 100,
 			redenvelopelist: [],
-			answerNumber:0,
-			totalNumber:0,
+			answerNumber: 0,
+			totalNumber: 0,
 		}
 	},
 	computed: {
@@ -65,13 +65,15 @@ export const IndexMixin = {
 				method: 'post',
 				url: urlPath + 'teacher-client/' + url
 			}).then(da => {
-				if(da.data.data&&da.data.data.length>0){
-					$me.namelist= da.data.data.map(item=>{item.checked=false;
-					return item});
-				}else{
+				if (da.data.data && da.data.data.length > 0) {
+					$me.namelist = da.data.data.map(item => {
+						item.checked = false;
+						return item
+					});
+				} else {
 					$me.namelist = [];
 				}
-				
+
 			})
 		},
 		/* 获取答题排名 */
@@ -98,7 +100,10 @@ export const IndexMixin = {
 			}).then(da => {
 				var list = da.data.data;
 				if (list.totalNumber && parseInt(list.totalNumber) > 0) {
+					$me.answerNumber = list.answerNumber;
+					$me.totalNumber = list.totalNumber;
 					$me.rate = parseInt((list.answerNumber / list.totalNumber) * 100);
+
 				}
 			});
 		},
@@ -136,7 +141,7 @@ export const IndexMixin = {
 			});
 		},
 		/* 添加红包 */
-		
+
 		addredenvelope(info) {
 
 			// const win = parseInt($('.couten').css('width')) - 200;
@@ -165,8 +170,9 @@ export const IndexMixin = {
 					console.log(newarr[5]);
 					var leftbottom = parseFloat(newarr[5]);
 					if (leftbottom > 0) {
-						var oldflytypehight = parseInt($('.li' + this.redenvelopelist[Left]).css('height')) < 160 ? 160 : parseInt($('.li' + this.list[
-							Left]).css('height'));
+						var oldflytypehight = parseInt($('.li' + this.redenvelopelist[Left]).css('height')) < 160 ? 160 : parseInt($(
+							'.li' + this.list[
+								Left]).css('height'));
 						// deybottom = leftbottom - oldflytypehight;
 						deybottom = leftbottom;
 					}

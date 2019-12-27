@@ -1,6 +1,6 @@
 <template>
 	<div class="toolbox" ref="TopImg">
-
+		<div class="mask" ref="mask" @click="isShow=false;" v-if="isShow"></div>
 		<!-- <a href="javascript:;" class="settoolbar" ref="TopImg" @click="isShow=!isShow;type=0"></a> -->
 		<div class="toolbar" v-if="isShow">
 			<div>
@@ -19,11 +19,11 @@
 					<i></i>
 					<p>截图</p>
 				</a> -->
-				<a href="javascript:;" class="rollCall">
+				<a href="javascript:;" class="rollCall" @click="show(5)">
 					<i></i>
 					<p>点名</p>
 				</a>
-				<a href="javascript:;" class="pickName">
+				<a href="javascript:;" class="pickName" @click="show(6)">
 					<i></i>
 					<p>随机</p>
 				</a>
@@ -52,6 +52,20 @@
 		<setDanmu @close="close" v-if="isShow&&type==1"></setDanmu>
 		<timeswiper ref="timeswiper" @cancelcountDown="close" v-if="isShow&&type==2"></timeswiper>
 		<draw ref="draw" v-if="type==4"></draw>
+		<!-- 点名名单 -->
+		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
+			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
+			<div class="namelistbox-bd">
+				<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist">×</a>
+				<ul class="clearfix">
+					<!-- {{namelist}} -->
+					<li v-for="(item, index) in selectNamelist" @click="selName(item)">
+						<img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
+						<span style="vertical-align: middle;">{{ item.stuName }}</span>
+					</li>
+				</ul>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -74,6 +88,8 @@
 				type: 0,
 				isShow: false,
 				htmlUrl: '',
+				isshowNamelist: false, //点名作答
+				selectNamelist: [],
 				options: {
 					img: '',
 					autoCrop: true,
@@ -91,6 +107,12 @@
 			timeswiper,
 			VueCropper,
 			draw
+		},
+		props: {
+			namelist: {
+				type: [Array, Object],
+				default: []
+			}
 		},
 		mounted() {
 			document.addEventListener('click', e => {
@@ -140,6 +162,21 @@
 								this.$emit('close')
 								break;
 							}
+						case 5:
+							{
+								$me.isShow = false;
+								if (this.namelist && this.namelist.length > 0) {
+									this.selectNamelist = this.namelist.filter(item => item.state == 1)
+								}
+								this.isshowNamelist = true;
+								break;
+							}
+						case 6:
+							{
+								$me.isShow = false;
+								this.$emit('Satrspeaker') //触发随机作答语音题目
+								break;
+							}
 
 					}
 				}
@@ -182,6 +219,10 @@
 					this.type = 0;
 					this.$emit('close')
 				})
+			},
+			selName(item) {
+				this.$emit('Satrspeaker', item.stuCode) //触发随机作答语音题目
+				this.isshowNamelist = false;
 			}
 
 		}
@@ -189,6 +230,14 @@
 </script>
 
 <style scoped="scoped" lang="less">
+	.mask {
+		position: fixed;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+	}
+
 	.settoolbar {
 		position: fixed;
 		left: 50%;
