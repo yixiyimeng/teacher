@@ -436,7 +436,8 @@
 					this.selectWordList.forEach(item=>{
 						list.push({
 							sound_eng_url:item.sound_eng_url,
-							word:item.word
+							word:item.word,
+							type:1
 						})
 					})
 					
@@ -445,7 +446,8 @@
 					this.selectSentenceList.forEach(item=>{
 						list.push({
 							sound_eng_url:item.sound_eng_url,
-							word:item.text
+							word:item.text,
+							type:2
 						})
 					})
 					

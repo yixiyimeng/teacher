@@ -856,8 +856,8 @@
 						this.$refs.xsmusic.src = this.xsAudioUrl;
 						this.$refs.xsmusic.load();
 						param = {
-							type: $me.XSquestionType == 0 ? 1 : 2,
-							refText: $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text
+							type: $me.XStalkName.type,
+							refText: $me.XStalkName.word
 							//uuid: $me.uuid
 						};
 						/* 设置已作答*/
@@ -1090,7 +1090,7 @@
 						if ($me.subjecttitle == 7) {
 							$me.reftext = $me.talkName;
 						} else {
-							$me.reftext = $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text;
+							$me.reftext = $me.XStalkName.word;
 						}
 
 						if ($me.isSatrspeaker) {
