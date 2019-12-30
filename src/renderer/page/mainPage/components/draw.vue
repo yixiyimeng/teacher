@@ -2,7 +2,18 @@
 	<div ref="drawbox" style="position: fixed; z-index: 1; top: 0; left: 0; bottom: 0; right: 0;">
 		<canvas id="draw" ref="draw" width="1000" height="500">您的浏览器不支持画布！</canvas>
 		<div class="drawbtnbar">
+			<!-- <div class="editbox">
+				<a href="javascript:;"><i></i></a>
+				<a href="javascript:;"><i></i></a>
+				<a href="javascript:;"><i></i></a>
+				<span>|</span>
+				<span class="selcolor"></span>
+				<div class="colorbox">
+					<span></span>
+				</div>
+			</div> -->
 			<!-- <a href="javascript:;" @click="clearDraw" class="edit" title="画笔"><i></i></a> -->
+			<!-- <a href="javascript:;" @click="clearDraw" class="cUndoBtn" title="撤销"><i></i></a> -->
 			<a href="javascript:;" @click="clearDraw" class="clear" title="清空"><i></i></a>
 		</div>
 	</div>
@@ -88,28 +99,30 @@
 			&>i {
 				display: block;
 				margin: 0 auto;
+				background: url(../assets/edit.png) no-repeat center top;
+				background-size: 30px auto;
+				height: 30px;
+				width: 40px;
 			}
 
 			&.edit {
 				padding-top: 13px;
-
-				&>i {
-					background: url(../assets/edit.png) no-repeat center top;
-					background-size: 30px auto;
-					height: 30px;
-					width: 40px;
-
-				}
 			}
 
 			&.clear {
 				padding-top: 10px;
 
 				&>i {
-					background: url(../assets/clear.png) no-repeat center top;
-					background-size: 30px auto;
-					height: 30px;
-					width: 40px;
+					background-image: url(../assets/clear.png);
+
+				}
+			}
+
+			&.cUndoBtn {
+				padding-top: 13px;
+
+				&>i {
+					background-image: url(../assets/cUndoBtn.png);
 
 				}
 			}

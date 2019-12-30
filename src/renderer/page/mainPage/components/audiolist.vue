@@ -10,17 +10,15 @@
 				</div>
 				<div class="list flex-1" v-if="selectWordList&&selectWordList.length>0&&hasRead">
 					<p v-for="(item,index) in selectWordList" :key="index">
-						<span
-						 class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
+						<span class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
 						<i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
 						<span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span></p>
 				</div>
 				<div class="list flex-1" v-if="hasNotplay&&hasNotplay.length>0&&!hasRead">
 					<p v-for="(item,index) in hasNotplay" :key="index">
-						<span
-						 class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
-						 <i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
-						<span v-if='item' @click="getVoiceRecord(item)">{{item.word}}</span></p>
+						<span class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
+						<i class="num">{{index+1}}</i>
+						<span v-if='item'>{{item.word}}</span></p>
 				</div>
 			</div>
 			<div class="arrow" @click="isShow=!isShow"></div>
@@ -30,8 +28,20 @@
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
 			<transition name="bounce">
 				<div class="namelistbox-bd">
-					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist">×</a>
-					<ul class="clearfix">
+					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
+					<div class="clearfix nameitem">
+						<div v-for="(item, index) in namelist" :key="index">
+							<div class="item" v-for="(subitem, subindex) in item" :key="subindex">
+								<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
+									<span style="vertical-align: middle;">{{ subitem.stuName }}</span></div>
+								<div>
+									<p v-for="(path,subindex2) in subitem.filePaths" :key='subindex2'><i class="num">{{subindex2+1}}</i>
+									<span class="play" @click="payAudio(path)" :class="{active:usersoundurl&&usersoundurl==path}"></span></p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!-- <ul class="clearfix">
 						<li v-for="(item, index) in namelist">
 							<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
 								<span style="vertical-align: middle;">{{ item.stuName }}</span></div>
@@ -40,7 +50,7 @@
 									 @click="payAudio(path)"></span></p>
 							</div>
 						</li>
-					</ul>
+					</ul> -->
 				</div>
 			</transition>
 		</div>
@@ -84,6 +94,7 @@
 				sound_eng_url: null,
 				isPlay: false,
 				hasRead: true, //已读列表
+				usersoundurl:null//学生语言地址
 
 			}
 		},
@@ -111,6 +122,7 @@
 						$me.playnum = -1;
 					}
 					$me.isPlay = false;
+					$me.usersoundurl = null
 				}, false);
 			}
 		},
@@ -133,6 +145,7 @@
 				if (this.$refs.playmusic) {
 					this.$refs.playmusic.src = xsAudioUrl;
 					console.log(xsAudioUrl)
+					this.usersoundurl=xsAudioUrl;
 					this.$refs.playmusic.load();
 					this.$refs.playmusic.play();
 
@@ -154,7 +167,9 @@
 				}).then(da => {
 					console.log(da)
 					if (da.data && da.data.ret == 'success') {
-						this.namelist = da.data.data[0].studentVoices;
+						let studentVoices = da.data.data[0].studentVoices;
+						this.namelist = this.splitArr(studentVoices, 4);
+						console.log(this.namelist)
 						this.isshowNamelist = true;
 					} else {
 						this.$toast.center(da.data.message);
@@ -164,6 +179,34 @@
 			startAudio() {
 				this.isPlay = true;
 				this.payAudio("https://data.caidouenglish.com/" + this.sound_eng_url)
+			},
+			splitArr(data, senArrLen) {
+				//处理成len个一组的数据
+				let data_len = data.length;
+				let arrOuter_len = data_len % senArrLen === 0 ? data_len / senArrLen : parseInt((data_len / senArrLen) + '') + 1;
+				let arrSec_len = data_len > senArrLen ? senArrLen : data_len; //内层数组的长度
+				let arrOuter = new Array(arrOuter_len); //最外层数组
+				let arrOuter_index = 0; //外层数组的子元素下标
+				// console.log(data_len % len);
+				for (let i = 0; i < data_len; i++) {
+					if (i % senArrLen === 0) {
+						arrOuter_index++;
+						let len = arrSec_len * arrOuter_index;
+						//将内层数组的长度最小取决于数据长度对len取余，平时最内层由下面赋值决定
+						arrOuter[arrOuter_index - 1] = new Array(data_len % senArrLen);
+						if (arrOuter_index === arrOuter_len) //最后一组
+							data_len % senArrLen === 0 ?
+							len = data_len % senArrLen + senArrLen * arrOuter_index :
+							len = data_len % senArrLen + senArrLen * (arrOuter_index - 1);
+						let arrSec_index = 0; //第二层数组的索引
+						for (let k = i; k < len; k++) { //第一层数组的开始取决于第二层数组长度*当前第一层的索引
+							arrOuter[arrOuter_index - 1][arrSec_index] = data[k];
+							arrSec_index++;
+						}
+					}
+				}
+				return arrOuter
+
 			}
 		}
 	}
@@ -212,8 +255,8 @@
 		font-size: 20px;
 	}
 
-	.namelistbox .num,
-	.list .num {
+	.namelistbox i.num,
+	.list i.num {
 		border-radius: 100%;
 		border: 1px solid #1890ff;
 		height: 20px;
@@ -222,7 +265,8 @@
 		vertical-align: middle;
 		display: inline-block;
 		text-align: center;
-		line-height: 20px;
+		line-height: 18px;
+		font-size: 12px;
 	}
 
 	.namelistbox p {
@@ -263,12 +307,12 @@
 		}
 
 		.arrow {
-			height: 45px;
-			width: 45px;
+			height: 40px;
+			width: 40px;
 			border: 2px solid #1890ff;
 			border-radius: 100%;
 			background: #fff url(../assets/rightbar.png) no-repeat center center;
-			background-size: 14px auto;
+			background-size: 12px auto;
 			position: absolute;
 			cursor: pointer;
 			left: 0;
@@ -286,6 +330,7 @@
 			font-size: 20px;
 			color: #1890ff;
 			text-align: center;
+			cursor: pointer;
 			border-bottom: 1px solid #d1e9ff;
 
 			&>span.active {
@@ -301,7 +346,7 @@
 
 
 		.list p {
-			padding: 10px 10px 30px;
+			padding: 10px 10px 30px 20px;
 			cursor: pointer;
 		}
 
@@ -318,7 +363,12 @@
 		vertical-align: middle;
 		width: 20px;
 		height: 20px;
-		background: url(../assets/icon24.png) no-repeat left center;
+		background: url(../assets/icon24.png) no-repeat left center !important;
+
+		&.play {
+			background-image: url(../assets/icon25.png)
+		}
+
 
 	}
 
@@ -326,14 +376,13 @@
 		background-size: 16px auto;
 	}
 
-	.notice.active {
-		background-image: url(../assets/noticeplay.gif);
-		background-size: 20px auto;
+	.notice.active ,.play.active{
+		background-image: url(../assets/noticeplay.gif) !important;
+		background-size: 20px auto !important;;
+		background-position-x: -2px !important;;
+
 	}
 
-	.play {
-		background-image: url(../assets/icon25.png)
-	}
 
 	.videobox {
 		position: absolute;

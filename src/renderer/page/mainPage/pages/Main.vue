@@ -147,10 +147,7 @@
 			_this.$electron.ipcRenderer.on('isminimizeApp', (event, flag) => {
 				_this.$store.commit('SET_isminimizeApp', flag);
 			});
-			/* 主进程 通知是否退出直播间 */
-			_this.$electron.ipcRenderer.on('exitdirebro', (event, flag) => {
-				_this.exitBtn();
-			});
+			
 			/* 监听页面刷新的时候，存储store */
 			window.addEventListener('beforeunload', () => {
 				localStorage.setItem('messageStore', JSON.stringify(this.$store.state));

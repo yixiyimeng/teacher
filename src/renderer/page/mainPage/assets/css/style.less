@@ -366,7 +366,7 @@ a {
 	left:426px;
 }
 .setupload.active,.setupload>div{
-	width:226px;
+	width:150px;
 }
 .setupload a{
 	display: block;
@@ -828,11 +828,12 @@ transform: rotate(180deg);
 	border: 6px solid #1890ff;
 }
 
-.namelistbox ul {
+.namelistbox ul ,.namelistbox .nameitem{
 	height: 100%;
 	overflow: auto;
 }
-.namelistbox ul > li {
+.namelistbox ul > li,
+.namelistbox .nameitem .item{
 	float: left;
 	margin: 10px 0;
 	color: #333;
@@ -842,7 +843,8 @@ transform: rotate(180deg);
 	line-height: 20px;
 	cursor: pointer;
 }
-.namelistbox ul li i {
+.namelistbox ul li i,
+.namelistbox .nameitem .item i{
 	width: 16px;
 	height: 16px;
 	display: inline-block;
@@ -856,7 +858,8 @@ transform: rotate(180deg);
 	background-color: #52c41a;
 }
 .namelistbox ul li .notice,
-.namelistbox ul li .play{
+.namelistbox ul li .play,
+.namelistbox .nameitem .item .play{
 	display: inline-block;
 	width: 20px;
 	height: 20px;

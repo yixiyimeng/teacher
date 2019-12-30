@@ -56,7 +56,7 @@
 		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
 			<div class="namelistbox-bd">
-				<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist">×</a>
+				<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
 				<ul class="clearfix">
 					<!-- {{namelist}} -->
 					<li v-for="(item, index) in selectNamelist" @click="selName(item)">

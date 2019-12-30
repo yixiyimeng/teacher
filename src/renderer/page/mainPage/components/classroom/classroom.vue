@@ -36,16 +36,16 @@
 						</div>
 					</div>
 					<div class="fromcontrol flex flex-1">
-						<label>试卷</label>
+						<label>备课题</label>
 						<div style=" width: 30px; position: absolute;overflow: hidden; left: 4em; height: 64px;">
 							<date-picker style="padding-top: 15px;position: absolute; right: 0;" v-model="rangetime" range appendToBody
 							 confirm confirm-text="确定" value-type="format" @input="changeTime"></date-picker>
 						</div>
 						<div class="flex-1">
-							<v-select :options="titlesearchList" v-model="titleCode" placeholder="选择时间段筛选试卷" class="flex-1" style="padding-right: 20px;"
+							<v-select :options="titlesearchList" v-model="titleCode" placeholder="选择时间段筛选备课题" class="flex-1" style="padding-right: 20px;"
 							 label="titleName">
 								<template slot="no-options">
-									没有筛选到试卷
+									没有筛选到备课题
 								</template>
 							</v-select>
 						</div>
@@ -66,7 +66,7 @@
 								<p>语音题导入</p>
 							</a> -->
 							<a href="javascript:;" class="setEnglishbtn" @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
-								<p>导入题库</p>
+								<p>导入备课题</p>
 							</a>
 						</div>
 					</div>
@@ -77,7 +77,7 @@
 				 v-if="isCloseUpload"></upload>
 			</div>
 		</div>
-		
+
 	</div>
 </template>
 
@@ -134,7 +134,7 @@
 			DatePicker,
 			upload,
 			dropmenu,
-			
+
 		},
 		computed: {
 			...mapState(['platformpath', 'interactiopath', 'foundationpath'])
@@ -147,6 +147,7 @@
 						this.sendInfo.className = this.selectclass.name;
 						if (this.sendInfo.classCode && this.sendInfo.subjectCode) {
 							this.getTitleList();
+							this.getTopicTitle();
 						}
 					} else {
 						this.sendInfo.classCode = '';
@@ -165,6 +166,7 @@
 						this.sendInfo.subjectName = this.selectsubject.name;
 						if (this.sendInfo.classCode && this.sendInfo.subjectCode) {
 							this.getTitleList();
+							this.getTopicTitle()
 						}
 					} else {
 						this.sendInfo.subjectCode = '';
@@ -194,10 +196,10 @@
 			this.rangetime[0] = parseDay(todayDate.getTime() - 30 * 86400000);
 			this.rangetime[1] = parseDay(todayDate.getTime());
 			//this.getTitleList();
-			this.getTopicTitle();
+			// this.getTopicTitle();
 			this.$store.commit('SET_selectWordList', []);
 			this.$store.commit('SET_selectSentenceList', []);
-			
+
 		},
 		filters: {
 			filterTime: function(value) {
@@ -307,7 +309,10 @@
 						'Content-Type': 'application/json; charset=UTF-8'
 					},
 					data: JSON.stringify({
-						teacherCode: $me.sendInfo.teacAssistantCode
+						teacherCode: $me.sendInfo.teacAssistantCode,
+						classCode: $me.sendInfo.classCode,
+						subjectCode: $me.sendInfo.subjectCode,
+
 					})
 				}).then(da => {
 					if (da.data.ret == 'success') {
