@@ -29,17 +29,20 @@
 			<transition name="bounce">
 				<div class="namelistbox-bd">
 					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
-					<div class="clearfix nameitem">
-						<div v-for="(item, index) in namelist" :key="index">
-							<div class="item" v-for="(subitem, subindex) in item" :key="subindex">
-								<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
-									<span style="vertical-align: middle;">{{ subitem.stuName }}</span></div>
+					<div class="clearfix flex"  style="flex-wrap: wrap;">
+						<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
+							<div class="item" v-for="(subitem, subindex) in namelist" :key="subindex" >
 								<div>
-									<p v-for="(path,subindex2) in subitem.filePaths" :key='subindex2'><i class="num">{{subindex2+1}}</i>
-									<span class="play" @click="payAudio(path)" :class="{active:usersoundurl&&usersoundurl==path}"></span></p>
+									<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
+										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
+									</div>
+									<div>
+										<p v-for="(path,subindex2) in subitem.filePaths" :key='subindex2'><i class="num">{{subindex2+1}}</i>
+											<span class="play" @click="payAudio(path)" :class="{active:usersoundurl&&usersoundurl==path}"></span></p>
+									</div>
 								</div>
 							</div>
-						</div>
+						<!-- </div> -->
 					</div>
 					<!-- <ul class="clearfix">
 						<li v-for="(item, index) in namelist">
@@ -85,7 +88,7 @@
 		data() {
 			return {
 				isshowNamelist: false,
-				namelist: [],
+				namelist:10,
 				isShow: false,
 				hsselectWordList: [],
 				playnum: -1,
@@ -94,7 +97,7 @@
 				sound_eng_url: null,
 				isPlay: false,
 				hasRead: true, //已读列表
-				usersoundurl:null//学生语言地址
+				usersoundurl: null //学生语言地址
 
 			}
 		},
@@ -145,7 +148,7 @@
 				if (this.$refs.playmusic) {
 					this.$refs.playmusic.src = xsAudioUrl;
 					console.log(xsAudioUrl)
-					this.usersoundurl=xsAudioUrl;
+					this.usersoundurl = xsAudioUrl;
 					this.$refs.playmusic.load();
 					this.$refs.playmusic.play();
 
@@ -168,8 +171,8 @@
 					console.log(da)
 					if (da.data && da.data.ret == 'success') {
 						let studentVoices = da.data.data[0].studentVoices;
-						this.namelist = this.splitArr(studentVoices, 4);
-						console.log(this.namelist)
+						this.namelist = studentVoices;
+						// console.log(this.namelist)
 						this.isshowNamelist = true;
 					} else {
 						this.$toast.center(da.data.message);
@@ -376,10 +379,13 @@
 		background-size: 16px auto;
 	}
 
-	.notice.active ,.play.active{
+	.notice.active,
+	.play.active {
 		background-image: url(../assets/noticeplay.gif) !important;
-		background-size: 20px auto !important;;
-		background-position-x: -2px !important;;
+		background-size: 20px auto !important;
+		;
+		background-position-x: -2px !important;
+		;
 
 	}
 
@@ -419,5 +425,25 @@
 
 	.sound.active>span {
 		background: none;
+	}
+
+	.namelistbox {
+		.item {
+			width: 25%;
+			padding: 10px;
+			&>div {
+				box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+				border-radius: 5px;
+				height: 100%;
+				padding: 10px;
+				.name+div{
+					overflow: hidden;
+				}
+				p{
+					float: left;
+				}
+			}
+
+		}
 	}
 </style>

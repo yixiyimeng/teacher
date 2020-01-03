@@ -6,7 +6,8 @@ import {
 	dialog,
 	ipcMain,
 	globalShortcut,
-	screen
+	screen,
+	shell
 } from 'electron';
 import {
 	autoUpdater
@@ -89,8 +90,9 @@ function createWindow() {
 
 	});
 	mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
-	   console.log("abcd"+url)
-	   mainWindow.webContents.send('iframeUrl',url);
+	  console.log("abcd"+url)
+	  mainWindow.webContents.send('iframeUrl',url);
+	  // shell.openExternal(url);
 	  event.preventDefault()
 	
 	})

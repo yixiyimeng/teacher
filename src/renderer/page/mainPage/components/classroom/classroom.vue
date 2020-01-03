@@ -269,7 +269,13 @@
 						}
 						//console.log(da);
 					} else {
-						// this.$toast.center('查询失败');
+
+						if (da.data.code == 401) {
+							setTimeout(function() {
+								$me.returnback()
+							}, 500)
+						}
+						this.$toast.center(da.data.message);
 					}
 				});
 			},
@@ -296,6 +302,12 @@
 						console.log(da);
 					} else {
 						// this.$toast.center('查询失败');
+						this.$toast.center(da.data.message);
+						if (da.data.code == 401) {
+							setTimeout(function() {
+								$me.returnback()
+							}, 500)
+						}
 					}
 				});
 			},
@@ -318,7 +330,7 @@
 					if (da.data.ret == 'success') {
 						$me.reftitletypelist = da.data.data;
 					} else {
-						this.$toast.center('查询失败');
+						this.$toast.center(da.data.message);
 					}
 				});
 			},
@@ -458,7 +470,12 @@
 					});
 			},
 			returnback() {
-				this.$router.go(-1);
+				// this.$router.go(-1);
+				this.$router.push({
+					//页面跳转
+					path: 'login'
+				});
+				localStorage.removeItem('loginSendInfo')
 			},
 			changrTopic() {
 				/* 手动输入主题,清空主题code */

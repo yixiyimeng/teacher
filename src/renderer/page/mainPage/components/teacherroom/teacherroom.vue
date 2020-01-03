@@ -629,7 +629,9 @@
 				console.log(iframeUrl);
 				// $me.resourceUrl1 = iframeUrl;
 				// $me.resourceUrllist[$me.isshowResource-1] = iframeUrl;
-				$me.$set($me.resourceUrllist, ($me.isshowResource - 1), iframeUrl)
+				if (iframeUrl) {
+					$me.$set($me.resourceUrllist, ($me.isshowResource - 1), iframeUrl)
+				}
 				// document.frames('iframe'+$me.isshowResource-1).location.reload(true);
 				// console.log($me.resourceUrllist)
 				// $me.$refs['iframe' + ($me.isshowResource - 1)].contentWindow.location.reload(true);
@@ -751,7 +753,14 @@
 				setTimeout(function() {
 					$me.$loading.close();
 					/* 跳转到选择直播间页面 */
-					$me.$router.go(-1); //返回上一层
+					// $me.$router.go(-1); //返回上一层
+					$me.$router.push({
+						//页面跳转
+						path: 'classroom',
+						query: {
+							sendInfo: localStorage.getItem('loginSendInfo')
+						}
+					});
 				}, 5000);
 			},
 

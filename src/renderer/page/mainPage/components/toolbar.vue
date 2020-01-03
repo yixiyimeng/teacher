@@ -15,10 +15,10 @@
 					<p>电子白板</p>
 					<div class="state" :class="{'active':type==4}"></div>
 				</a>
-				<!-- <a href="javascript:;" class="printScreen" @click.stop="saveImgFullScreen">
+				<a href="javascript:;" class="printScreen" @click.stop="saveImgFullScreen">
 					<i></i>
 					<p>截图</p>
-				</a> -->
+				</a>
 				<a href="javascript:;" class="rollCall" @click="show(5)">
 					<i></i>
 					<p>点名</p>
@@ -51,7 +51,7 @@
 		</div>
 		<setDanmu @close="close" v-if="isShow&&type==1"></setDanmu>
 		<timeswiper ref="timeswiper" @cancelcountDown="close" v-if="isShow&&type==2"></timeswiper>
-		<draw ref="draw" v-if="type==4"></draw>
+		<draw ref="draw" v-if="type==4" @save='saveImgFullScreen'></draw>
 		<!-- 点名名单 -->
 		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
@@ -189,29 +189,23 @@
 			saveImgFullScreen() {
 				/* 全屏截图 */
 				const $me = this;
-
-				$me.type = 3;
 				$me.isShow = false;
-				// 				html2canvas(this.$refs.TopImg, {
-				// 					backgroundColor: null
-				// 				}).then((canvas) => {
-				// 					let url = canvas.toDataURL('image/png');
-				// 					this.htmlUrl = url;
-				// 					console.log(this.htmlUrl)
-				// 
-				// 				})
-				$me.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/common/saveImgFullScreen'
-				}).then(da => {
-					if (da.data.ret == 'success') {
-						/* 截图保存给后端 */
-						$me.htmlUrl = 'data:image/jpg;base64,' + da.data.data;
-						// console.log(this.htmlUrl)
-					} else {
-						$me.$toast.center(da.data.message);
-					}
-				});
+				this.$nextTick(() => {
+					console.log(12)
+					$me.$http({
+						method: 'post',
+						url: urlPath + 'teacher-client/common/saveImgFullScreen'
+					}).then(da => {
+						if (da.data.ret == 'success') {
+							/* 截图保存给后端 */
+							$me.htmlUrl = 'data:image/jpg;base64,' + da.data.data;
+							// console.log(this.htmlUrl)
+							$me.type = 3;
+						} else {
+							$me.$toast.center(da.data.message);
+						}
+					});
+				})
 			},
 			saveImg() {
 				this.$refs.cropper.getCropData(data => {
