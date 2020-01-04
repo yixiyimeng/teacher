@@ -41,7 +41,7 @@
 		<div class="printScreenbox" v-show="type==3">
 			<div style="height:100%; width: 100%;">
 				<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
-				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox">
+				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox" :canMove="options.canMove">
 				</vue-cropper>
 			</div>
 			<div class="optionbtn">
@@ -93,9 +93,10 @@
 				options: {
 					img: '',
 					autoCrop: true,
-					autoCropWidth: 200,
-					autoCropHeight: 200,
-					fixedBox: false
+					// autoCropWidth: 200,
+					// autoCropHeight: 200,
+					fixedBox: false,
+					canMove: false
 				},
 			}
 		},
@@ -112,6 +113,10 @@
 			namelist: {
 				type: [Array, Object],
 				default: []
+			},
+			ifTemporary: {
+				type: Boolean,
+				default: false
 			}
 		},
 		mounted() {
@@ -156,10 +161,18 @@
 								// $me.$refs.timeswiper.show();
 								break;
 							}
+						case 3:
+							{
+								this.$nextTick(() => {
+									this.$refs.cropper.startCrop();
+								})
+								break;
+							}
 						case 4:
 							{
 								$me.isShow = false;
-								this.$emit('close')
+								this.$emit('close');
+
 								break;
 							}
 						case 5:
@@ -208,10 +221,25 @@
 				})
 			},
 			saveImg() {
+				const $me = this;
 				this.$refs.cropper.getCropData(data => {
-					console.log(data)
+					// console.log(data)
 					this.type = 0;
-					this.$emit('close')
+					$me.$http({
+						method: 'post',
+						url: urlPath + 'teacher-client/platform/saveWhiteboardImg',
+						data: {
+							ifTemporary: !$me.ifTemporary,
+							imgBase64: data
+						}
+					}).then(da => {
+						if (da.data.ret == 'success') {
+							this.$emit('close')
+						} else {
+							$me.$toast.center(da.data.message);
+						}
+					});
+
 				})
 			},
 			selName(item) {
@@ -383,19 +411,19 @@
 
 	.printScreenbox {
 		position: fixed;
-		top: 20%;
-		bottom: 20%;
-		left: 20%;
-		right: 20%;
-		background: rgba(255, 255, 255, .5);
-		border: 4px solid #1890ff;
-		border-radius: 8px;
-		z-index: 9999;
+		top: 0%;
+		bottom: 0%;
+		left: 0%;
+		right: 0%;
+		// background: rgba(255, 255, 255, .5);
+		// border: 4px solid #1890ff;
+		// border-radius: 8px;
+		z-index: 100001;
 	}
 
 	.printScreenbox .optionbtn {
 		position: absolute;
-		bottom: -20px;
+		bottom: 10px;
 		left: 0;
 		right: 0;
 		text-align: center;

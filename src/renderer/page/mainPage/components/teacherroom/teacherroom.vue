@@ -3,7 +3,7 @@
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<!-- 工具箱 -->
-		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" :namelist="namelist"></toolbar>
+		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
 		<div class="bottommenu">
 			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
 			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
@@ -355,7 +355,7 @@
 			<!-- <iframe ref="iframe1" :src="resourceUrllist[1]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==2"></iframe> -->
 			<iframe ref="iframe2" :src="resourceUrllist[2]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==3"></iframe>
 		</div>
-		<audiolist :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
+		<audiolist ref="audiolist" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
 	</div>
@@ -1127,6 +1127,9 @@
 				/* 清空红包 */
 				$me.delredenvelope();
 				document.getElementById('music').pause();
+				/* 隐藏跟读测评的 历史记录 */
+				$me.$refs.audiolist.hideNamelist();
+				$me.isreftext = false; //语音测评
 			},
 			stopRace(isNext) {
 				/* 点击结束答题 */
@@ -1969,6 +1972,7 @@
 			/* 下一题 */
 			nextQuestion() {
 				const $me = this;
+				// $me.startVIew();
 				$me.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/common/nextQuestion'
@@ -2605,7 +2609,7 @@
 		position: fixed;
 		bottom: 40px;
 		left: 10px;
-		z-index: 1000;
+		z-index: 10001;
 
 	}
 

@@ -300,16 +300,18 @@ body {
 
 .namelist ul {
 	padding-left: 30px;
-	
+
 }
 
 .namelist.active {
 	transform: translate(0, -50%);
 }
-.namelist.active .swiper-container{
+
+.namelist.active .swiper-container {
 	opacity: 1;
 }
-.namelist .swiper-container{
+
+.namelist .swiper-container {
 	opacity: 0;
 	transition: all .3s;
 	background: rgba(0, 0, 0, .4);
@@ -317,31 +319,35 @@ body {
 	border-bottom-right-radius: 8px;
 	box-shadow: 0 0 4px rgba(255, 255, 255, .3);
 }
+
 .setting-drawer-index-handle {
 	position: absolute;
-	left:275px;
+	left: 275px;
 	background: rgba(24, 114, 255, 0.9);
 	width: 45px;
 	height: 45px;
 	text-align: center;
 	font-size: 16px;
-	border-radius:100% ;
+	border-radius: 100%;
 	/* border-radius: 0 4px 4px 0; */
 	/* line-height: 48px; */
 	top: -20px;
 	cursor: pointer;
 	z-index: 999;
 }
-.setting-drawer-index-handle img{
+
+.setting-drawer-index-handle img {
 	width: 25px;
 	text-align: center;
 }
-.namelist .unbind{
+
+.namelist .unbind {
 	background: rgba(255, 0, 0, 0.6);
-		top: -20px;
-		left: 225px;
-		
-	}
+	top: -20px;
+	left: 225px;
+
+}
+
 .namelist ul li i {
 	width: 12px;
 	height: 12px;
@@ -496,8 +502,8 @@ select {
 	position: fixed;
 	top: 0;
 	bottom: 20%;
-	left: 220px;
-	right: 220px;
+	left: 275px;
+	right: 275px;
 	z-index: 999;
 	/* display:none; */
 }
@@ -784,20 +790,24 @@ select {
 .txtlist .item .flex-1 img {
 	width: 40px;
 }
-.rankborad{
+
+.rankborad {
 	border: 6px solid #1890ff;
 	padding: 20px 30px;
 	border-radius: 8px;
 	margin: 5px 0;
-	background: #fff;width: 70%;
+	background: #fff;
+	/* width: 70%; */
 	position: fixed;
-	left: 15%;
+	left:275px;
+	right: 275px;
 	top: 20%;
 	bottom: 20%;
 	overflow: auto;
 	z-index: 9999;
 }
-.rankborad .item{
+
+.rankborad .item {
 	width: 33.33%;
 	float: left;
 	color: #b85e1e;
@@ -805,45 +815,60 @@ select {
 	box-sizing: border-box;
 	font-size: 18px;
 }
-.rankborad .item .name{
+
+.rankborad .item .name {
 	font-size: 20px;
 	font-weight: bold;
 	color: #1890ff;
 }
-.rankborad .item .name+span{
+
+.rankborad .item .name+span {
 	color: #333;
 }
+
 .rankborad .item1 .name+span,
 .rankborad .item2 .name+span,
-.rankborad .item3 .name+span{
+.rankborad .item3 .name+span {
 	color: #cc0000;
 }
+
 /* .rankborad .item:not(:last-child){
 	border-bottom: 1px solid #ccc;
 } */
-.rankborad .item .imgbox{
-	width:52px ;
-	height:80px ;
+.rankborad .item .imgbox {
+	width: 52px;
+	height: 80px;
 	position: relative;
 	top: -15px;
 }
-.rankborad .item1 .imgbox,.rankborad .item2 .imgbox,.rankborad .item3 .imgbox{
+
+.rankborad .item1 .imgbox,
+.rankborad .item2 .imgbox,
+.rankborad .item3 .imgbox {
 	background: no-repeat center bottom;
 	background-size: contain;
-	
+
 }
-.rankborad .item1 .imgbox{
+
+.rankborad .item1 .imgbox {
 	background-image: url(../rank1.png)
-}.rankborad .item2 .imgbox{
+}
+
+.rankborad .item2 .imgbox {
 	background-image: url(../rank2.png)
-}.rankborad .item3 .imgbox{
+}
+
+.rankborad .item3 .imgbox {
 	background-image: url(../rank3.png)
 }
-.rankborad .item .imgbox img{
-	width:50px;
+
+.rankborad .item .imgbox img {
+	width: 50px;
 	padding-top: 30px;
 	padding-left: 3px;
-}.rankborad .item .num{
+}
+
+.rankborad .item .num {
 	/* background: url(../icon.png) no-repeat top center; */
 	width: 25px;
 	height: 25px;
@@ -855,11 +880,17 @@ select {
 	text-align: center;
 	line-height: 25px;
 	margin-right: 10px;
-}.rankborad .item1 .num{
+}
+
+.rankborad .item1 .num {
 	background: #fad111;
-}.rankborad .item2 .num{
+}
+
+.rankborad .item2 .num {
 	background: #c6d3e2;
-}.rankborad .item3 .num{
+}
+
+.rankborad .item3 .num {
 	background: #f8a86e;
 }
 
@@ -1005,6 +1036,7 @@ select {
 	background: url(../1.png) no-repeat center center;
 	background-size: cover;
 }
+
 .couten li a p {
 	text-align: center;
 }

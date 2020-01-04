@@ -210,6 +210,9 @@
 				}
 				return arrOuter
 
+			},
+			hideNamelist(){
+				this.isshowNamelist=false
 			}
 		}
 	}

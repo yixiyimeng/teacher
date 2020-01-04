@@ -140,7 +140,7 @@ export default {
       // 移动的y
       moveY: 0,
       // 开启截图
-      crop: false,
+      crop: true,
       // 正在截图
       cropping: false,
       // 裁剪框大小

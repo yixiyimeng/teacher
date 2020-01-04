@@ -1,5 +1,5 @@
 <template>
-	<div ref="drawbox" style="position: fixed; z-index: 1; top: 0; left: 0; bottom: 0; right: 0;font-family: 'microsoft yahei';">
+	<div ref="drawbox" style="position: fixed; z-index: 10001; top: 0; left: 0; bottom: 0; right: 0;font-family: 'microsoft yahei';">
 		<canvas id="draw" ref="draw" width="1000" height="500">您的浏览器不支持画布！</canvas>
 		<div class="drawbtnbar">
 			<div class="editbox flex flex-align-center" v-if="showedit">
@@ -37,8 +37,10 @@
 
 				</div>
 			</div>
-			<a href="javascript:;" @click="showedit=!showedit;showeditfont=false;isFont=false" class="edit" title="画笔"><i></i></a>
-			<a href="javascript:;" @click="showeditfont=!showeditfont;showedit=false;isFont=true" class="editfont" title="文字"><i></i></a>
+			<a href="javascript:;" @click="showedit=!showedit;showeditfont=false;isFont=false;iseditFont = false;" class="edit"
+			 title="画笔"><i></i></a>
+			<a href="javascript:;" @click="showeditfont=!showeditfont;showedit=false;isFont=true;iseditFont = false;" class="editfont"
+			 title="文字"><i></i></a>
 			<a href="javascript:;" @click="cUndoBtn" class="cUndoBtn" title="撤销"><i></i></a>
 			<a href="javascript:;" @click="cRedoBtn" class="cUndoBtn cRedoBtn" title="返回"><i></i></a>
 			<a href="javascript:;" @click="clearDraw" class="clear" title="清空"><i></i></a>
@@ -107,26 +109,7 @@
 									that.iseditFont = true;
 								} else {
 									textarea.onblur = function(e) {
-										if (textarea.value) {
-											//有值的情况
-											let top = textarea.offsetTop + 1;
-											let m_top = 0;
-											ctx.font = that.fontSize + "px bold Microsoft YaHei";
-											m_top = that.fontSize;
-											ctx.fillStyle = that.pColor;
-											let valueArr = textarea.value.split(/[(\r\n)\r\n]+/);
-											valueArr.forEach(function(v, i, arr) {
-												ctx.fillText(v, textarea.offsetLeft + 1, top + (m_top * (i + 1)));
-											});
-											that.iseditFont = false;
-											textarea.value = ''
-											// that.cPush();
-											// canvaNode.removeChild(textarea);//删除节点
-											//添加 imgData
-											// record.push(canvas.getContext("2d").getImageData(0, 0, options.canvas_w, options.canvas_h)); //保存画布的像素值
-										} else {
-											that.iseditFont = false;
-										}
+										that.drawfont();
 									};
 								}
 							} else {
@@ -149,7 +132,9 @@
 					}
 					myCanvas.onpointerup = function(e) {
 						isSameMove = false;
-						that.cPush();
+						if (!that.isFont) {
+							that.cPush();
+						}
 					}
 				})
 			},
@@ -157,6 +142,7 @@
 				this.isShow = false;
 			},
 			clearDraw() {
+				this.iseditFont = false;
 				let myCanvas = this.$refs.draw;
 				var ctx = myCanvas.getContext('2d');
 				ctx.clearRect(0, 0, myCanvas.width, myCanvas.height);
@@ -186,6 +172,7 @@
 			},
 			cUndoBtn() {
 				var that = this;
+				that.iseditFont = false;
 				if (that.cStep >= 0) {
 					that.cStep--;
 					if (that.cStep == -1) {
@@ -197,6 +184,7 @@
 			},
 			cRedoBtn() {
 				var that = this;
+				that.drawfont();
 				if (that.cStep < that.cPushArray.length - 1) {
 					that.cStep++;
 					that.cGet(that.cStep);
@@ -214,8 +202,31 @@
 				// })
 
 			},
-			save(){
+			save() {
 				this.$emit('save')
+			},
+			drawfont() {
+				var that = this;
+				let myCanvas = this.$refs.draw;
+				var ctx = myCanvas.getContext('2d');
+				let textarea = that.$refs.canvastextarea;
+				if (textarea.value) {
+					//有值的情况
+					let top = textarea.offsetTop + 1;
+					let m_top = 0;
+					ctx.font = that.fontSize + "px bold Microsoft YaHei";
+					m_top = that.fontSize;
+					ctx.fillStyle = that.pColor;
+					let valueArr = textarea.value.split(/[(\r\n)\r\n]+/);
+					valueArr.forEach(function(v, i, arr) {
+						ctx.fillText(v, textarea.offsetLeft + 1, top + (m_top * (i + 1)));
+					});
+					that.iseditFont = false;
+					textarea.value = '';
+					that.cPush();
+				} else {
+					that.iseditFont = false;
+				}
 			}
 
 		}
@@ -269,6 +280,7 @@
 
 			&.save {
 				padding-top: 13px;
+
 				&>i {
 					background-image: url(../assets/saveDraw.png);
 
@@ -291,7 +303,7 @@
 	}
 
 	.editbox {
-		position: absolute;
+		position: fixed;
 		bottom: -50px;
 		font-size-adjust: none;
 		font-size: 0;
