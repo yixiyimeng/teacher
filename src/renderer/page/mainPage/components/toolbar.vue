@@ -223,14 +223,15 @@
 			saveImg() {
 				const $me = this;
 				this.$refs.cropper.getCropData(data => {
-					// console.log(data)
+					console.log(data)
+					 data.split('data:image/jpg;base64,')[1]
 					this.type = 0;
 					$me.$http({
 						method: 'post',
 						url: urlPath + 'teacher-client/platform/saveWhiteboardImg',
 						data: {
 							ifTemporary: !$me.ifTemporary,
-							imgBase64: data
+							imgBase64: data.replace(/data:image\/jpeg;base64,/,'')
 						}
 					}).then(da => {
 						if (da.data.ret == 'success') {

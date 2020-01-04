@@ -2359,7 +2359,7 @@
 				const $me = this;
 				$me.$http({
 					method: 'post',
-					url: urlPath + 'teacher-client/common/saveImgFullScreen'
+					url: urlPath + 'teacher-client/common/saveQuestionImgAndSend'
 				}).then(da => {
 					if (da.data.ret == 'success') {
 						/* 截图保存给后端 */
