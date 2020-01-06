@@ -27,7 +27,7 @@
 		<div class="namelistbox" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
 			<transition name="bounce">
-				<div class="namelistbox-bd">
+				<div class="namelistbox-bd" style="margin: 5px 0;">
 					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
 					<div class="clearfix flex"  style="flex-wrap: wrap;">
 						<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
@@ -58,7 +58,7 @@
 			</transition>
 		</div>
 		<div class="videobox">
-			<div class="reftext " v-if="isshowNamelist">
+			<div class="reftext active" v-if="isshowNamelist">
 				<div class="txt">
 					<div class="title">{{ reftext }}</div>
 				</div>

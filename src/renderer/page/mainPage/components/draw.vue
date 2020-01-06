@@ -1,6 +1,6 @@
 <template>
 	<div ref="drawbox" style="position: fixed; z-index: 10001; top: 0; left: 0; bottom: 0; right: 0;font-family: 'microsoft yahei';">
-		<canvas id="draw" ref="draw" width="1000" height="500">您的浏览器不支持画布！</canvas>
+		<canvas id="draw" touch-action='none' ref="draw" width="1000" height="500">您的浏览器不支持画布！</canvas>
 		<div class="drawbtnbar">
 			<div class="editbox flex flex-align-center" v-if="showedit">
 				<a href="javascript:;" class="lineWidth" @click="penSize=1" :class="{active:penSize==1}"><i :style="{background:pColor}"></i></a>
@@ -45,6 +45,7 @@
 			<a href="javascript:;" @click="cRedoBtn" class="cUndoBtn cRedoBtn" title="返回"><i></i></a>
 			<a href="javascript:;" @click="clearDraw" class="clear" title="清空"><i></i></a>
 			<a href="javascript:;" @click="save" class="save" title="保存"><i></i></a>
+			<a href="javascript:;" @click="cancel" class="cancel" title="取消"><i></i></a>
 			<textarea name="" id="" cols="30" rows="4" ref="canvastextarea" :style="{color:pColor,borderColor: pColor,fontSize:fontSize+'px'}"
 			 :auto-focus="true" class="canvastextarea" v-show="iseditFont"></textarea>
 		</div>
@@ -52,6 +53,7 @@
 </template>
 
 <script>
+	import '@/page/mainPage/assets/js/pep';
 	export default {
 		data() {
 			return {
@@ -205,6 +207,9 @@
 			save() {
 				this.$emit('save')
 			},
+			cancel(){
+				this.$emit('cancel')
+			},
 			drawfont() {
 				var that = this;
 				let myCanvas = this.$refs.draw;
@@ -297,6 +302,12 @@
 
 				&.cRedoBtn>i {
 					transform: scaleX(-1);
+				}
+			}
+			&.cancel{
+				padding-top: 13px;
+				&>i {
+					background-image: url(../assets/cancel.png);
 				}
 			}
 		}

@@ -51,7 +51,7 @@
 		</div>
 		<setDanmu @close="close" v-if="isShow&&type==1"></setDanmu>
 		<timeswiper ref="timeswiper" @cancelcountDown="close" v-if="isShow&&type==2"></timeswiper>
-		<draw ref="draw" v-if="type==4" @save='saveImgFullScreen'></draw>
+		<draw ref="draw" v-if="type==4" @save='saveImgFullScreen' @cancel="type=0;$emit('close')"></draw>
 		<!-- 点名名单 -->
 		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>

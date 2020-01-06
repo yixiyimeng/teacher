@@ -535,13 +535,14 @@ a {
 	right: 20%;
 	text-align: center;
 	z-index: 998;
-}
+ }
+
 
 .reftext > div.txt {
 	display: inline-block;
 	// border: 5px dashed @baseColor;
-	transform: translatex(-50%);
-	-webkit-transform: translatex(-50%);
+	// transform: translatex(-50%);
+	// -webkit-transform: translatex(-50%);
 	background: rgba(255, 255, 255, 1);
 	// padding: 5px;
 	// border-radius: 15px;
@@ -549,10 +550,19 @@ a {
 	max-width: 75%;
 	border-radius: 15px;
 	text-align: left;
-	position:absolute;
-	left: 50%;
+	// position:absolute;
+	// left: 50%;
 	color: @baseColor;
+	height: 100%;
+	overflow: auto;
 	
+	
+}
+ .reftext.active{
+	 z-index: 9998;
+ }
+ .reftext.active> div.txt{
+	max-height: calc(20vh - 20px)
 }
 .reftext > div.txt .title{
 	font-size: 40px;
@@ -818,11 +828,12 @@ transform: rotate(180deg);
 }
 .namelistbox > div.namelistbox-bd {
 	background: #fff;
-	width: 80%;
+	// width: 80%;
 	position: absolute;
 	top: 20%;
 	min-height: 100px;
-	left: 10%;
+	left:275px;
+	right:275px;
 	border-radius: 14px;
 	height: 60%;
 	min-height: 100px;

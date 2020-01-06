@@ -83,6 +83,7 @@ function createWindow() {
 	/* 在窗口从最小化恢复的时候触发,通知页面，恢复弹幕 */
 	mainWindow.on('restore', (e) => {
 		mainWindow.maximize();
+		mainWindow.moveTop()
 		win.moveTop();
 		// mainWindow.setFullScreen(true);
 		mainWindow.webContents.send('isminimizeApp', false);

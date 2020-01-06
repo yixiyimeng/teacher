@@ -96,7 +96,7 @@
 			</div>
 			<!-- 语音文本显示 -->
 			<transition name="bounce">
-				<audiotxt v-if="isreftext" :reftext="reftext" :questionType="XSquestionType"></audiotxt>
+				<audiotxt v-if="isreftext" :reftext="reftext" :questionType="XSquestionType" :class="{active:!isAnswering}"></audiotxt>
 			</transition>
 			<div class="soundbox" v-if="isreftext&&subjecttitle == 9"><span @click="startAudio" class="sound" v-if="subjecttitle == 9">
 					<img src="../../assets/play.png" alt="" v-if="!isPlay">
@@ -752,6 +752,9 @@
 				});
 				setTimeout(function() {
 					$me.$loading.close();
+					$me.$store.commit('SET_startClass', false);
+					/* 通知悬浮窗 退出直播间成功 */
+					$me.$electron.ipcRenderer.send('onlinedirebro', false);
 					/* 跳转到选择直播间页面 */
 					// $me.$router.go(-1); //返回上一层
 					$me.$router.push({
@@ -762,6 +765,7 @@
 						}
 					});
 				}, 5000);
+
 			},
 
 			/* 开始下发题目 */
@@ -2285,6 +2289,9 @@
 								{
 									/* 网络连接连接 */
 									$me.$toast('网络连接成功');
+									/* 重新加载学科网地址 */
+									$me.resourceUrllist[2] = null
+									$me.getResource(3);
 									break;
 								}
 							case 14:
