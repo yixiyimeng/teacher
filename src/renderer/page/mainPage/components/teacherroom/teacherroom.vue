@@ -3,7 +3,8 @@
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<!-- 工具箱 -->
-		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
+		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown"  :namelist="namelist"
+		 :ifTemporary="isAnswering"></toolbar>
 		<div class="bottommenu">
 			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
 			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
@@ -2467,7 +2468,17 @@
 				this.sentenceList = list; //先声题库
 				this.hasNotplay = [...this.sentenceList];
 				console.log('groupName', this.hasNotplay)
-			}
+			},
+			
+			resumeCountDown(type) {
+				if (this.isCountDown == 1&&this.isAnswering) {
+					if(type==1){
+						this.$refs.countdown.resume();
+					}else{
+						this.$refs.countdown.clearCount();
+					}
+				}
+			},
 
 		}
 	};

@@ -142,6 +142,7 @@ function createSuspensionWindow() {
 		maxHeight: 220,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前
+	
 	});
 	const size = screen.getPrimaryDisplay().workAreaSize; //获取显示器的宽高
 	const winSize = win.getSize(); //获取窗口宽高

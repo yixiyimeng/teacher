@@ -45,7 +45,7 @@
 				</vue-cropper>
 			</div>
 			<div class="optionbtn">
-				<a href="javascript:;" @click="type=0;$emit('close')">取消</a>
+				<a href="javascript:;" @click="canceImg()">取消</a>
 				<a href="javascript:;" class="savebtn" @click="saveImg">保存</a>
 			</div>
 		</div>
@@ -214,6 +214,8 @@
 							$me.htmlUrl = 'data:image/jpg;base64,' + da.data.data;
 							// console.log(this.htmlUrl)
 							$me.type = 3;
+							/* todo 暂停计时器 */
+							this.$emit('resumeCountDown',0)
 						} else {
 							$me.$toast.center(da.data.message);
 						}
@@ -235,6 +237,7 @@
 						}
 					}).then(da => {
 						if (da.data.ret == 'success') {
+							this.$emit('resumeCountDown',1)
 							this.$emit('close')
 						} else {
 							$me.$toast.center(da.data.message);
@@ -242,6 +245,11 @@
 					});
 
 				})
+			},
+			canceImg(){
+				this.type=0;
+				this.$emit('close');
+				this.$emit('resumeCountDown',1)
 			},
 			selName(item) {
 				this.$emit('Satrspeaker', item.stuCode) //触发随机作答语音题目

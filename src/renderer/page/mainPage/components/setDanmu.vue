@@ -7,7 +7,7 @@
 			</div>
 			<div class="setdanmu-bd">
 				<div class="flex flex-pack-justify" v-for="(item,index) in list" :key="index">
-					<span class="flex-1 name" @click.stop="setDetails(index)">{{item.questionTypeName}}</span>
+					<span class="flex-1 name" @click.stop="setDetails(index)">{{item.questionTypeName=='语音测评'?'语音/跟读测评':item.questionTypeName}}</span>
 					<!-- <a-switch size="small" v-model="item.isOpenBarrageflag" /> -->
 					<label>
 						<input type="checkbox" style="opacity: 0;" v-model="item.isOpenBarrageflag">
@@ -23,7 +23,7 @@
 			</div>
 		</div>
 		<div v-if="!isShowmenu">
-			<div class="setdanmu-hd flex flex-pack-justify flex-align-center"><span>{{setinfo.questionTypeName}}设置</span>
+			<div class="setdanmu-hd flex flex-pack-justify flex-align-center"><span>{{setinfo.questionTypeName=='语音测评'?'语音/跟读测评':setinfo.questionTypeName}}设置</span>
 				<!-- <a-switch size="small" v-model="setinfo.isOpenBarrageflag" /> -->
 				<label>
 					<input type="checkbox" style="opacity: 0;" v-model="setinfo.isOpenBarrageflag">

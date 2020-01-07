@@ -1,17 +1,15 @@
 <template>
 	<div id="suspension">
 		<div class="rightBtnlist" @mouseenter="setbgwin" @mouseleave="setsmwin" :class="{active:ishover}">
-			<a href="javascript:;" class="kjbtn"  @click="toggleSetwin" >
+			<a href="javascript:;" class="kjbtn" @click="toggleSetwin">
 				<div class="la-ball-scale-multiple">
 					<div></div>
 					<div></div>
 					<div></div>
 				</div>
 			</a>
-			<a href="javascript:;" class="minApp" @click="minApp" title="最小化" v-if="!isminimizeAppStatesub"><img src="../assets/min.png"
-				 alt="" /></a>
-			<a href="javascript:;" class="minApp" @click="maxApp" title="最大化" v-if="isminimizeAppStatesub"><img src="../assets/max.png"
-				 alt="" /></a>
+			<a href="javascript:;" class="minApp" @click="minApp" title="最小化" v-if="!isminimizeAppStatesub"></a>
+			<a href="javascript:;" class="minApp maxApp" @click="maxApp" title="最大化" v-if="isminimizeAppStatesub"></a>
 			<a href="javascript:;" class="exitBtn mt10" @click="exitBtn" title="下课" v-if="onlinedirebro"></a>
 			<!-- <a href="javascript:;" class="uploadTitle mt10" @click="uploadTitle" title="上传题目" v-if="isUploadfile"><img src="../../mainPage/assets/upload.png" alt="" /></a> -->
 			<a href="javascript:;" class="exitApp mt10" @click="exitBtnApp" title="退出"><img src="../assets/exit.png" alt="" /></a>
@@ -57,28 +55,28 @@
 				document.removeEventListener('mousemove', moveEvent);
 			});
 			// 			/* 添加触碰事件 */
-// 			document.addEventListener('touchstart', function(e) {
-// 				console.log('触摸开始', e)
-// 				// biasX = e.touches[0].clientX;
-// 				// biasY = e.touches[0].clientY;
-// 				e.preventDefault()
-// 				document.addEventListener('touchmove', touchmoveEvent);
-// 			});
-// 
-// 			document.addEventListener('touchend', function(e) {
-// 				console.log('触摸结束', e)
-// 				biasX = 0;
-// 				biasY = 0;
-// 				document.removeEventListener('touchmove', moveEvent);
-// 			});
+			// 			document.addEventListener('touchstart', function(e) {
+			// 				console.log('触摸开始', e)
+			// 				// biasX = e.touches[0].clientX;
+			// 				// biasY = e.touches[0].clientY;
+			// 				e.preventDefault()
+			// 				document.addEventListener('touchmove', touchmoveEvent);
+			// 			});
+			// 
+			// 			document.addEventListener('touchend', function(e) {
+			// 				console.log('触摸结束', e)
+			// 				biasX = 0;
+			// 				biasY = 0;
+			// 				document.removeEventListener('touchmove', moveEvent);
+			// 			});
 
 			function moveEvent(e) {
 				win.setPosition(e.screenX - biasX, e.screenY - biasY);
 			}
-
-			function touchmoveEvent(e) {
-				win.setPosition(e.touches[0].screenX, e.touches[0].screenY);
-			}
+			// 
+			// 			function touchmoveEvent(e) {
+			// 				win.setPosition(e.touches[0].screenX, e.touches[0].screenY);
+			// 			}
 		},
 		created() {
 			const _this = this;
@@ -150,11 +148,11 @@
 				this.ishover = false;
 				this.$electron.ipcRenderer.send('smwin');
 			},
-			toggleSetwin(e){
+			toggleSetwin(e) {
 				e.preventDefault();
-				if(this.ishover){
+				if (this.ishover) {
 					this.setsmwin();
-				}else{
+				} else {
 					this.setbgwin();
 				}
 			}
@@ -252,7 +250,7 @@
 	.uploadTitle,
 	.minApp,
 	.exitBtn {
-		background: rgba(255, 0, 0, 0.6);
+		background: #f96060 no-repeat center center;
 		color: #fff;
 		display: block;
 		width: 45px;
@@ -267,23 +265,35 @@
 	}
 
 	.exitBtn {
-		background: rgba(230, 162, 60, 0.9) url(../assets/exitvideo.png) center center no-repeat;
-		background-size: 30px;
-
-
+		background: #7b6dfb url(../assets/exitvideo.png) no-repeat center center;
+		background-size: 20px;
 	}
 
-	.uploadTitle,
+	/* .uploadTitle,
 	.minApp {
 		margin-bottom: 10px;
 		background: rgba(24, 114, 255, 0.9);
-	}
+	}*/
 
 	.uploadTitle img,
 	.exitApp img,
 	.minApp img {
 		width: 25px;
 		display: inline-block;
+	}
+
+	.minApp {
+		background: rgba(24, 114, 255, 0.9) no-repeat center center;
+	}
+
+	.minApp {
+		background-image: url(../assets/min.png);
+		background-size: 20px auto;
+	}
+
+	.maxApp {
+		background-image: url(../assets/max.png);
+		background-size: 25px auto;
 	}
 
 	.la-ball-scale-multiple,
