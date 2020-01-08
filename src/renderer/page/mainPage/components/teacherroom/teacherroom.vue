@@ -3,8 +3,8 @@
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<!-- 工具箱 -->
-		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown"  :namelist="namelist"
-		 :ifTemporary="isAnswering"></toolbar>
+		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown"
+		 :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
 		<div class="bottommenu">
 			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
 			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
@@ -73,6 +73,7 @@
 			<a href="javascript:;" @click="isshowNamelist = !isshowNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
 			<!-- <a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a> -->
 			<!-- <a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon3"></i>组卷网</a> -->
+			<i class="refresh" @click="getResource(3)" v-if="isshowResource==3"></i>
 			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>资源/组卷</a>
 			<a href="javascript:;" @click.stop="showSet" :class="{'active':isshowSet}"><i class="icon4"></i>工具箱</a>
 		</div>
@@ -354,7 +355,9 @@
 		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-show="isshowResource!=0">
 			<!-- <iframe ref="iframe0" :src="resourceUrllist[0]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==1"></iframe> -->
 			<!-- <iframe ref="iframe1" :src="resourceUrllist[1]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==2"></iframe> -->
-			<iframe ref="iframe2" :src="resourceUrllist[2]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==3"></iframe>
+			<a-spin tip="正在加载..." :spinning="spinning" style="height: 100%;" size="large">
+				<iframe ref="iframe2" :src="resourceUrllist[2]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==3"></iframe>
+			</a-spin>
 		</div>
 		<audiolist ref="audiolist" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
 		<!-- 先声题库 -->
@@ -576,6 +579,7 @@
 				groupName: '', //题库名称
 				sentenceList: [],
 				hasNotplay: [], //未播放的先声题库列表
+				spinning: false, //加载loading
 
 			};
 		},
@@ -677,7 +681,8 @@
 
 			// this.getResource(1);
 			// this.getResource(2);
-			this.getResource(3);
+			// this.getResource(3);
+
 		},
 		watch: {
 			isshowNamelist: function(newval, oldval) {
@@ -2291,8 +2296,7 @@
 									/* 网络连接连接 */
 									$me.$toast('网络连接成功');
 									/* 重新加载学科网地址 */
-									$me.resourceUrllist[2] = null
-									$me.getResource(3);
+									$me.getResource(3, 1);
 									break;
 								}
 							case 14:
@@ -2378,8 +2382,9 @@
 				});
 			},
 			/* 获取题库资源 */
-			getResource(type) {
+			getResource(type, state) {
 				const $me = this;
+				$me.spinning = true;
 				$me.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/platform/authentication',
@@ -2391,7 +2396,33 @@
 						if (type == 1) {
 							this.resourceUrl1 = da.data.data;
 						}
-						this.resourceUrllist[type - 1] = da.data.data
+						$me.$set($me.resourceUrllist, 2, '');
+						$me.$set($me.resourceUrllist, 2, da.data.data);
+						if (!state) {
+							/* 表示第一次加载，显示iframe */
+							this.isshowResource = type;
+						} else {
+							$me.spinning = false;
+						}
+						this.$nextTick(() => {
+							try {
+								let iframe = $me.$refs['iframe2'];
+								console.log('iframe', iframe)
+								if (iframe) {
+									if (iframe.attachEvent) {
+										iframe.attachEvent("onload", function() {
+											$me.spinning = false;
+										});
+									} else {
+										iframe.onload = function() {
+											$me.spinning = false;
+										};
+									}
+								}
+							} catch (e) {
+								//TODO handle the exception
+							}
+						})
 						// this.resourceUrl = da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
@@ -2414,8 +2445,16 @@
 				if (this.isshowResource == type) {
 					this.isshowResource = 0
 				} else {
-					this.isshowResource = type
+					let resourceUrl = this.resourceUrllist[type - 1];
+					if (!resourceUrl) {
+						this.getResource(type)
+					} else {
+						this.isshowResource = type;
+					}
+
+
 				}
+				// this.spinning=true;
 				// if (this.isshowResource != 0) {
 				// 	this.resourceUrl = this.resourceUrllist[type - 1]
 				// }
@@ -2469,12 +2508,12 @@
 				this.hasNotplay = [...this.sentenceList];
 				console.log('groupName', this.hasNotplay)
 			},
-			
+
 			resumeCountDown(type) {
-				if (this.isCountDown == 1&&this.isAnswering) {
-					if(type==1){
+				if (this.isCountDown == 1 && this.isAnswering) {
+					if (type == 1) {
 						this.$refs.countdown.resume();
-					}else{
+					} else {
 						this.$refs.countdown.clearCount();
 					}
 				}
@@ -2678,5 +2717,20 @@
 
 	.leftmenu>a i.icon4 {
 		background-image: url(../../assets/icon27.png);
+	}
+
+	.leftmenu .refresh {
+		height: 40px;
+		width: 40px;
+		display: block;
+		background: url(../../assets/refresh.png);
+		right: -50px;
+		position: absolute;
+		top: 70px;
+		cursor: pointer;
+	}
+
+	/deep/ .ant-spin-container {
+		height: 100%;
 	}
 </style>
