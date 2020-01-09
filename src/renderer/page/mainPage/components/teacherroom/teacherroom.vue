@@ -2491,9 +2491,10 @@
 						this.hasNotplay.unshift(this.XStalkName);
 					}
 					this.startRace();
-				}
-				if (this.subjecttitle == 6) {
+				}else if (this.subjecttitle == 6) {
 					this.startRace();
+				}else{
+					this.$toast.center('请先选择一个语音题目');
 				}
 
 			},

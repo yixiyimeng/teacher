@@ -41,7 +41,7 @@
 		<div class="printScreenbox" v-show="type==3">
 			<div style="height:100%; width: 100%;">
 				<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
-				 :autoCropHeight="options.autoCropHeight" :fixedBox="options.fixedBox" :canMove="options.canMove">
+				 :autoCropHeight="options.autoCropHeight"  :mode="options.mode" :fixedBox="options.fixedBox" :canMove="options.canMove">
 				</vue-cropper>
 			</div>
 			<div class="optionbtn">
@@ -96,7 +96,8 @@
 					// autoCropWidth: 200,
 					// autoCropHeight: 200,
 					fixedBox: false,
-					canMove: false
+					canMove: false,
+					mode:'100%'
 				},
 			}
 		},
@@ -204,7 +205,6 @@
 				const $me = this;
 				$me.isShow = false;
 				this.$nextTick(() => {
-					console.log(12)
 					$me.$http({
 						method: 'post',
 						url: urlPath + 'teacher-client/common/saveImgFullScreen'
