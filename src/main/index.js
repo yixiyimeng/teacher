@@ -321,8 +321,9 @@ if (!gotTheLock) {
 			iswinsm = true;
 			win.setSize(70, 60)
 		})
-		ipcMain.on('new-window',function() {
-			console.log(12233);
+		ipcMain.on('moveTop',function() {
+			win.moveTop()
+			// console.log(12233);
 		         // mainWindow.loadURL(url.format({
 		         // pathname: path.join(__dirname, '/views/list.html'),
 		         // protocol: 'file:',

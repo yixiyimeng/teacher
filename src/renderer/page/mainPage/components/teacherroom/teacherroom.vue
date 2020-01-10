@@ -637,6 +637,8 @@
 				if (iframeUrl) {
 					$me.$set($me.resourceUrllist, ($me.isshowResource - 1), iframeUrl)
 				}
+				/* 赋值地址后，主动将悬浮窗置为顶层 */
+				this.$electron.ipcRenderer.send('moveTop');
 				// document.frames('iframe'+$me.isshowResource-1).location.reload(true);
 				// console.log($me.resourceUrllist)
 				// $me.$refs['iframe' + ($me.isshowResource - 1)].contentWindow.location.reload(true);
@@ -1021,6 +1023,7 @@
 						$me.startVIew();
 						$me.totalNumber = da.data.data; //答题总人数
 
+
 					})
 					.catch(function(err) {
 						// $me.$loading.close();
@@ -1092,6 +1095,9 @@
 
 				}
 				if ($me.subjecttitle == 5) {
+					// setInterval(() => {
+					// 	$me.addredenvelope({});
+					// },100)
 					if (document.getElementById('music')) {
 						document.getElementById('music').play();
 					}
@@ -1124,6 +1130,7 @@
 					}
 					//$me.isparticlesbox = true;
 				}
+				
 			},
 			clearView() {
 				/* 是否教鞭切换发题是，清屏页面 */
@@ -2491,9 +2498,9 @@
 						this.hasNotplay.unshift(this.XStalkName);
 					}
 					this.startRace();
-				}else if (this.subjecttitle == 6) {
+				} else if (this.subjecttitle == 6) {
 					this.startRace();
-				}else{
+				} else {
 					this.$toast.center('请先选择一个语音题目');
 				}
 

@@ -27,11 +27,12 @@
 		<div class="namelistbox" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
 			<transition name="bounce">
-				<div class="namelistbox-bd" style="margin: 5px 0;">
+				<div class="namelistbox-bd" style="margin: 5px 0; padding: 40px 0;">
 					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
-					<div class="clearfix flex"  style="flex-wrap: wrap;">
-						<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
-							<div class="item" v-for="(subitem, subindex) in namelist" :key="subindex" >
+					<div style="height: 100%; overflow: auto; padding:0 40px">
+						<div class="clearfix flex" style="flex-wrap: wrap;">
+							<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
+							<div class="item" v-for="(subitem, subindex) in namelist" :key="subindex">
 								<div>
 									<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
 										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
@@ -42,7 +43,8 @@
 									</div>
 								</div>
 							</div>
-						<!-- </div> -->
+							<!-- </div> -->
+						</div>
 					</div>
 					<!-- <ul class="clearfix">
 						<li v-for="(item, index) in namelist">
@@ -88,7 +90,7 @@
 		data() {
 			return {
 				isshowNamelist: false,
-				namelist:10,
+				namelist: [],
 				isShow: false,
 				hsselectWordList: [],
 				playnum: -1,
@@ -211,8 +213,8 @@
 				return arrOuter
 
 			},
-			hideNamelist(){
-				this.isshowNamelist=false
+			hideNamelist() {
+				this.isshowNamelist = false
 			}
 		}
 	}
@@ -434,15 +436,18 @@
 		.item {
 			width: 25%;
 			padding: 10px;
+
 			&>div {
 				box-shadow: 0 0 10px rgba(0, 0, 0, .1);
 				border-radius: 5px;
 				height: 100%;
 				padding: 10px;
-				.name+div{
+
+				.name+div {
 					overflow: hidden;
 				}
-				p{
+
+				p {
 					float: left;
 				}
 			}

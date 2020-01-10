@@ -162,7 +162,6 @@ export const IndexMixin = {
 			if (this.redenvelopelist[Left] && $('.li' + this.redenvelopelist[Left]).length > 0) {
 				try {
 					var reg = /matrix.((.+([, ]+)?){6})./g;
-
 					var str = $('.li' + this.redenvelopelist[Left]).css("transform");
 					console.log(str);
 					var arr = reg.exec(str);
@@ -170,11 +169,12 @@ export const IndexMixin = {
 					console.log(newarr[5]);
 					var leftbottom = parseFloat(newarr[5]);
 					if (leftbottom > 0) {
-						var oldflytypehight = parseInt($('.li' + this.redenvelopelist[Left]).css('height')) < 160 ? 160 : parseInt($(
-							'.li' + this.list[
-								Left]).css('height'));
+						// var oldflytypehight = parseInt($('.li' + this.redenvelopelist[Left]).css('height')) < 160 ? 160 : parseInt($(
+						// 	'.li' + this.list[
+						// 		Left]).css('height'));
 						// deybottom = leftbottom - oldflytypehight;
 						deybottom = leftbottom;
+					console.log('deybottom' + deybottom);
 					}
 				} catch (e) {
 					//TODO handle the exception
@@ -195,7 +195,7 @@ export const IndexMixin = {
 			});
 			rate = ($(".couten").height() + 20 + h) / ($(".couten").height() + $(".li" +
 				time).height() + 20);
-			console.log("rate" + rate);
+			console.log('h' + h);
 			var hhh = ($(".couten").height() + 20) * -1;
 			$(".li" + time).css({
 				"-webkit-transform": 'translateY(' + hhh + 'px)',
