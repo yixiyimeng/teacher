@@ -23,7 +23,7 @@ export default new Vuex.Store({
 		eventlist: [],
 		alertCont: [],
 		danmuinfolist: [],
-		countDown:localStorage.getItem('countDown')||0,
+		countDown:localStorage.getItem('countDown')||10,
 		isCountDown:localStorage.getItem('isCountDown')||0,//是否启用倒计时
 
 	},

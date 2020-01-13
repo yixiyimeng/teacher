@@ -362,6 +362,7 @@
 		<audiolist ref="audiolist" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
+		
 	</div>
 </template>
 
@@ -1007,11 +1008,7 @@
 						console.log('发题成功了');
 
 
-						/* 判断题型，截屏 */
-						if (judgetype == 1 || judgetype == 2 || judgetype == 4) {
-							$me.saveImgFullScreen();
-						}
-
+						
 						if ($me.isCountDown == 1) {
 							$me.$refs.countdown.clearCount();
 
@@ -1021,6 +1018,17 @@
 							}
 						}
 						$me.startVIew();
+						/* 判断题型，截屏 */
+						if (judgetype == 1 || judgetype == 2 || judgetype == 4) {
+							$me.$nextTick(()=>{
+								setTimeout(()=>{
+									$me.saveImgFullScreen();
+								},500)
+								
+							})
+							
+						}
+						
 						$me.totalNumber = da.data.data; //答题总人数
 
 
@@ -2002,7 +2010,12 @@
 						$me.subjectType = 0;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.startVIew();
-						$me.saveImgFullScreen();
+						$me.$nextTick(()=>{
+							setTimeout(()=>{
+								$me.saveImgFullScreen();
+							},500)
+							
+						})
 						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
@@ -2027,7 +2040,12 @@
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.subjectType = 0;
 						$me.startVIew();
-						$me.saveImgFullScreen();
+						$me.$nextTick(()=>{
+							setTimeout(()=>{
+								$me.saveImgFullScreen();
+							},500)
+							
+						})
 						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
