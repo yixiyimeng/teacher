@@ -66,7 +66,7 @@
 								<p>语音题导入</p>
 							</a> -->
 							<a href="javascript:;" class="setEnglishbtn" @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
-								<p>导入备课题</p>
+								<p>本地导入</p>
 							</a>
 						</div>
 					</div>

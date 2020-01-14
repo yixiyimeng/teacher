@@ -74,7 +74,7 @@
 			<!-- <a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a> -->
 			<!-- <a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon3"></i>组卷网</a> -->
 			<i class="refresh" @click="getResource(3)" v-if="isshowResource==3"></i>
-			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>资源/组卷</a>
+			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a>
 			<a href="javascript:;" @click.stop="showSet" :class="{'active':isshowSet}"><i class="icon4"></i>工具箱</a>
 		</div>
 		<!-- 显示 -->

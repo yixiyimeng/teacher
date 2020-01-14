@@ -6,7 +6,7 @@
 					<div class="fromcontrol flex">
 						<label>用户名</label>
 						<input type="text" name="" id="" value="" placeholder="请输入用户名" v-model.trim="username" class="flex-1" />
-						<dropmenu :reftitletypelist="loginInfolist" @selTalkName="selName">
+						<dropmenu :reftitletypelist="loginInfolist" @selTalkName="selName" v-if="loginInfolist.length>0">
 							<template slot-scope="item">
 								{{ item.data.username }}
 							</template></dropmenu>
