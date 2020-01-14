@@ -60,13 +60,13 @@
 					<!-- <a href="javascript:;" class="setEnglish mt20" @click="showXianshenWin()"></a> -->
 					<div class="setupload mt20 flex" :class="{'active':showitembank&&sendInfo.classCode && sendInfo.subjectCode}">
 						<div><a href="javascript:;" class="setbtn" @click="settest"><i></i>
-								<p>导入题库</p>
+								<p>本地导入</p>
 							</a>
 							<!-- <a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;showXianshenWin()"><i></i>
 								<p>语音题导入</p>
 							</a> -->
 							<a href="javascript:;" class="setEnglishbtn" @click="showitembank=!showitembank;isCloseUpload = !isCloseUpload"><i></i>
-								<p>本地导入</p>
+								<p>导入备课题</p>
 							</a>
 						</div>
 					</div>
