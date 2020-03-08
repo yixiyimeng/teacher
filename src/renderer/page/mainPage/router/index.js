@@ -11,35 +11,38 @@ export default new Router({
 			path: '/',
 			name: 'mainPage',
 			component: Main,
-			redirect: '/login',
+			redirect: '/testiframe',
 			children: [{
-				path: '/login',
-				name: 'login',
-				component: require('@/page/mainPage/components/login/login').default
-			}
-			,{
-				path: '/classroom',
-				name: 'classroom',
-				component: require('@/page/mainPage/components/classroom/classroom').default,
-			}
-			,{
-				path: '/titleList',
-				name: 'titleList',
-				component: require('@/page/mainPage/components/titleList/titleList').default,
-			},
+					path: '/testiframe',
+					name: 'testiframe',
+					component: require('@/page/mainPage/components/testiframe').default
+				}, {
+					path: '/login',
+					name: 'login',
+					component: require('@/page/mainPage/components/login/login').default
+				}, {
+					path: '/classroom',
+					name: 'classroom',
+					component: require('@/page/mainPage/components/classroom/classroom').default,
+				}, {
+					path: '/titleList',
+					name: 'titleList',
+					component: require('@/page/mainPage/components/titleList/titleList').default,
+				},
 
-			
-// 			{
-// 				path: '/upload',
-// 				name: 'upload',
-// 				component: require('@/page/mainPage/components/upload/upload').default,
-// 			}
-// 			,
-			{
-				path: '/teacherroom',
-				name: 'teacherroom',
-				component: require('@/page/mainPage/components/teacherroom/teacherroom').default,
-			}]
+
+				// 			{
+				// 				path: '/upload',
+				// 				name: 'upload',
+				// 				component: require('@/page/mainPage/components/upload/upload').default,
+				// 			}
+				// 			,
+				{
+					path: '/teacherroom',
+					name: 'teacherroom',
+					component: require('@/page/mainPage/components/teacherroom/teacherroom').default,
+				}
+			]
 		},
 		{
 			path: '/mainPage',
