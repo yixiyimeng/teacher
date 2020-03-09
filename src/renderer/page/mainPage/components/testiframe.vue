@@ -1,5 +1,6 @@
 <template>
 	<div style="width: 100%; height: 100%; box-sizing: border-box; overflow: hidden;">
+		
 		<a-spin tip="正在加载..." :spinning="spinning" style="height: 100%;" size="large">
 			<iframe ref="iframe" :src="iframePath" frameborder="0" style="width: 100%; height: 100%;"></iframe>
 		</a-spin>
