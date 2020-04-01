@@ -70,10 +70,11 @@
 
 		<!-- 左侧菜单 -->
 		<div class="leftmenu">
+			<i class="refresh" @click="getResource(2)" v-if="isshowResource==2"></i>
+			<i class="refresh refresh2" @click="getResource(3)" v-if="isshowResource==3"></i>
 			<a href="javascript:;" @click="isshowNamelist = !isshowNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
 			<!-- <a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a> -->
-			<!-- <a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon3"></i>组卷网</a> -->
-			<i class="refresh" @click="getResource(3)" v-if="isshowResource==3"></i>
+			<a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon2"></i>网校通</a>
 			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a>
 			<a href="javascript:;" @click.stop="showSet" :class="{'active':isshowSet}"><i class="icon4"></i>工具箱</a>
 		</div>
@@ -354,19 +355,27 @@
 		 ref="countdown"></count-down>
 		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-show="isshowResource!=0">
 			<!-- <iframe ref="iframe0" :src="resourceUrllist[0]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==1"></iframe> -->
-			<!-- <iframe ref="iframe1" :src="resourceUrllist[1]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==2"></iframe> -->
+			<!-- -->
 			<a-spin tip="正在加载..." :spinning="spinning" style="height: 100%;" size="large">
+				<iframe ref="iframe1" :src="resourceUrllist[1]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==2"></iframe>
 				<iframe ref="iframe2" :src="resourceUrllist[2]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==3"></iframe>
 			</a-spin>
 		</div>
 		<audiolist ref="audiolist" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
-		
+
 	</div>
 </template>
 
 <script>
+	function GetQueryString(searchurl, name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = searchurl.match(reg);
+		if (r != null) return unescape(r[2]);
+		return null;
+	}
+
 	function fixedZero(val) {
 		return val * 1 < 10 ? `0${val}` : val;
 	}
@@ -632,18 +641,16 @@
 			let $me = this;
 			/* 监听 资源网 打开新窗口 */
 			this.$electron.ipcRenderer.on('iframeUrl', (event, iframeUrl) => {
-				console.log(iframeUrl);
-				// $me.resourceUrl1 = iframeUrl;
-				// $me.resourceUrllist[$me.isshowResource-1] = iframeUrl;
 				if (iframeUrl) {
+					if ($me.isshowResource == 2) {
+						let search = iframeUrl.split('?')[1];
+						var wxtpath = GetQueryString(search, 'wxtpath');
+						iframeUrl = 'http://zkxl.school.zxxk.com' + wxtpath;
+					}
 					$me.$set($me.resourceUrllist, ($me.isshowResource - 1), iframeUrl)
 				}
 				/* 赋值地址后，主动将悬浮窗置为顶层 */
 				this.$electron.ipcRenderer.send('moveTop');
-				// document.frames('iframe'+$me.isshowResource-1).location.reload(true);
-				// console.log($me.resourceUrllist)
-				// $me.$refs['iframe' + ($me.isshowResource - 1)].contentWindow.location.reload(true);
-
 			});
 
 			/* 获取弹幕信息 */
@@ -1008,7 +1015,7 @@
 						console.log('发题成功了');
 
 
-						
+
 						if ($me.isCountDown == 1) {
 							$me.$refs.countdown.clearCount();
 
@@ -1020,15 +1027,15 @@
 						$me.startVIew();
 						/* 判断题型，截屏 */
 						if (judgetype == 1 || judgetype == 2 || judgetype == 4) {
-							$me.$nextTick(()=>{
-								setTimeout(()=>{
+							$me.$nextTick(() => {
+								setTimeout(() => {
 									$me.saveImgFullScreen();
-								},500)
-								
+								}, 500)
+
 							})
-							
+
 						}
-						
+
 						$me.totalNumber = da.data.data; //答题总人数
 
 
@@ -1138,7 +1145,7 @@
 					}
 					//$me.isparticlesbox = true;
 				}
-				
+
 			},
 			clearView() {
 				/* 是否教鞭切换发题是，清屏页面 */
@@ -2010,11 +2017,11 @@
 						$me.subjectType = 0;
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.startVIew();
-						$me.$nextTick(()=>{
-							setTimeout(()=>{
+						$me.$nextTick(() => {
+							setTimeout(() => {
 								$me.saveImgFullScreen();
-							},500)
-							
+							}, 500)
+
 						})
 						if ($me.isCountDown == 1) {
 							$me.timeDown();
@@ -2040,11 +2047,11 @@
 						$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
 						$me.subjectType = 0;
 						$me.startVIew();
-						$me.$nextTick(()=>{
-							setTimeout(()=>{
+						$me.$nextTick(() => {
+							setTimeout(() => {
 								$me.saveImgFullScreen();
-							},500)
-							
+							}, 500)
+
 						})
 						if ($me.isCountDown == 1) {
 							$me.timeDown();
@@ -2322,6 +2329,7 @@
 									$me.$toast('网络连接成功');
 									/* 重新加载学科网地址 */
 									$me.getResource(3, 1);
+									$me.getResource(2, 1);
 									break;
 								}
 							case 14:
@@ -2406,54 +2414,6 @@
 					}
 				});
 			},
-			/* 获取题库资源 */
-			getResource(type, state) {
-				const $me = this;
-				$me.spinning = true;
-				$me.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/platform/authentication',
-					data: {
-						serviceType: type //1 学科网，2组卷网 3，e卷通
-					}
-				}).then(da => {
-					if (da.data.ret == 'success') {
-						if (type == 1) {
-							this.resourceUrl1 = da.data.data;
-						}
-						$me.$set($me.resourceUrllist, 2, '');
-						$me.$set($me.resourceUrllist, 2, da.data.data);
-						if (!state) {
-							/* 表示第一次加载，显示iframe */
-							this.isshowResource = type;
-						} else {
-							$me.spinning = false;
-						}
-						this.$nextTick(() => {
-							try {
-								let iframe = $me.$refs['iframe2'];
-								console.log('iframe', iframe)
-								if (iframe) {
-									if (iframe.attachEvent) {
-										iframe.attachEvent("onload", function() {
-											$me.spinning = false;
-										});
-									} else {
-										iframe.onload = function() {
-											$me.spinning = false;
-										};
-									}
-								}
-							} catch (e) {
-								//TODO handle the exception
-							}
-						})
-						// this.resourceUrl = da.data.data
-					} else {
-						$me.$toast.center(da.data.message);
-					}
-				});
-			},
 			showSet() {
 				/* 打开工具箱 */
 				this.isshowSet = !this.isshowSet
@@ -2462,7 +2422,67 @@
 				} else {
 					this.$refs.toolbar.hide();
 				}
-
+			
+			},
+			/* 获取题库资源 */
+			getResource(type, state) {
+				const $me = this;
+				$me.spinning = true;
+				if (type == 3) {
+					$me.$http({
+						method: 'post',
+						url: urlPath + 'teacher-client/platform/authentication',
+						data: {
+							serviceType: type //1 学科网，2组卷网 3，e卷通
+						}
+					}).then(da => {
+						if (da.data.ret == 'success') {
+							// if (type == 1) {
+							// 	this.resourceUrl1 = da.data.data;
+							// }
+							$me.$set($me.resourceUrllist, 2, '');
+							$me.$set($me.resourceUrllist, 2, da.data.data);
+							$me.setResoule(type, state)
+							// this.resourceUrl = da.data.data
+						} else {
+							$me.$toast.center(da.data.message);
+						}
+					});
+				} else {
+					$me.$set($me.resourceUrllist, 1, '');
+					$me.$set($me.resourceUrllist, 1, 'http://zkxl.school.zxxk.com/ThirdParty/CustomJump?_m=http://localhost:8080/');
+					$me.setResoule(type, state)
+				}
+			},
+			setResoule(type, state) {
+				const $me = this;
+				if (!state) {
+					/* 表示第一次加载，显示iframe */
+					this.isshowResource = type;
+				} else {
+					$me.spinning = false;
+				}
+				if (this.isshowResource != type) {
+					return false;
+				}
+				this.$nextTick(() => {
+					try {
+						let iframe = $me.$refs['iframe' + (type - 1)];
+						if (iframe) {
+							if (iframe.attachEvent) {
+								iframe.attachEvent("onload", function() {
+									$me.spinning = false;
+								});
+							} else {
+								iframe.onload = function() {
+									$me.spinning = false;
+								};
+							}
+						}
+					} catch (e) {
+						//TODO handle the exception
+					}
+				})
 			},
 			showResource(type) {
 				/* 显示资源网 */
@@ -2752,8 +2772,12 @@
 		background: url(../../assets/refresh.png);
 		right: -50px;
 		position: absolute;
-		top: 70px;
+		top: 75px;
 		cursor: pointer;
+	}
+
+	.leftmenu .refresh.refresh2 {
+		top: 140px;
 	}
 
 	/deep/ .ant-spin-container {

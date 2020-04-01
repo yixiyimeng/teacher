@@ -11,7 +11,7 @@ export default new Router({
 			path: '/',
 			name: 'mainPage',
 			component: Main,
-			redirect: '/testiframe',
+			redirect: '/login',
 			children: [{
 					path: '/testiframe',
 					name: 'testiframe',
