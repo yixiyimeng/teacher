@@ -10,13 +10,13 @@
 				</div>
 				<div class="list flex-1" v-if="selectWordList&&selectWordList.length>0&&hasRead">
 					<p v-for="(item,index) in selectWordList" :key="index">
-						<span class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
+						<span class="notice" :class="{'active':playnum==index&&playlisttype==0}" @click="play(item.sound_eng_url,index,0)"></span>
 						<i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
 						<span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span></p>
 				</div>
 				<div class="list flex-1" v-if="hasNotplay&&hasNotplay.length>0&&!hasRead">
 					<p v-for="(item,index) in hasNotplay" :key="index">
-						<span class="notice" :class="{'active':playnum==index}" @click="play(item.sound_eng_url,index)"></span>
+						<span class="notice" :class="{'active':playnum==index&&playlisttype==1}" @click="play(item.sound_eng_url,index,1)"></span>
 						<i class="num">{{index+1}}</i>
 						<span v-if='item'>{{item.word}}</span></p>
 				</div>
@@ -94,6 +94,7 @@
 				isShow: false,
 				hsselectWordList: [],
 				playnum: -1,
+				playlisttype:0,
 				isreftex: false,
 				reftext: '',
 				sound_eng_url: null,
@@ -141,8 +142,9 @@
 			handleClick: function() {
 				this.show = !this.show
 			},
-			play(xsAudioUrl, index) {
+			play(xsAudioUrl, index,type) {
 				this.playnum = index;
+				this.playlisttype=type;
 				this.isPlay = false;
 				this.payAudio("https://data.caidouenglish.com/" + xsAudioUrl)
 			},

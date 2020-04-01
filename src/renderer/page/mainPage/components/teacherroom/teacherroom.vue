@@ -351,9 +351,9 @@
 				</div>
 			</div>
 		</div>
-		<count-down v-if="isCountDown" v-show="isAnswering&&!isSatrspeaker" :setTimer="countDown*1000" @stopCountDown="stopCountDown"
+		<count-down v-if="isCountDown==1" v-show="isAnswering&&!isSatrspeaker" :setTimer="countDown*1000" @stopCountDown="stopCountDown"
 		 ref="countdown"></count-down>
-		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1;" v-show="isshowResource!=0">
+		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; background: #fff;" v-show="isshowResource!=0">
 			<!-- <iframe ref="iframe0" :src="resourceUrllist[0]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==1"></iframe> -->
 			<!-- -->
 			<a-spin tip="正在加载..." :spinning="spinning" style="height: 100%;" size="large">
@@ -643,9 +643,11 @@
 			this.$electron.ipcRenderer.on('iframeUrl', (event, iframeUrl) => {
 				if (iframeUrl) {
 					if ($me.isshowResource == 2) {
-						let search = iframeUrl.split('?')[1];
-						var wxtpath = GetQueryString(search, 'wxtpath');
-						iframeUrl = 'http://zkxl.school.zxxk.com' + wxtpath;
+						if (iframeUrl.split('?')[0] == 'http://localhost:8080/tabframe') {
+							let search = iframeUrl.split('?')[1];
+							var wxtpath = GetQueryString(search, 'wxtpath');
+							iframeUrl = 'http://zkxl.school.zxxk.com' + wxtpath;
+						}
 					}
 					$me.$set($me.resourceUrllist, ($me.isshowResource - 1), iframeUrl)
 				}
@@ -753,7 +755,14 @@
 			// 			console.log("112121111newName:" + JSON.stringify(newName));
 			// 	},
 			// 	immediate: true
-			// }
+			// },
+			isCountDown(newValue, oldValue) {
+				if (newValue != oldValue) {
+					if (newValue == 1 && this.isAnswering && !this.isSatrspeaker) {
+						this.timeDown();
+					}
+				}
+			}
 		},
 		methods: {
 			exitBtn() {
@@ -1012,13 +1021,8 @@
 						data: JSON.stringify(param)
 					})
 					.then(da => {
-						console.log('发题成功了');
-
-
-
 						if ($me.isCountDown == 1) {
 							$me.$refs.countdown.clearCount();
-
 							/* 如果是随机作答题目，就暂停倒计时 */
 							if (!$me.isSatrspeaker) {
 								$me.timeDown();
@@ -2090,28 +2094,28 @@
 				})
 
 			},
-			checkcountDown() {
-				if (this.isAnswering) {
-					return false;
-				}
-				this.countDownTime == 0;
-				if (this.iscountDown) {
-					this.iscountDown = false;
-					this.showcountDown = false;
-					if (this.timer) {
-						clearInterval(this.timer);
-					}
-				} else {
-					this.iscountDown = true;
-					this.showcountDown = true;
-				}
-			},
-			checkshowcountDown() {
-				if (this.isAnswering) {
-					return false;
-				}
-				this.showcountDown = !this.showcountDown;
-			},
+			// checkcountDown() {
+			// 	if (this.isAnswering) {
+			// 		return false;
+			// 	}
+			// 	this.countDownTime == 0;
+			// 	if (this.iscountDown) {
+			// 		this.iscountDown = false;
+			// 		this.showcountDown = false;
+			// 		if (this.timer) {
+			// 			clearInterval(this.timer);
+			// 		}
+			// 	} else {
+			// 		this.iscountDown = true;
+			// 		this.showcountDown = true;
+			// 	}
+			// },
+			// checkshowcountDown() {
+			// 	if (this.isAnswering) {
+			// 		return false;
+			// 	}
+			// 	this.showcountDown = !this.showcountDown;
+			// },
 			/* 切换先声题库类型 */
 			changeXSquestionType() {
 
@@ -2422,7 +2426,7 @@
 				} else {
 					this.$refs.toolbar.hide();
 				}
-			
+
 			},
 			/* 获取题库资源 */
 			getResource(type, state) {
@@ -2450,7 +2454,7 @@
 					});
 				} else {
 					$me.$set($me.resourceUrllist, 1, '');
-					$me.$set($me.resourceUrllist, 1, 'http://zkxl.school.zxxk.com/ThirdParty/CustomJump?_m=http://localhost:8080/');
+					$me.$set($me.resourceUrllist, 1, 'http://zkxl.school.zxxk.com/ThirdParty/CustomJump?_m=http://localhost:8080');
 					$me.setResoule(type, state)
 				}
 			},
@@ -2556,6 +2560,7 @@
 			},
 
 			resumeCountDown(type) {
+				console.log('type'+type);
 				if (this.isCountDown == 1 && this.isAnswering) {
 					if (type == 1) {
 						this.$refs.countdown.resume();
