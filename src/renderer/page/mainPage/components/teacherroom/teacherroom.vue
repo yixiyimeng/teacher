@@ -2441,15 +2441,17 @@
 						}
 					}).then(da => {
 						if (da.data.ret == 'success') {
-							// if (type == 1) {
-							// 	this.resourceUrl1 = da.data.data;
-							// }
 							$me.$set($me.resourceUrllist, 2, '');
 							$me.$set($me.resourceUrllist, 2, da.data.data);
 							$me.setResoule(type, state)
 							// this.resourceUrl = da.data.data
 						} else {
 							$me.$toast.center(da.data.message);
+							if (da.data.code == 401) {
+								setTimeout(function() {
+									$me.returnback()
+								}, 500)
+							}
 						}
 					});
 				} else {
@@ -2560,7 +2562,7 @@
 			},
 
 			resumeCountDown(type) {
-				console.log('type'+type);
+				console.log('type' + type);
 				if (this.isCountDown == 1 && this.isAnswering) {
 					if (type == 1) {
 						this.$refs.countdown.resume();
@@ -2569,7 +2571,14 @@
 					}
 				}
 			},
-
+			/* 返回登录 */
+			returnback() {
+				this.$router.push({
+					//页面跳转
+					path: 'login'
+				});
+				localStorage.removeItem('loginSendInfo')
+			},
 		}
 	};
 </script>
