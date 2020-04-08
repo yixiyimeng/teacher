@@ -1181,7 +1181,7 @@
 				$me.delredenvelope();
 				document.getElementById('music').pause();
 				/* 清空倒计时 */
-				if (this.isCountDown) {
+				if (this.isCountDown==1) {
 					this.$refs.countdown.clearCount();
 				}
 				if ($me.subjecttitle == 4 || $me.subjecttitle == 6 || $me.subjecttitle == 7 || $me.subjecttitle == 8) {
