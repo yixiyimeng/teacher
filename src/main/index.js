@@ -91,11 +91,11 @@ function createWindow() {
 
 	});
 	mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options) => {
-	  console.log("abcd"+url)
-	  mainWindow.webContents.send('iframeUrl',url);
-	  // shell.openExternal(url);
-	  event.preventDefault()
-	
+		console.log("abcd" + url)
+		mainWindow.webContents.send('iframeUrl', url);
+		// shell.openExternal(url);
+		event.preventDefault()
+
 	})
 	/* 调试 */
 	globalShortcut.register('CTRL+T', () => {
@@ -120,6 +120,7 @@ function createWindow() {
 		mainWindow.show();
 		// mainWindow.setFullScreen(true);
 		mainWindow.maximize();
+		mainWindow.moveTop()
 		win.moveTop()
 		//mainWindow.webContents.openDevTools({mode:'bottom'})
 	})
@@ -142,7 +143,7 @@ function createSuspensionWindow() {
 		maxHeight: 220,
 		transparent: true, //设置透明
 		alwaysOnTop: true, //窗口是否总是显示在其他窗口之前
-	
+
 	});
 	const size = screen.getPrimaryDisplay().workAreaSize; //获取显示器的宽高
 	const winSize = win.getSize(); //获取窗口宽高
@@ -193,7 +194,8 @@ function createTray() {
 		mainWindow.show();
 		// mainWindow.setFullScreen(true);
 		mainWindow.maximize();
-		win.moveTop()
+		mainWindow.moveTop()
+		win.moveTop();
 	})
 }
 
@@ -210,13 +212,17 @@ function onOpenAppClick() {
 	mainWindow.show();
 	// mainWindow.setFullScreen(true);
 	mainWindow.maximize();
+	mainWindow.moveTop()
 	win.moveTop()
 }
 
 function onExitAppClick() {
 	if (mainWindow.isMinimized()) {
 		mainWindow.show();
-		mainWindow.setFullScreen(true);
+		mainWindow.maximize();
+		mainWindow.moveTop()
+		win.moveTop()
+		// mainWindow.setFullScreen(true);
 	}
 	mainWindow.webContents.send('isexitApp')
 }
@@ -252,101 +258,108 @@ if (!gotTheLock) {
 	})
 }
 
-	/**
-	 * On ready
-	 * ----------------------
-	 * 1. create tray
-	 * 2. create window
-	 * 3. listen ,if vue is ready ,get the music path and set the music list
-	 */
-	app.on('ready', () => {
-		createTray();
-		// new musicServer().start();
-		createWindow();
+/**
+ * On ready
+ * ----------------------
+ * 1. create tray
+ * 2. create window
+ * 3. listen ,if vue is ready ,get the music path and set the music list
+ */
+app.on('ready', () => {
+	createTray();
+	// new musicServer().start();
+	createWindow();
 
-		ipcMain.on("exitApp", () => {
-			if (process.platform !== 'darwin') {
-				//app.quit()
-				app.exit();
-			}
-		});
-
-		ipcMain.on('minApp', e => mainWindow.minimize());
-		ipcMain.on('maxApp', e => mainWindow.show());
-		/* 是否退出软件 */
-		ipcMain.on('isexitApp', e => {
-			mainWindow.webContents.send('isexitApp');
-			if (mainWindow.isMinimized()) {
-				mainWindow.show();
-				mainWindow.maximize();
-				// mainWindow.setFullScreen(true);
-			}
-		});
-		/* 是否上传题目 */
-		ipcMain.on('isuploadTitle', e => {
-			mainWindow.webContents.send('isuploadTitle');
-			mainWindow.show();
-			mainWindow.setFullScreen(true);
-		});
-		/* 是否退出直播间 */
-		ipcMain.on('isexitdirebro', e => {
-			mainWindow.webContents.send('exitdirebro');
-		});
-		/* 直播间状态 */
-		ipcMain.on('onlinedirebro', (e, value) => {
-			win.webContents.send('onlinedirebro', value);
-		});
-		/* 上传文件状态 */
-		ipcMain.on('uploadfile', (e, value) => {
-			win.webContents.send('isUploadfile', value);
-		});
-		ipcMain.on('showSuspensionWindow', () => {
-			if (win) {
-				if (win.isVisible()) {
-					createSuspensionWindow();
-				} else {
-					win.showInactive(); //显示但不聚焦于窗口
-				}
-			} else {
-				createSuspensionWindow();
-			}
-
-		});
-		ipcMain.on('lgwin', () => {
-			iswinsm = false;
-			win.setSize(70, 220);
-		})
-
-		ipcMain.on('smwin', () => {
-			iswinsm = true;
-			win.setSize(70, 60)
-		})
-		ipcMain.on('moveTop',function() {
-			win.moveTop()
-			// console.log(12233);
-		         // mainWindow.loadURL(url.format({
-		         // pathname: path.join(__dirname, '/views/list.html'),
-		         // protocol: 'file:',
-		         // slashes: true
-		     // }))
-		})
-
-	});
-
-	/**
-	 * On close
-	 */
-	app.on('window-all-closed', () => {
-		// 	if (process.platform !== 'darwin') {
-		// 		app.quit()
-		// 	}
-	});
-
-	/**
-	 * On active
-	 */
-	app.on('activate', () => {
-		if (mainWindow === null) {
-			createWindow()
+	ipcMain.on("exitApp", () => {
+		if (process.platform !== 'darwin') {
+			//app.quit()
+			app.exit();
 		}
 	});
+
+	ipcMain.on('minApp', e => mainWindow.minimize());
+	ipcMain.on('maxApp', e => {
+		mainWindow.show();
+		mainWindow.maximize();
+		mainWindow.moveTop()
+		win.moveTop();
+	});
+	/* 是否退出软件 */
+	ipcMain.on('isexitApp', e => {
+		mainWindow.webContents.send('isexitApp');
+		if (mainWindow.isMinimized()) {
+			mainWindow.show();
+			mainWindow.maximize();
+			mainWindow.moveTop()
+			win.moveTop();
+			// mainWindow.setFullScreen(true);
+		}
+	});
+	/* 是否上传题目 */
+	ipcMain.on('isuploadTitle', e => {
+		mainWindow.webContents.send('isuploadTitle');
+		mainWindow.show();
+		mainWindow.setFullScreen(true);
+	});
+	/* 是否退出直播间 */
+	ipcMain.on('isexitdirebro', e => {
+		mainWindow.webContents.send('exitdirebro');
+	});
+	/* 直播间状态 */
+	ipcMain.on('onlinedirebro', (e, value) => {
+		win.webContents.send('onlinedirebro', value);
+	});
+	/* 上传文件状态 */
+	ipcMain.on('uploadfile', (e, value) => {
+		win.webContents.send('isUploadfile', value);
+	});
+	ipcMain.on('showSuspensionWindow', () => {
+		if (win) {
+			if (win.isVisible()) {
+				createSuspensionWindow();
+			} else {
+				win.showInactive(); //显示但不聚焦于窗口
+			}
+		} else {
+			createSuspensionWindow();
+		}
+
+	});
+	ipcMain.on('lgwin', () => {
+		iswinsm = false;
+		win.setSize(70, 220);
+	})
+
+	ipcMain.on('smwin', () => {
+		iswinsm = true;
+		win.setSize(70, 60)
+	})
+	ipcMain.on('moveTop', function() {
+		win.moveTop()
+		// console.log(12233);
+		// mainWindow.loadURL(url.format({
+		// pathname: path.join(__dirname, '/views/list.html'),
+		// protocol: 'file:',
+		// slashes: true
+		// }))
+	})
+
+});
+
+/**
+ * On close
+ */
+app.on('window-all-closed', () => {
+	// 	if (process.platform !== 'darwin') {
+	// 		app.quit()
+	// 	}
+});
+
+/**
+ * On active
+ */
+app.on('activate', () => {
+	if (mainWindow === null) {
+		createWindow()
+	}
+});
