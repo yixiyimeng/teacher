@@ -16,7 +16,17 @@
 				<!-- <span>下一题</span> -->
 				<i></i>
 			</a>
-
+			<!-- 点名 -->
+			<a href="javascript:;" class="rollCall" @click="callname(0)" v-if="(subjecttitle==6||subjecttitle==7||subjecttitle==9)&&isAnswering">
+				<i></i>
+				<p>点名</p>
+			</a>
+			<!-- 随机抽答 -->
+			<a href="javascript:;" class="pickName" @click="callname(1)" v-if="(subjecttitle==6||subjecttitle==7||subjecttitle==9)&&isAnswering">
+				<i></i>
+				<p>随机</p>
+			</a>
+			
 		</div>
 		<!-- 正确答案 -->
 		<board :trueAnswer="trueAnswer" v-show="isSendtitle && trueAnswer" :class="[isSendtitle ? 'fadeIn' : 'fadeOut']"></board>
@@ -1181,7 +1191,7 @@
 				$me.delredenvelope();
 				document.getElementById('music').pause();
 				/* 清空倒计时 */
-				if (this.isCountDown==1) {
+				if (this.isCountDown == 1) {
 					this.$refs.countdown.clearCount();
 				}
 				if ($me.subjecttitle == 4 || $me.subjecttitle == 6 || $me.subjecttitle == 7 || $me.subjecttitle == 8) {
@@ -2531,6 +2541,10 @@
 					}
 				});
 
+			},
+			callname(type){
+				/* 随机或者点名 */
+				this.$refs.toolbar.show(type==0?5:6)
 			},
 			Satrspeaker(stuCode) {
 				/* 触发随机点名语音测评 */

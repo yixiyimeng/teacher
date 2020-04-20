@@ -728,7 +728,9 @@ transform: rotate(180deg);
 }
 
 .bottommenu a.next,
-.bottommenu a.prev {
+.bottommenu a.prev,
+.bottommenu a.pickName,
+.bottommenu a.rollCall{
 	display: inline-block;
 	color: #fff;
 	vertical-align: middle;
@@ -742,6 +744,30 @@ transform: rotate(180deg);
 	box-shadow:0 0 10px rgba(179, 0, 39, 0.2);
 	margin: 0 10px;
 }
+.bottommenu a.rollCall{
+	background-color: #1890ff;
+	background-image: url(../../assets/icon9.png);
+	background-position: center 5px;
+	box-shadow: 3px 3px 10px rgba(24, 144, 255, .5);
+	background-size: 30px auto;
+	position: absolute;
+	 left: -130px;
+	 top:0;
+	 font-size: 10px;
+	 padding-top: 40px;
+}
+.bottommenu a.pickName{
+	background-color: #f1c16b;
+	background-image: url(../../assets/icon10.png);
+	background-position: center 5px;
+	box-shadow: 3px 3px 10px rgba(241, 193, 107, .5);
+	background-size: 30px auto;
+	position: absolute;
+	 left: -240px;top:0; 
+	 font-size: 10px;
+	 padding-top: 40px;
+}
+
 .bottommenu a.prev {
 	position: absolute;
 	 left: -130px;
@@ -770,7 +796,8 @@ transform: rotate(180deg);
 }
 .bottommenu a.start,
 .bottommenu a.stopBtn,
-.bottommenu a.send{
+.bottommenu a.send
+{
 	height: 63px;
 	width: 63px;
 	border-radius: 50px;

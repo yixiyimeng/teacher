@@ -275,6 +275,7 @@ app.on('ready', () => {
 	ipcMain.on('minApp', e => mainWindow.minimize());
 	ipcMain.on('maxApp', e => {
 		mainWindow.show();
+		mainWindow.moveTop();
 		mainWindow.maximize();
 		mainWindow.moveTop()
 		win.moveTop();
