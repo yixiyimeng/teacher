@@ -9,14 +9,9 @@ import {
 	screen,
 	shell
 } from 'electron';
-import {
-	autoUpdater
-} from 'electron-updater';
 import path from 'path';
 import fs from 'fs';
 import electron from 'electron';
-
-
 let tray = null;
 
 if (process.env.NODE_ENV !== 'development') {

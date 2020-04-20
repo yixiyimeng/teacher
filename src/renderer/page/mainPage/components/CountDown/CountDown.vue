@@ -105,24 +105,25 @@
 			},
 			startCount(){
 				this.timeLeft=this.setTimer;
-				this.lastDate = Date.now();
-				if(this.interval){
-					clearInterval(this.interval)
-					this.interval=null
-				}
-				this.interval = setInterval(() => {
-					let curDate = Date.now()
-					let diff = Math.round((curDate - this.lastDate) / 1000) * 1000
-					this.timeLeft -= diff
-					if (this.timeLeft <= 0) {
-						this.$emit('stopCountDown');
-						clearInterval(this.interval)
-						this.interval=null
-					}
-					if (diff >= 1000) {
-						this.lastDate = curDate
-					}
-				}, 1000)
+				this.resume();
+				// this.lastDate = Date.now();
+				// if(this.interval){
+				// 	clearInterval(this.interval)
+				// 	this.interval=null
+				// }
+				// this.interval = setInterval(() => {
+				// 	let curDate = Date.now()
+				// 	let diff = Math.round((curDate - this.lastDate) / 1000) * 1000
+				// 	this.timeLeft -= diff
+				// 	if (this.timeLeft <= 0) {
+				// 		this.$emit('stopCountDown');
+				// 		clearInterval(this.interval)
+				// 		this.interval=null
+				// 	}
+				// 	if (diff >= 1000) {
+				// 		this.lastDate = curDate
+				// 	}
+				// }, 1000)
 			},
 			resume(){
 				this.lastDate = Date.now();

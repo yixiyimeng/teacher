@@ -41,7 +41,7 @@
 		<div class="printScreenbox" v-show="type==3">
 			<div style="height:100%; width: 100%;">
 				<vue-cropper ref="cropper" :img="htmlUrl" :info="true" :autoCrop="options.autoCrop" :autoCropWidth="options.autoCropWidth"
-				 :autoCropHeight="options.autoCropHeight"  :mode="options.mode" :fixedBox="options.fixedBox" :canMove="options.canMove">
+				 :autoCropHeight="options.autoCropHeight" :mode="options.mode" :fixedBox="options.fixedBox" :canMove="options.canMove">
 				</vue-cropper>
 			</div>
 			<div class="optionbtn">
@@ -97,7 +97,7 @@
 					// autoCropHeight: 200,
 					fixedBox: false,
 					canMove: false,
-					mode:'100%'
+					mode: '100%'
 				},
 			}
 		},
@@ -128,11 +128,14 @@
 						this.type = 0;
 						this.$emit('close')
 					}
-				} else {
-
-				}
+				} 
 
 			});
+		},
+		watch: {
+			isshowNamelist: function(newval, oldval) {
+				this.$emit('resumeCountDown', newval?0:1)
+			},
 		},
 		methods: {
 			...mapMutations(['SET_isCountDown']),
@@ -215,7 +218,7 @@
 							// console.log(this.htmlUrl)
 							$me.type = 3;
 							/* todo 暂停计时器 */
-							this.$emit('resumeCountDown',0)
+							this.$emit('resumeCountDown', 0)
 						} else {
 							$me.$toast.center(da.data.message);
 						}
@@ -226,18 +229,18 @@
 				const $me = this;
 				this.$refs.cropper.getCropData(data => {
 					console.log(data)
-					 data.split('data:image/jpg;base64,')[1]
+					data.split('data:image/jpg;base64,')[1]
 					this.type = 0;
 					$me.$http({
 						method: 'post',
 						url: urlPath + 'teacher-client/platform/saveWhiteboardImg',
 						data: {
 							ifTemporary: !$me.ifTemporary,
-							imgBase64: data.replace(/data:image\/jpeg;base64,/,'')
+							imgBase64: data.replace(/data:image\/jpeg;base64,/, '')
 						}
 					}).then(da => {
 						if (da.data.ret == 'success') {
-							this.$emit('resumeCountDown',1)
+							this.$emit('resumeCountDown', 1)
 							this.$emit('close')
 						} else {
 							$me.$toast.center(da.data.message);
@@ -246,10 +249,10 @@
 
 				})
 			},
-			canceImg(){
-				this.type=0;
+			canceImg() {
+				this.type = 0;
 				this.$emit('close');
-				this.$emit('resumeCountDown',1)
+				this.$emit('resumeCountDown', 1)
 			},
 			selName(item) {
 				this.$emit('Satrspeaker', item.stuCode) //触发随机作答语音题目
