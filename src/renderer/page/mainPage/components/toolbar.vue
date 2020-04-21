@@ -32,10 +32,10 @@
 					<p>弹幕</p>
 				</a>
 
-				<a href="javascript:;" class="more">
+				<!-- <a href="javascript:;" class="more">
 					<i></i>
 					<p>更多</p>
-				</a>
+				</a> -->
 			</div>
 		</div>
 		<div class="printScreenbox" v-show="type==3">
