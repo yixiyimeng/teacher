@@ -1,5 +1,5 @@
-// export const urlPath = 'http://192.168.10.148:8080/';
-// export const urlwsPath = 'ws://192.168.10.148:8080/';
+// export const urlPath = 'http://192.168.10.106:8080/';
+// export const urlwsPath = 'ws://192.168.10.106:8080/';
 export const urlPath = 'http://localhost:8080/';
 export const urlwsPath = 'ws://localhost:8080/';
 export const stupath = 'http://localhost:8899/';

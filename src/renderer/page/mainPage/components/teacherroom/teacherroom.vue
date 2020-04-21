@@ -1012,8 +1012,10 @@
 								} else {
 									url = 'voiceAnswer/startAppraisalAndMicrophoneClear'
 								}
-								param.stuCode = $me.stuCode
+								param.stuCode = $me.stuCode;
+								
 							}
+							param.refVoicePath = $me.xsAudioUrl
 							$me.titlename = '跟读测评';
 							break;
 						}
