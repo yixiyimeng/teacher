@@ -27,7 +27,9 @@
 							</label>
 						</div>
 					</div>
-					<a href="javascript:;" class="loginBtn mt20" @click="login()">登录</a>
+					<div class="loginBtnbox">
+						<a href="javascript:;" class="loginBtn mt20" @click="login()">登录</a>
+					</div>
 				</form>
 			</div>
 		</div>
