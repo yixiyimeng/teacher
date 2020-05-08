@@ -26,7 +26,7 @@
 				<i></i>
 				<p>随机</p>
 			</a>
-			
+
 		</div>
 		<!-- 正确答案 -->
 		<board :trueAnswer="trueAnswer" v-show="isSendtitle && trueAnswer" :class="[isSendtitle ? 'fadeIn' : 'fadeOut']"></board>
@@ -600,6 +600,7 @@
 				sentenceList: [],
 				hasNotplay: [], //未播放的先声题库列表
 				spinning: false, //加载loading
+				isScreening: false, //是否正则截屏
 
 			};
 		},
@@ -806,6 +807,11 @@
 			/* 开始下发题目 */
 			startRace() {
 				const $me = this;
+				if ($me.isScreening) {
+					$me.$toast.center('正在保存，请稍后');
+					return false;
+				}
+				$me.isScreening = true; //开始截屏
 				var param = {};
 				if ($me.subjectType == 0) {
 					var answer = $me.settrueanswer
@@ -902,21 +908,6 @@
 							refText: $me.XStalkName.word
 							//uuid: $me.uuid
 						};
-						/* 设置已作答*/
-						// 						if (param.refText) {
-						// 							var index = -1;
-						// 							if (this.XSquestionType == 0) {
-						// 								index = this.selectWordList.findIndex(item => item.word == $me.XStalkName.word);
-						// 								this.selectWordList[index].isPlayed = true;
-						// 								this.$store.commit('SET_selectWordList', this.selectWordList);
-						// 							} else {
-						// 								index = this.selectSentenceList.findIndex(item => item.text == $me.XStalkName.text);
-						// 								this.selectSentenceList[index].isPlayed = true;
-						// 								this.$store.commit('SET_selectSentenceList', this.selectSentenceList);
-						// 							}
-						// 
-						// 						}
-
 
 					}
 				}
@@ -1013,7 +1004,7 @@
 									url = 'voiceAnswer/startAppraisalAndMicrophoneClear'
 								}
 								param.stuCode = $me.stuCode;
-								
+
 							}
 							param.refVoicePath = $me.xsAudioUrl
 							$me.titlename = '跟读测评';
@@ -1033,28 +1024,31 @@
 						data: JSON.stringify(param)
 					})
 					.then(da => {
-						if ($me.isCountDown == 1) {
-							$me.$refs.countdown.clearCount();
-							/* 如果是随机作答题目，就暂停倒计时 */
-							if (!$me.isSatrspeaker) {
-								$me.timeDown();
+						if (da.data.ret == 'success') {
+							if ($me.isCountDown == 1) {
+								$me.$refs.countdown.clearCount();
+								/* 如果是随机作答题目，就暂停倒计时 */
+								if (!$me.isSatrspeaker) {
+									$me.timeDown();
+								}
 							}
+							$me.startVIew();
+							/* 判断题型，截屏 */
+							if (judgetype == 1 || judgetype == 2 || judgetype == 4) {
+								$me.$nextTick(() => {
+									setTimeout(() => {
+										$me.saveImgFullScreen();
+									}, 100)
+
+								})
+
+							}
+
+							$me.totalNumber = da.data.data; //答题总人数
+						} else {
+							$me.isScreening = false; //开始截屏
+							$me.$toast.center(da.data.message);
 						}
-						$me.startVIew();
-						/* 判断题型，截屏 */
-						if (judgetype == 1 || judgetype == 2 || judgetype == 4) {
-							$me.$nextTick(() => {
-								setTimeout(() => {
-									$me.saveImgFullScreen();
-								}, 500)
-
-							})
-
-						}
-
-						$me.totalNumber = da.data.data; //答题总人数
-
-
 					})
 					.catch(function(err) {
 						// $me.$loading.close();
@@ -2020,6 +2014,11 @@
 			/* 下一题 */
 			nextQuestion() {
 				const $me = this;
+				if ($me.isScreening) {
+					$me.$toast.center('正在保存，请稍后');
+					return false;
+				}
+				$me.isScreening = true; //开始截屏
 				// $me.startVIew();
 				$me.$http({
 					method: 'post',
@@ -2036,7 +2035,7 @@
 						$me.$nextTick(() => {
 							setTimeout(() => {
 								$me.saveImgFullScreen();
-							}, 500)
+							}, 100)
 
 						})
 						if ($me.isCountDown == 1) {
@@ -2044,6 +2043,7 @@
 						}
 						$me.totalNumber = da.data.data.totalNum; //答题总人数
 					} else {
+						$me.isScreening = false; //开始截屏
 						$me.$toast.center(da.data.message);
 					}
 				});
@@ -2051,6 +2051,11 @@
 			/* 上一题 */
 			prevQuestion() {
 				const $me = this;
+				if ($me.isScreening) {
+					$me.$toast.center('正在保存，请稍后');
+					return false;
+				}
+				$me.isScreening = true; //开始截屏
 				$me.$http({
 					method: 'post',
 					url: urlPath + 'teacher-client/common/prevQuestion'
@@ -2066,7 +2071,7 @@
 						$me.$nextTick(() => {
 							setTimeout(() => {
 								$me.saveImgFullScreen();
-							}, 500)
+							}, 100)
 
 						})
 						if ($me.isCountDown == 1) {
@@ -2074,6 +2079,7 @@
 						}
 						$me.totalNumber = da.data.data.totalNum; //答题总人数
 					} else {
+						$me.isScreening = false; //开始截屏
 						$me.$toast.center(da.data.message);
 					}
 				});
@@ -2428,6 +2434,8 @@
 					} else {
 						$me.$toast.center(da.data.message);
 					}
+					/* 提示截屏成功 */
+					this.isScreening = false;
 				});
 			},
 			showSet() {
@@ -2544,9 +2552,9 @@
 				});
 
 			},
-			callname(type){
+			callname(type) {
 				/* 随机或者点名 */
-				this.$refs.toolbar.show(type==0?5:6)
+				this.$refs.toolbar.show(type == 0 ? 5 : 6)
 			},
 			Satrspeaker(stuCode) {
 				/* 触发随机点名语音测评 */
