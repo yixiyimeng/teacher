@@ -811,7 +811,7 @@
 					$me.$toast.center('正在保存，请稍后');
 					return false;
 				}
-				$me.isScreening = true; //开始截屏
+
 				var param = {};
 				if ($me.subjectType == 0) {
 					var answer = $me.settrueanswer
@@ -1014,7 +1014,6 @@
 				if (judgetype) {
 					param.questionType = judgetype;
 				}
-
 				this.$http({
 						method: 'post',
 						url: urlPath + 'teacher-client/' + url,
@@ -1035,6 +1034,7 @@
 							$me.startVIew();
 							/* 判断题型，截屏 */
 							if (judgetype == 1 || judgetype == 2 || judgetype == 4) {
+								$me.isScreening = true; //开始截屏
 								$me.$nextTick(() => {
 									setTimeout(() => {
 										$me.saveImgFullScreen();
@@ -2434,7 +2434,9 @@
 					} else {
 						$me.$toast.center(da.data.message);
 					}
-					/* 提示截屏成功 */
+
+				}).finally(() => {
+					/* 提示截屏完成 */
 					this.isScreening = false;
 				});
 			},
