@@ -207,6 +207,8 @@
 				/* 全屏截图 */
 				const $me = this;
 				$me.isShow = false;
+				/* todo 暂停计时器 */
+				this.$emit('resumeCountDown', 0);
 				this.$nextTick(() => {
 					$me.$http({
 						method: 'post',
@@ -218,10 +220,14 @@
 							// console.log(this.htmlUrl)
 							$me.type = 3;
 							/* todo 暂停计时器 */
-							this.$emit('resumeCountDown', 0)
+							// this.$emit('resumeCountDown', 0)
 						} else {
 							$me.$toast.center(da.data.message);
 						}
+					}).catch(() => {
+						/* 重新开始倒计时 */
+						$me.$toast.center('截图发成错误了');
+						this.$emit('resumeCountDown', 1);
 					});
 				})
 			},
