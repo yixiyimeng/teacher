@@ -19,14 +19,14 @@
 					<i></i>
 					<p>截图</p>
 				</a>
-				<a href="javascript:;" class="rollCall" @click="show(5)">
+				<!-- <a href="javascript:;" class="rollCall" @click="show(5)">
 					<i></i>
 					<p>点名</p>
 				</a>
 				<a href="javascript:;" class="pickName" @click="show(6)">
 					<i></i>
 					<p>随机</p>
-				</a>
+				</a> -->
 				<a href="javascript:;" class="barrage" @click="show(1)">
 					<i></i>
 					<p>弹幕</p>

@@ -11,4 +11,27 @@ import toolbar from '@/page/mainPage/components/toolbar.vue';
 import CountDown from '@/page/mainPage/components/CountDown';
 import audiotxt from '@/page/mainPage/components/audiotxt';
 import audiolist from '@/page/mainPage/components/audiolist';
-export {notice,progressbox,dropmenu,search,board,load,timeswiper,xianshen,toolbar,CountDown,audiotxt,audiolist}
+import namelist from '@/page/mainPage/components/namelist';
+import controlbar from '@/page/mainPage/components/controlbar';
+import temquestion from '@/page/mainPage/components/temquestion';
+import piechart from '@/page/mainPage/components/piechart';
+import barchart from '@/page/mainPage/components/barchart';
+export {
+	notice,
+	progressbox,
+	dropmenu,
+	search,
+	board,
+	load,
+	timeswiper,
+	xianshen,
+	toolbar,
+	CountDown,
+	audiotxt,
+	audiolist,
+	namelist,
+	controlbar,
+	temquestion,
+	piechart,
+	barchart
+}

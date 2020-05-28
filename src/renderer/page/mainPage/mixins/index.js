@@ -61,6 +61,9 @@ export const IndexMixin = {
 		/* 获取学生名单 */
 		getNamelist(url) {
 			const $me = this;
+			if (!url) {
+				url = 'bingingCard/getAllBingdCardInfo'
+			}
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/' + url
@@ -174,7 +177,7 @@ export const IndexMixin = {
 						// 		Left]).css('height'));
 						// deybottom = leftbottom - oldflytypehight;
 						deybottom = leftbottom;
-					console.log('deybottom' + deybottom);
+						console.log('deybottom' + deybottom);
 					}
 				} catch (e) {
 					//TODO handle the exception

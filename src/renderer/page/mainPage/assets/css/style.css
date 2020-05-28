@@ -755,7 +755,7 @@ select {
 	bottom: 20%;
 	border-radius: 5px;
 	color: #b85e1e;
-	padding: 20px;
+	padding:0 20px;
 	font-size: 40px;
 	overflow: hidden;
 

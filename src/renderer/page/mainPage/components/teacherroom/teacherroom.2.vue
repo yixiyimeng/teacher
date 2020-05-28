@@ -5,22 +5,84 @@
 		<!-- 工具箱 -->
 		<toolbar ref="toolbar" @close="isshowSet=false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown"
 		 :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
-		<controlbar @startRace="startRace" @stopRace="stopRace" @sendtitle="sendtitle" @prevQuestion="prevQuestion"
-		 @nextQuestion="nextQuestion" @callname="callname" @addSubject="addSubject" :isSubject="isSubject" :isAddSubject="isAddSubject"
-		 :isStop="isStop" :isSendtitle="isSendtitle" :subjecttitle="subjecttitle" :isAnswering="isAnswering"></controlbar>
+		<div class="bottommenu">
+			<a href="javascript:;" class="start" @click="startRace" v-show="isSubject && isAddSubject"></a>
+			<a href="javascript:;" class="stopBtn" @click="stopRace" v-if="isStop"></a>
+			<a href="javascript:;" class="send" @click="sendtitle" v-show="isSendtitle"></a>
+			<a href="javascript:;" class="prev" @click="prevQuestion" v-show="isSubject && !isAddSubject">
+				<i></i>
+			</a>
+			<a href="javascript:;" class="next" @click="nextQuestion" v-show="isSubject && !isAddSubject">
+				<!-- <span>下一题</span> -->
+				<i></i>
+			</a>
+			<!-- 点名 -->
+			<a href="javascript:;" class="rollCall" @click="callname(0)" v-if="(subjecttitle==6||subjecttitle==7||subjecttitle==9)&&isAnswering">
+				<i></i>
+				<p>点名</p>
+			</a>
+			<!-- 随机抽答 -->
+			<a href="javascript:;" class="pickName" @click="callname(1)" v-if="(subjecttitle==6||subjecttitle==7||subjecttitle==9)&&isAnswering">
+				<i></i>
+				<p>随机</p>
+			</a>
+
+		</div>
 		<!-- 正确答案 -->
 		<board :trueAnswer="trueAnswer" v-show="isSendtitle && trueAnswer" :class="[isSendtitle ? 'fadeIn' : 'fadeOut']"></board>
+		<!-- 添加题目 -->
+		<a href="javascript:;" class="addSubject" @click="isAddSubject = !isAddSubject" v-show="isSubject"></a>
+		<!-- 绑定名单 -->
+		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
+			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
+			<div class="namelistbox-bd">
+				<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
+				<ul class="clearfix">
+					<!-- {{namelist}} -->
+					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
+						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
+						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
+						<!-- <span class="notice"></span>
+						<span class="play"></span> -->
+						<img src="../../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" style="opacity: .6;" />
+					</li>
+				</ul>
 
-		<!-- 进度条 -->
+				<div class="tag">
+					<span>已选择{{ checkbindStu }}个学生</span>
+					<a href="javascript:;" @click="unbindCheckedStu">解绑选中学生</a>
+					<a href="javascript:;" @click="checkAll">全选</a>
+					<a href="javascript:;" @click="uncheckAll">全不选</a>
+				</div>
+				<div @click="unBindAllStu" class="unbindAllStu" title="一键解绑"><img src="../../assets/jiebang.png" alt="" /></div>
+			</div>
+		</div>
+		<!-- 选择答案的名单 -->
+		<div class="namelistbox animated fast" :class="[isshowselectNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowselectNamelist">
+			<div class="mask" @click.stop="isshowselectNamelist = !isshowselectNamelist"></div>
+			<div class="namelistbox-bd">
+				<a href="javascript:;" class="close" @click="isshowselectNamelist = !isshowselectNamelist"></a>
+				<ul class="clearfix">
+					<!-- {{namelist}} -->
+					<li v-for="(item, index) in selectNamelist">
+						<img src="../../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
+						<span style="vertical-align: middle;">{{ item.stuName }}
+							<template v-if="subjecttitle==3">({{item.answer}})</template>
+						</span>
+					</li>
+				</ul>
+			</div>
+		</div>
+
 		<load :isprogress="isprogress" :rate="rate" :answerNumber="answerNumber" :totalNumber="totalNumber"></load>
-
+		<!-- 显示答案 -->
 		<notice :titlename="titlename" class="animated fast" :class="[titlename ? 'slideInDown' : 'slideOutUp']"></notice>
 
 		<!-- 左侧菜单 -->
 		<div class="leftmenu">
 			<i class="refresh" @click="getResource(2)" v-if="isshowResource==2"></i>
 			<i class="refresh refresh2" @click="getResource(3)" v-if="isshowResource==3"></i>
-			<a href="javascript:;" @click="showNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
+			<a href="javascript:;" @click="isshowNamelist = !isshowNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
 			<!-- <a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a> -->
 			<a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon2"></i>网校通</a>
 			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a>
@@ -53,6 +115,9 @@
 					<img src="../../assets/play.png" alt="" v-if="!isPlay">
 					<img src="../../assets/play.gif" alt="" v-if="isPlay"></span>
 			</div>
+			<!-- <div class=" bounceInDown animated" v-if="isreftext" >
+				
+			</div> -->
 			<div class="txtlist" v-show="isanalysis">
 				<div class="item flex " v-for="(item, index) in txtlist" :key="index">
 					<div class="imgbox"><img src="../../assets/1.png" /></div>
@@ -65,13 +130,6 @@
 					</div>
 				</div>
 			</div>
-			<div class="prevtxt" @click="prevtxtScreen"  v-show="isanalysis&&txtlist.length>0" >
-				<!-- <img src="../../assets/prev.png" alt=""> -->
-			</div>
-			<div class="nexttxt" @click="nexttxtScreen"  v-show="isanalysis&&txtlist.length>0" >
-				<!-- <img src="../../assets/next.png" alt=""> -->
-			</div>
-
 		</div>
 		<!-- 结果 -->
 		<div class="resultbox " v-show="isResult">
@@ -85,15 +143,29 @@
 				<div class="chartbox flex-1" :class="{ h70: isRank && ranklist.length > 0 }" v-show="isChart || isCorrectchart">
 					<!-- 主观题统计 -->
 					<div class="chart" style="height:90%;width: 45%;float: left;" v-show="isChart">
-						<piechart ref="piechart" @handPiechart="handPiechart"></piechart>
+						<div id="myChart" style="height:100%; min-height: 100px;"></div>
 					</div>
 					<!-- 正确率统计 -->
 					<div class="Correctchart" style="height:90%; float: left; text-align: center;" :style="{ width: isChart ? '55%' : '100%' }"
 					 v-show="isCorrectchart">
-						<barchart ref="barchart" @handBarchart="handBarchart" :colorList="colorList" :subjecttitle="subjecttitle"
-						 :trueAnswer="trueAnswer"></barchart>
+						<div style="height: 25px; text-align: left; padding-left: 60px;" v-if="subjecttitle == 3">
+							<div class="ant-checkbox-group">
+								<label class="ant-checkbox-group-item ant-checkbox-wrapper" v-for="(item, index) in checklist" :key="index">
+									<span class="ant-checkbox">
+										<input type="checkbox" v-model="item.ischeck" class="ant-checkbox-input" />
+										<span class="ant-checkbox-inner"></span>
+									</span>
+									<span>{{ item.name }}</span>
+								</label>
+							</div>
+							<a style="text-align: center; color: rgb(24, 114, 255);" href="javascript:;" v-if="selectAnswerStr" @click="getEveryAnswerName({ answer: selectAnswerStr })">
+								查看选择{{ selectAnswerStr }}人员名单
+							</a>
+						</div>
+						<div id="myCorrectChart" style="height:100%; min-height:100px;"></div>
 					</div>
 				</div>
+				<!-- <a class="sendtitle" href="javascript:;" @click="sendtitle" v-show="isSendtitle">下发题目</a> -->
 				<!-- 语音测评排行榜 -->
 				<div class="rankborad" v-if="isrankboradlist">
 					<div class="item flex flex-align-center" :class="'item' + (index + 1)" v-for="(item, index) in rankboradlist" :key="index">
@@ -108,37 +180,201 @@
 			</div>
 		</div>
 		<!--选择题目-->
-		<temquestion ref="temquestion" @showXianshenWin="showXianshenWin" :groupName="groupName" :sentenceList="sentenceList"></temquestion>
-		<!-- 倒计时 -->
+		<div class="subject flex flex-v flex-align-center modbox" v-show="isAddSubject">
+			<div class="tab">
+				<div class="tab-item" :class="{ active: subjectType == '0' }">
+					<div @click="chooSesubjectType('0')">
+						<i></i>
+						<span>普通题</span>
+					</div>
+				</div>
+				<div class="tab-item" :class="{ active: subjectType == '1' }">
+					<div @click="chooSesubjectType('1')">
+						<i></i>
+						<span>语音题</span>
+					</div>
+				</div>
+			</div>
+
+			<div class="commonroom flex-1" v-if="subjectType == 0">
+				<ul class="subjectitlebox flex flex-pack-justify">
+					<li v-for="item in subjectitleList" class="flex-1" :key="item.value" @click="selSubjecttitle(item)" :class="{ active: item.value == subjecttitle }">
+						<i></i>
+						<p>{{ item.name }}</p>
+					</li>
+				</ul>
+
+				<div class="fromcontrol flex" v-if="subjecttitle != 4 && subjecttitle != 5">
+					<label>答案</label>
+
+					<input type="password" name="" id="" value="" autocomplete="off" class="trueanswer" v-model="settrueanswer"
+					 placeholder="请输入正确答案" />
+				</div>
+				<p class="warn" v-if="subjecttitle != 4 && subjecttitle != 5">
+					<template v-if="subjecttitle == 1">
+						请输入A-D的单选
+					</template>
+					<template v-if="subjecttitle == 2">
+						请输入E（正确）或者F（错误）
+					</template>
+					<template v-if="subjecttitle == 3">
+						请输入A-D的多选
+					</template>
+				</p>
+				<div class="fromcontrol flex" v-if="subjecttitle != 4 && subjecttitle != 5">
+					<label>得分</label>
+					<input type="text" name="" id="getScore" value="" class="txt" autocomplete="off" v-model="score" />
+				</div>
+			</div>
+			<!-- 語音 -->
+			<div class="talkroom flex-1 " v-if="subjectType == 1">
+				<ul class="subjectitlebox flex flex-pack-justify">
+					<li v-for="item in yysubjectitleList" class="flex-1" :key="item.value" :class="{ active: item.value == subjecttitle }"
+					 @click="chooseSubjecttitle(item)">
+						<i></i>
+						<p>{{ item.name }}</p>
+					</li>
+				</ul>
+
+				<div class="fromcontrol flex" v-show="subjecttitle == 6">
+					<label>题目类型</label>
+					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
+						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
+							<span class="ant-radio">
+								<input type="radio" name="talkquestionType" :value="7" v-model="talkquestionType" />
+								<span class="ant-radio-inner"></span>
+							</span>
+							<span>英文识别</span>
+						</label>
+						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
+							<span class="ant-radio">
+								<input type="radio" name="talkquestionType" :value="8" v-model="talkquestionType" />
+								<span class="ant-radio-inner"></span>
+							</span>
+							<span>中文识别</span>
+						</label>
+					</div>
+				</div>
+				<div class="fromcontrol flex" v-show="subjecttitle == 7">
+					<label>题目类型</label>
+					<search :searchList="titletypeList" placeholdertxt="请选择题型" @selectFunc="changeTitleType" class="flex-1"
+					 :selectValue="onetitletype"></search>
+				</div>
+				<div class="flex flex-align-center" v-show="subjecttitle == 7">
+					<div class="fromcontrol flex flex-1">
+						<label>题目</label>
+						<div class="flex-1" style="margin-right: 60px;">
+							<input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" />
+							<dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu>
+						</div>
+					</div>
+					<div class="uploadbox">
+						<input type="file" name="" value="" id="upload" @change="uploadfile" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" />
+						<span>上传题目</span>
+					</div>
+				</div>
+				<div class="fromcontrol flex" v-show="subjecttitle == 8">
+					<label>题目类型</label>
+					<div style="display:inline-block; font-size:20px;vertical-align: top;">
+						<label style="width:5em;text-align:left" class="ant-radio-wrapper">
+							<span class="ant-radio">
+								<input type="radio" name="iPhoneType" :value="0" v-model="iPhoneType" />
+								<span class="ant-radio-inner"></span>
+							</span>
+							<span>抢麦</span>
+						</label>
+						<label style="width:8em;text-align:left" class="ant-radio-wrapper">
+							<span class="ant-radio">
+								<input type="radio" name="iPhoneType" :value="1" v-model="iPhoneType" />
+								<span class="ant-radio-inner"></span>
+							</span>
+							<span>群发麦克风</span>
+						</label>
+					</div>
+				</div>
+				<!-- 跟读测评 题目类型 -->
+				<!-- <div class="fromcontrol flex" v-show="subjecttitle == 9">
+					<label>题目类型</label>
+					<div style="display:inline-block;  font-size:20px;vertical-align: top;">
+						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
+							<span class="ant-radio">
+								<input type="radio" name="XSquestionType" :value="0" v-model="XSquestionType" @change="changeXSquestionType" />
+								<span class="ant-radio-inner"></span>
+							</span>
+							<span>英文单词</span>
+						</label>
+						<label style="width:6em;text-align:left" class="ant-radio-wrapper">
+							<span class="ant-radio">
+								<input type="radio" name="XSquestionType" :value="1" v-model="XSquestionType" @change="changeXSquestionType" />
+								<span class="ant-radio-inner"></span>
+							</span>
+							<span>英文句子</span>
+						</label>
+					</div>
+				</div> -->
+				<!-- <div class="flex flex-align-center" v-show="subjecttitle == 9">
+					<div class="fromcontrol flex flex-1">
+						<label>题目</label>
+						<v-select :options="xianshenglist" v-model="XStalkName" placeholder="请选择题目" class="flex-1" style="padding-right: 20px;"
+						 :label="XSquestionType==0?'word':'text'">
+							<template slot="no-options">
+								没有筛选到题目
+							</template>
+						</v-select>
+					</div>
+				</div> -->
+				<div class="flex flex-align-center" v-show="subjecttitle == 9">
+					<div class="fromcontrol flex flex-1" style="width: 200px;">
+						<label>语音课件</label>
+						<div class="flex-1" :title="groupName" style="margin-right: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+							{{groupName}}
+							<!-- <input type="text" name="" value="" autocomplete="off" v-model.trim="talkName" style="width: 100%;" /> -->
+							<!-- <dropmenu :reftitletypelist="reftitletypelist" @selTalkName="selTalkName"></dropmenu> -->
+						</div>
+					</div>
+					<div class="uploadbox" @click="showXianshenWin()">
+						<span>导入题库</span>
+					</div>
+				</div>
+				<!-- <div class="fromcontrol flex flex-align-center" v-if="subjecttitle == 6 || subjecttitle == 7|| subjecttitle == 9">
+					<label>扬声器</label>
+					<div class="ant-checkbox-group " style="text-align: left;">
+						<label class="ant-checkbox-group-item ant-checkbox-wrapper" style="width: 20em;">
+							<span class="ant-checkbox">
+								<input type="checkbox" class="ant-checkbox-input" v-model="isSatrspeaker" />
+								<span class="ant-checkbox-inner"></span>
+							</span>
+							<span style="color: #f00; font-size:20px ;">是否开启扬声器</span>
+						</label>
+					</div>
+				</div> -->
+			</div>
+		</div>
+		<div class="exitappWin animated fadeIn" v-if="isunbind">
+			<div class="confirm">
+				<div>
+					<div class="title">{{ unbindtext }}</div>
+					<div class="buttonGroup">
+						<a href="javascript:;" @click="isunbind = !isunbind">暂不</a>
+						<a href="javascript:;" class="comfirmBtn" @click="unBindStu">确定</a>
+					</div>
+				</div>
+			</div>
+		</div>
 		<count-down v-if="isCountDown==1" v-show="isAnswering&&!isSatrspeaker" :setTimer="countDown*1000" @stopCountDown="stopCountDown"
 		 ref="countdown"></count-down>
 		<div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: -1; background: #fff;" v-show="isshowResource!=0">
+			<!-- <iframe ref="iframe0" :src="resourceUrllist[0]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==1"></iframe> -->
+			<!-- -->
 			<a-spin tip="正在加载..." :spinning="spinning" style="height: 100%;" size="large">
 				<iframe ref="iframe1" :src="resourceUrllist[1]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==2"></iframe>
 				<iframe ref="iframe2" :src="resourceUrllist[2]" frameborder="0" style="width: 100%; height: 100%;" v-show="isshowResource==3"></iframe>
 			</a-spin>
 		</div>
-		<!-- 右侧先声题库历史 -->
 		<audiolist ref="audiolist" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
-		<!-- 学生名单 -->
-		<namelist ref="namelist" :namelist="namelist" @hide="isshowNamelist=false" @uploadNameList="getNamelist"></namelist>
-		<!-- statistics 统计答案的名单 -->
-		<div class="namelistbox animated fast" :class="[isshowselectNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowselectNamelist">
-			<div class="mask" @click.stop="isshowselectNamelist = !isshowselectNamelist"></div>
-			<div class="namelistbox-bd">
-				<a href="javascript:;" class="close" @click="isshowselectNamelist = !isshowselectNamelist"></a>
-				<ul class="clearfix">
-					<li v-for="(item, index) in selectNamelist">
-						<img src="../../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
-						<span style="vertical-align: middle;">{{ item.stuName }}
-							<template v-if="(subjecttitle==3)&&item.answer">({{item.answer}})</template>
-						</span>
-					</li>
-				</ul>
-			</div>
-		</div>
+
 	</div>
 </template>
 
@@ -160,17 +396,14 @@
 		search,
 		load,
 		board,
+		timeswiper,
 		CountDown,
 		toolbar,
 		audiotxt,
 		audiolist,
-		xianshen,
-		namelist,
-		controlbar,
-		temquestion,
-		piechart,
-		barchart
+		xianshen
 	} from '@/page/mainPage/components';
+	import vSelect from '@/page/mainPage/components/vue-select';
 	import {
 		IndexMixin
 	} from '@/page/mainPage/mixins/index';
@@ -187,27 +420,23 @@
 	} from '@/page/mainPage/utils/base';
 	import $ from '@/page/mainPage/assets/js/jquery-vendor';
 	import '@/page/mainPage/assets/js/jquery.danmu';
-
 	import echarts from 'echarts'
 	export default {
 		mixins: [IndexMixin],
 		components: {
 			notice,
-			progressbox, //进度条
+			progressbox,
 			dropmenu,
 			search,
 			load,
-			board, //正确答案显示
+			board,
+			timeswiper,
+			vSelect,
 			toolbar,
-			CountDown, //倒计时
+			CountDown,
 			audiotxt,
 			audiolist,
-			xianshen,
-			namelist, //学生名单
-			controlbar, //控制条
-			temquestion,
-			piechart,
-			barchart
+			xianshen
 		},
 		data() {
 			return {
@@ -229,16 +458,15 @@
 				txtlist: [], //语音解析文本
 				onlinedirectBroadcastCode: '', //直播间code
 				isResult: false, //是否显示统计结果
-				/* TODO 删除 start */
 				subjecttitle: '1', //题型
 				subjectType: 0, //0 普通 1 语音
 				settrueanswer: '', //正确答案
 				score: 5, //分数
 				isSubject: true, //是否显示题目
 				isAddSubject: false, //是否添加题目
-				/* TODO 删除 end */
-
 				isStop: false, //是否显示结束按钮
+				myChart: null,
+				myCorrectChart: null,
 				reftitletype: 1, //语言测评类型
 				titletypeList: [{
 						name: '英文单词',
@@ -382,15 +610,36 @@
 				'selectWordList', 'selectSentenceList', 'isCountDown', 'countDown', 'danmuinfolist'
 			]),
 			...mapGetters(['getisminimizeApp', 'onEvent']),
-
-			// selectAnswerStr() {
-			// 	return this.checklist
-			// 		.filter(item => item.ischeck)
-			// 		.map(item => item.name)
-			// 		.sort()
-			// 		.join('');
+			// alertCont() {
+			// 	return this.$store.getters.onEvent();
 			// },
-
+			checkbindStu() {
+				if (this.namelist && this.namelist.length > 0) {
+					return this.namelist.filter(item => item.checked).length;
+				} else {
+					return 0;
+				}
+			},
+			// 		selectAnswerStr() {
+			// 			return this.selectAnswer.sort().join('');
+			// 		},
+			selectAnswerStr() {
+				return this.checklist
+					.filter(item => item.ischeck)
+					.map(item => item.name)
+					.sort()
+					.join('');
+			},
+			countDownList() {
+				//return `${fixedZero(h)}:${fixedZero(m)}:${fixedZero(s)}`;
+				return (
+					fixedZero(Math.floor((this.countDownTime / 60 / 60) % 24)) +
+					':' +
+					fixedZero(Math.floor((this.countDownTime / 60) % 60)) +
+					':' +
+					fixedZero(Math.floor(this.countDownTime % 60))
+				);
+			}
 		},
 		created() {
 			this.sendInfo = JSON.parse(this.$route.query.sendInfo);
@@ -399,7 +648,7 @@
 			this.$store.commit('SET_startClass', true);
 			this.$electron.ipcRenderer.send('onlinedirebro', true);
 			this.getNamelist('bingingCard/getAllBingdCardInfo');
-			// this.getjson();
+			this.getjson();
 			let $me = this;
 			/* 监听 资源网 打开新窗口 */
 			this.$electron.ipcRenderer.on('iframeUrl', (event, iframeUrl) => {
@@ -427,6 +676,10 @@
 		},
 
 		mounted() {
+			this.$nextTick(() => {
+				this.myChart = echarts.init($('#myChart')[0]);
+				this.myCorrectChart = echarts.init($('#myCorrectChart')[0]); //初始化echart
+			})
 			const $me = this;
 			/* 设置count的宽度 */
 			const w = parseInt($('.couten').width() / 200) * 200;
@@ -447,16 +700,51 @@
 			}
 			/* 接受websock   */
 			this.onmessage();
+			/* 获取资源 */
 
+			// this.getResource(1);
+			// this.getResource(2);
+			// this.getResource(3);
 
 		},
 		watch: {
+			isshowNamelist: function(newval, oldval) {
+				const $me = this;
+				if (newval) {
+					if ($me.onlinedirectBroadcastCode && $me.isshowNamelist) {
+						$me.getOnlinelist({
+							code: $me.onlinedirectBroadcastCode
+						});
+					}
+				}
+			},
+			/* getisminimizeApp(newValue, oldValue) {
+				if (newValue != oldValue) {
+					if (!this.isminimizeAppState && this.isAnswering) {
+						if ($('#danmu').data('paused') == 1) {
+							$('#danmu').danmu('danmuResume');
+						}
+					} else {
+						$('#danmu').danmu('danmuPause');
+					}
+				}
+			}, */
+			talkName(newValue, oldValue) {
+				if (newValue != oldValue) {
+					var maxnum = this.reftitletype == 4 ? 50 : 70;
+					console.log('this.reftitletype' + this.reftitletype);
+					if (this.talkName.length > maxnum) {
+						this.talkName = this.talkName.slice(0, maxnum);
+						this.$toast.center(`题目长度不能大于${maxnum}`);
+					}
+				}
+			},
 
 			checklist: {
 				handler(newName, oldName) {
 					const $me = this;
 					if ($me.subjecttitle == 3) {
-						// var option = $me.myCorrectChart.getOption();
+						var option = $me.myCorrectChart.getOption();
 						//console.log(option);
 						for (var i = 0; i < $me.checklist.length; i++) {
 							if ($me.checklist[i].ischeck) {
@@ -465,15 +753,20 @@
 								$me.colorList[i] = '#59ADF3';
 							}
 						}
-						$me.$refs.barchart.upOption();
-						// $me.myCorrectChart.setOption(option);
+						$me.myCorrectChart.setOption(option);
 					}
 				},
 				deep: true
 				// 代表在wacth里声明了firstName这个方法之后立即先去执行handler方法
 				// immediate: true
 			},
-			/* 是否显示弹幕 */
+			// onEvent: {
+			// 	handler(newName, oldName) {
+			// 		if (newName && newName != oldName)
+			// 			console.log("112121111newName:" + JSON.stringify(newName));
+			// 	},
+			// 	immediate: true
+			// },
 			isCountDown(newValue, oldValue) {
 				if (newValue != oldValue) {
 					if (newValue == 1 && this.isAnswering && !this.isSatrspeaker) {
@@ -515,22 +808,94 @@
 			startRace() {
 				const $me = this;
 				if ($me.isScreening) {
-					$me.$toast.center('正在保存题干，请稍后');
+					$me.$toast.center('正在保存，请稍后');
 					return false;
 				}
-				var param = $me.$refs.temquestion.start();
-				if (param) {
-					$me.subjecttitle = $me.$refs.temquestion.subjecttitle;
-					/* 判读语音测评  题目*/
-					if ($me.subjecttitle == 7) {
-						$me.talkName = $me.$refs.temquestion.talkName
+
+				var param = {};
+				if ($me.subjectType == 0) {
+					var answer = $me.settrueanswer
+						.toLocaleUpperCase()
+						.split('')
+						.sort()
+						.join('');
+					let answerreg = '';
+					if (!$me.subjecttitle) {
+						$me.$toast.center('请选择一个题型');
+						return false;
 					}
-					/* 判断麦克风是抢麦还是群发麦克风 */
-					if ($me.subjecttitle == 8) {
-						$me.iPhoneType = $me.$refs.temquestion.iPhoneType;
+					//$me.uuid = $me.randomWord(false, 32);
+					if ($me.subjecttitle == 1 || $me.subjecttitle == 2 || $me.subjecttitle == 3) {
+						if ($me.subjecttitle == 1) {
+							answerreg = /^[A-D]{1}$/;
+						} else if ($me.subjecttitle == 2) {
+							answerreg = /^[E-F]{1}$/;
+						} else if ($me.subjecttitle == 3) {
+							answerreg = /^(?!.*([A-D]).*\1)[A-D]{2,4}$/;
+						}
+						if (answer && !answerreg.test(answer)) {
+							$me.$toast.center('请输入正确答案');
+							return false;
+						}
+						let score = $me.score;
+						let integer = /^[0-9]\d*$/; //正整数
+						if (!integer.test(score) || score >= 60000) {
+							$me.score = '';
+							$me.$toast.center('请输入不超过60000整数');
+							return false;
+						}
+						$me.trueAnswer = answer;
+						param = {
+							trueAnswer: answer,
+							score: score,
+							impromptu: true
+							//uuid: $me.uuid
+						};
+					} else {
+						param = {
+							//uuid: $me.uuid
+						};
 					}
-					/* 判断是否是跟读测评 */
-					if ($me.subjecttitle == 9) {
+				} else {
+					if ($me.subjecttitle == 6) {
+						if (!$me.talkquestionType) {
+							$me.$toast.center('请选择题目类型');
+							return false;
+						}
+						param = {
+							type: $me.talkquestionType
+						};
+					} else if ($me.subjecttitle == 7) {
+						if (!$me.reftitletype) {
+							$me.$toast.center('请选择题目类型');
+							return false;
+						}
+						if (!$me.talkName) {
+							$me.$toast.center('请选择或输入题目');
+							return false;
+						}
+						if ($me.reftitletype == 3 || $me.reftitletype == 4) {
+							if (!allchinese.test($me.talkName)) {
+								$me.$toast.center('请输入中文!');
+								return;
+							}
+						} else {
+							if (!allenglish.test($me.talkName)) {
+								$me.$toast.center('请输入英文!');
+								return;
+							}
+						}
+						//$me.uuid = $me.randomWord(false, 32);
+						param = {
+							type: $me.reftitletype,
+							refText: $me.talkName
+							//uuid: $me.uuid
+						};
+					} else if ($me.subjecttitle == 9) {
+						if (!$me.groupName || $me.sentenceList.length <= 0) {
+							$me.$toast.center('请选择题目!');
+							return;
+						}
 						if ($me.hasNotplay.length <= 0) {
 							this.hasNotplay = [...$me.sentenceList];
 						}
@@ -541,14 +906,12 @@
 						param = {
 							type: $me.XStalkName.type,
 							refText: $me.XStalkName.word
-						}
+							//uuid: $me.uuid
+						};
+
 					}
-					/* 显示正确答案 */
-					if (param.trueAnswer) {
-						$me.trueAnswer = param.trueAnswer;
-					}
-					$me.Answerstar(param);
 				}
+				$me.Answerstar(param);
 			},
 			Answerstar(param) {
 				/* 普通题目调用接口 */
@@ -757,6 +1120,9 @@
 
 				}
 				if ($me.subjecttitle == 5) {
+					// setInterval(() => {
+					// 	$me.addredenvelope({});
+					// },100)
 					if (document.getElementById('music')) {
 						document.getElementById('music').play();
 					}
@@ -1037,43 +1403,243 @@
 			/*获取答题 柱状图chart*/
 			getCorrectChartData(myoption) {
 				const $me = this;
+				var fontSize = $me.getDpr();
 				$me.isCorrectchart = true;
-				this.$refs.barchart.setOption(myoption)
+				var title = myoption.title;
+				var mydata = myoption.data;
+				var dataShadow = myoption.dataShadow
+				var percentage = myoption.percentage;
+				$me.checklist = title
+					.filter(item => item != '未作答')
+					.map(item => {
+						return {
+							name: item,
+							ischeck: false
+						};
+					});
+				var defaultcolor = ['#FF999A', '#59ADF3', '#AF89D6', '#af89d6'];
+				$me.colorList = [];
+				if (title && title.length > 0) {
+					$me.colorList = title.map((item, i) => {
+						if ($me.subjecttitle == 4) {
+							return defaultcolor[i];
+						} else {
+							if (title[i] == ($me.trueAnswer == 'F' ? '×' : $me.trueAnswer == 'E' ? '√' : $me.trueAnswer) && ($me.subjecttitle ==
+									1 || $me.subjecttitle == 2)) {
+								return '#ff999a';
+							}
+							if (item == '未作答') {
+								return '#AF89D6';
+							}
+							return '#59ADF3';
+						}
+					});
+				}
+				let option = {
+					color: ['#59ADF3', '#FF999A', '#AF89D6', '#af89d6'],
+					grid: {
+						x: 110,
+						y: 20,
+						x2: 25,
+						y2: 45
+					},
+					xAxis: {
+						type: 'category',
+						data: title,
+						axisLine: {
+							lineStyle: {
+								color: '#ccc'
+							}
+						},
+						axisLabel: {
+							fontSize: fontSize > 24 ? 20 : fontSize,
+							backgroundColor: '#fff',
+							color: '#5793f3',
+							borderRadius: 4,
+							borderColor: '#5793f3',
+							borderWidth: 1,
+							padding: [3, 10, 3, 10],
+							interval: 0
+						}
+						/* ,
+						triggerEvent:true */
+					},
+					yAxis: {
+						type: 'value',
+						axisLine: {
+							lineStyle: {
+								color: '#ccc'
+							}
+						},
+						axisLabel: {
+							formatter: ['{value}人'].join('\n'),
+							fontSize: fontSize > 24 ? 20 : fontSize,
+							backgroundColor: '#fff',
+							color: '#5793f3',
+							borderRadius: 4,
+							borderColor: '#5793f3',
+							borderWidth: 1,
+							padding: [3, 10, 3, 10],
 
+						},
+						minInterval: 1
+					},
+					series: [{
+						data: dataShadow,
+						type: 'bar',
+						barWidth: 80,
+						barGap: '-100%',
+						itemStyle: {
+							normal: {
+								color: 'rgba(0,0,0,0.01)',
+								barBorderRadius: [8, 8, 0, 0]
+							}
+						}
+					}, {
+						data: mydata,
+						type: 'bar',
+						barWidth: 80,
+						label: {
+							normal: {
+								show: true,
+								position: 'inside',
+								color: '#fff',
+								formatter: function(param) {
+									if (param.value == 0) {
+										return 0;
+									} else {
+										return param.value + '人\n(' + percentage[param.dataIndex] + '%)';
+									}
+								},
+								textStyle: {
+									fontSize: 20
+								}
+							}
+						},
+						itemStyle: {
+							normal: {
+								color: function(params) {
+									return $me.colorList[params.dataIndex];
+								},
+								barBorderRadius: [8, 8, 0, 0]
+							}
+						}
+					}]
+				};
+				if (title.length > 5) {
+					option.dataZoom = [{
+							show: true,
+							start: 0,
+							end: 50
+						},
+						{
+							type: 'inside',
+							start: 0,
+							end: 50
+						}
+					];
+				}
+				$me.myCorrectChart = echarts.init($('#myCorrectChart')[0]);
+				$me.myCorrectChart.setOption(option);
+				setTimeout(function() {
+					$me.myCorrectChart.resize();
+				}, 200);
+				$me.myCorrectChart.off('click');
+				$me.selectAnswer = [];
+				$me.myCorrectChart.on('click', function(param) {
+					/* if(param.componentType == "xAxis"){
+						console.log("单击了"+param.value+"x轴标签");
+					}else{ */
+					if ($me.subjecttitle == 3) {
+						if (title[param.dataIndex] == '未作答') {
+							$me.getEveryAnswerName({
+								answer: title[param.dataIndex]
+							});
+						} else {
+							if ($me.colorList[param.dataIndex] == '#FF999A') {
+								//$me.colorList[param.dataIndex] = '#61a0a8';
+								$me.checklist[param.dataIndex].ischeck = false;
+							} else {
+								//$me.colorList[param.dataIndex] = '#ff999a';
+								$me.checklist[param.dataIndex].ischeck = true;
+							}
+						}
+						//$me.myCorrectChart.setOption(option);
+					} else {
+						$me.getEveryAnswerName({
+							answer: title[param.dataIndex]
+						});
+						//$me.getEveryAnswerName({ answer:$me.trueAnswer });
+					}
+					// }
+				});
 			},
 			/* 正确率显示 */
 			getCorrectChartpieData(myoption) {
 				const $me = this;
 				$me.isChart = true;
-				this.$refs.piechart.setOption(myoption, '正确率')
-
-			},
-			/* 主观题统计 饼状图 显示*/
-			getChartData(myoption, title) {
-				const $me = this;
-				$me.isChart = true;
-				this.$refs.piechart.setOption(myoption, '主观题统计')
-
-			},
-			/* piechart 点击事件 
-			@handtitle 点击标题，
-			@seriesname 正确率统计还是主观题统计
-			*/
-			handPiechart(handtitle, seriesname) {
-				if (seriesname == '正确率') {
-					this.getEveryAnswerName({
-						answer: this.trueAnswer
-					}, (handtitle != '正确'));
-				} else {
-					this.getEveryAnswerName({
-						answer: handtitle
-					});
+				var List = myoption;
+				var title = [];
+				for (var i = 0; i < List.length; i++) {
+					title.push(List[i].name);
 				}
-			},
-			/* 点击柱状图 */
-			handBarchart(handtitle) {
-				this.getEveryAnswerName({
-					answer: handtitle
+				var fontSize = $me.getDpr();
+				let option = {
+					// 				legend: {
+					// 					x: 'center',
+					// 					y: 'bottom',
+					// 					textStyle: {
+					// 						color: '#5793f3'
+					// 					},
+					// 					data: title
+					// 				},
+					color: ['#FF999A', '#59ADF3', '#AF89D6', '#af89d6'],
+					series: [{
+						name: '正确率',
+						type: 'pie',
+						radius: ['35%', '80%'],
+						avoidLabelOverlap: false,
+						label: {
+							normal: {
+								show: true,
+								position: 'inner',
+								formatter: function(params) {
+									//console.log(params);
+									return params.name + params.value + '人\n(' + params.percent + '%)';
+								},
+								textStyle: {
+									fontSize: fontSize > 18 ? 18 : fontSize
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								show: false
+							}
+						}
+					}]
+				};
+				option.series[0].data = myoption;
+				// if(!$me.myChart){
+				// 	$me.myChart = echarts.init($('#myChart')[0]);
+				// }
+				$me.myChart = echarts.init($('#myChart')[0]);
+				$me.myChart.setOption(option);
+				//console.log(option)
+				setTimeout(function() {
+					$me.myChart.resize();
+				}, 200);
+				$me.myChart.off('click');
+				$me.myChart.on('click', function(param) {
+					if (title[param.dataIndex] == '正确') {
+						$me.getEveryAnswerName({
+							answer: $me.trueAnswer
+						});
+					} else {
+						$me.getFalseAnswerName({
+							answer: $me.trueAnswer
+						});
+					}
 				});
 			},
 			/* 清空页面显示内容 */
@@ -1091,14 +1657,14 @@
 				$me.txtlist = []; //语音解析文本
 				$me.isSubject = false; //是否显示题目
 				$me.isAddSubject = false; //是否添加题目
-				$me.$refs.temquestion.isShow($me.isAddSubject);
 				$me.isStop = false; //是否显示结束按钮
 				$me.isSendtitle = false;
 				// $me.isparticlesbox = false;
 				$me.isprogress = false; //隐藏进度条
-				$me.rate = 0; // 答题进度条
-				$me.answerNumber = 0; // 答题进度条 答题人数
-				$me.totalNumber = 0; // 答题进度条 总人数
+				$me.rate = 0;
+				$me.answerNumber = 0;
+				$me.totalNumber = 0;
+				$me.settrueanswer = '';
 				$me.chartDate = {
 					title: [],
 					agreeNumber: [],
@@ -1112,7 +1678,28 @@
 				$me.isPlay = false; //停止播放音频
 				// $me.stuName=''
 			},
-
+			/* 切换语言测评类型 */
+			changeTitleType(obj) {
+				const $me = this;
+				const type = ($me.reftitletype = obj.value);
+				$me.talkName = '';
+				try {
+					if (type == 1) {
+						$me.reftitletypelist = $me.alltxtlist['enWord'];
+					} else if (type == 2) {
+						$me.reftitletypelist = $me.alltxtlist['enSentence'];
+					} else {
+						$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+					}
+				} catch (e) {
+					$me.reftitletypelist = [];
+				}
+			},
+			/* 选择语言测评题目 */
+			selTalkName(talk) {
+				const $me = this;
+				$me.talkName = talk;
+			},
 			/* 下发题目 隐藏统计结果 显示题目 */
 			sendtitle() {
 				const $me = this;
@@ -1124,19 +1711,273 @@
 				$me.stuName = ''; //麦克风学生名称
 				$me.isSatrspeaker = false; //是否开启扬声器
 			},
-
-
-			/* 获取选项答题人数 */
-			getEveryAnswerName(param, isFalseAnswer) {
+			/* 切换题型 */
+			chooSesubjectType(type) {
 				const $me = this;
-				var url = 'teacher-client/statistics/getEveryAnswerName';
-				if (isFalseAnswer) {
-					/* 查询错误学生名单 */
-					url = 'teacher-client/statistics/getFalseAnswerName';
+				$me.subjectType = type;
+				if ($me.subjectType == 0) {
+					$me.subjecttitle = '1';
+					$me.onesubjectitle = $me.subjectitleList[0];
+				} else {
+					$me.subjecttitle = '6';
+					$me.talkquestionType = 7;
 				}
+			},
+			/* 切换普通题型 */
+			selSubjecttitle(obj) {
+				//console.log(obj)
+				this.subjecttitle = obj.value;
+				this.settrueanswer = '';
+			},
+			/* 切换语音题型 */
+			chooseSubjecttitle(obj) {
+				this.subjecttitle = obj.value;
+				const $me = this;
+				if ($me.subjecttitle == 6) {
+					$me.talkquestionType = 7;
+				} else if ($me.subjecttitle == 7) {
+					$me.reftitletype = '1';
+					$me.onetitletype = $me.titletypeList[0];
+					$me.talkName = '';
+					try {
+						$me.reftitletypelist = $me.alltxtlist['enWord'];
+					} catch (e) {
+						$me.reftitletypelist = [];
+					}
+				} else if ($me.subjecttitle == 8) {
+					$me.iPhoneType = 0;
+				} else if ($me.subjecttitle == 9) {
+					$me.XSquestionType = 0;
+					$me.xianshenglist = $me.selectWordList;
+				}
+			},
+			/* 主观题统计 */
+			getChartData(myoption, title) {
+				const $me = this;
+				$me.isChart = true;
+				var List = myoption;
+				var title = [];
+				List.map(function(item) {
+					title.push(item.name);
+				});
+				var fontSize = $me.getDpr();
+				let option = {
+					// 				legend: {
+					// 					x: 'center',
+					// 					y: 'bottom',
+					// 					textStyle: {
+					// 						color: '#5793f3'
+					// 					},
+					// 					data: title
+					// 				},
+					color: ['#FF999A', '#59ADF3', '#AF89D6', '#af89d6'],
+					series: [{
+						name: '主观题统计',
+						type: 'pie',
+						radius: ['30%', '70%'],
+						avoidLabelOverlap: false,
+						label: {
+							normal: {
+								show: true,
+								position: 'inner',
+								formatter: function(params) {
+									//console.log(params);
+									return params.name + params.value + '人\n(' + params.percent + '%)';
+								},
+								textStyle: {
+									fontSize: fontSize > 18 ? 18 : fontSize
+								}
+							}
+						},
+						labelLine: {
+							normal: {
+								show: false
+							}
+						}
+					}]
+				};
+				option.series[0].data = myoption;
+				$me.myChart = echarts.init($('#myChart')[0]);
+				$me.myChart.setOption(option);
+				setTimeout(function() {
+					$me.myChart.resize();
+				}, 200);
+				$me.myChart.off('click');
+				$me.myChart.on('click', function(param) {
+					$me.getEveryAnswerName({
+						answer: title[param.dataIndex]
+					});
+				});
+			},
+			uploadfile() {
+				const $me = this;
+				var file = $('#upload')[0];
+				var FileExt = $('#upload')
+					.val()
+					.replace(/.+\./, ''); //正则表达式获取后缀
+				if (FileExt != 'xls' && FileExt != 'xlsx') {
+					$me.$toast.center('请上传excel文件');
+					return false;
+				}
+				if (file.files[0]) {
+					var formData = new FormData();
+					formData.append('file', file.files[0]);
+					formData.append('teacAssistantCode', $me.sendInfo.teacAssistantCode);
+					formData.append('teacAssistantName', $me.sendInfo.teacAssistantName);
+					this.$http({
+						method: 'post',
+						url: urlPath + '/teacher-client/platform/importVoiceQuesrions',
+						data: formData,
+						processData: false, // jQuery不要去处理发送的数据
+						contentType: false
+					}).then(da => {
+						if (da.data.ret == 'success') {
+							//showMessage('上传成功')
+							$me.$toast.center('上传成功');
+							$me.getjson();
+						} else {
+							$me.$toast.center('上传失败');
+						}
+					});
+					file.value = '';
+				}
+			},
+			getjson() {
+				const $me = this;
 				this.$http({
 					method: 'post',
-					url: urlPath + url,
+					url: urlPath + '/teacher-client/platform/selectVoiceQuestions',
+					data: JSON.stringify({
+						teacAssistantCode: $me.sendInfo.teacAssistantCode,
+						teacAssistantName: $me.sendInfo.teacAssistantName
+					}),
+					headers: {
+						'Content-Type': 'application/json; charset=UTF-8'
+					}
+				}).then(da => {
+					$me.alltxtlist = da.data.data;
+					const type = $me.reftitletype;
+					try {
+						if (type == 1) {
+							$me.reftitletypelist = $me.alltxtlist['enWord'];
+						} else if (type == 2) {
+							$me.reftitletypelist = $me.alltxtlist['enSentence'];
+						} else {
+							$me.reftitletypelist = $me.alltxtlist['cnSentence'];
+						}
+					} catch (e) {
+						$me.reftitletypelist = [];
+					}
+				});
+			},
+			/* 一键解绑学生名单 */
+			unBindStu() {
+				const $me = this;
+				$me.isunbind = false;
+
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/bingingCard/unBind',
+					headers: {
+						'Content-Type': 'application/json; charset=UTF-8'
+					},
+					data: JSON.stringify($me.ubindParams)
+				}).then(da => {
+					if (da.data.ret == 'success') {
+						$me.$toast.center('解绑成功');
+						/* 刷新名单 */
+						$me.getNamelist('bingingCard/getAllBingdCardInfo');
+					} else {
+						$me.$toast.center('解绑失败');
+					}
+				});
+			},
+			/* 解绑一个学生 */
+			unBindOneStu(stu) {
+				const $me = this;
+				if ($me.isAnswering) {
+					$me.$toast.center('答题过程中不能解绑');
+					return false;
+				}
+				$me.isunbind = true;
+				$me.unbindtext = '确定解绑' + stu.stuName + '吗？';
+				$me.ubindParams = {
+					stuCodes: [stu.stuCode]
+				};
+			},
+			/* 解绑选中学生 */
+			unbindCheckedStu() {
+				const $me = this;
+				if ($me.isAnswering) {
+					$me.$toast.center('答题过程中不能解绑');
+					return false;
+				}
+				var list = [];
+				if ($me.namelist && $me.namelist.length > 0) {
+					list = $me.namelist
+						.filter(item => {
+							return item.checked;
+						})
+						.map(item => item.stuCode);
+				}
+				if (list.length > 0) {
+					$me.isunbind = true;
+					$me.unbindtext = '确定解绑选中学生吗？';
+					$me.ubindParams = {
+						stuCodes: list
+					};
+				} else {
+					$me.$toast.center('请至少选择一个学生');
+				}
+			},
+			/* 解绑所有学生名单吗 */
+			unBindAllStu() {
+				const $me = this;
+				if ($me.isAnswering) {
+					$me.$toast.center('答题过程中不能解绑');
+					return false;
+				}
+				$me.isunbind = true;
+				$me.unbindtext = '确定解绑所有学生名单吗？';
+				$me.ubindParams = {
+					classCode: $me.sendInfo.classCode
+				};
+			},
+			/* 选中一个学生 */
+			checkOneStu(item) {
+				const $me = this;
+				if (item.state != 0) {
+					item.checked = !item.checked;
+				}
+			},
+			/* 全选 */
+			checkAll() {
+				const $me = this;
+				if ($me.namelist && $me.namelist.length > 0) {
+					$me.namelist.forEach(item => {
+						if (item.state == 1) {
+							item.checked = true;
+						}
+					});
+				}
+			},
+			/* 全不选 */
+			uncheckAll() {
+				const $me = this;
+				if ($me.namelist && $me.namelist.length > 0) {
+					$me.namelist.forEach(item => {
+						if (item.state == 1) {
+							item.checked = false;
+						}
+					});
+				}
+			},
+			/* 获取选项答题人数 */
+			getEveryAnswerName(param) {
+				const $me = this;
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/statistics/getEveryAnswerName',
 					headers: {
 						'Content-Type': 'application/json; charset=UTF-8'
 					},
@@ -1151,7 +1992,25 @@
 					}
 				});
 			},
-
+			getFalseAnswerName(param) {
+				const $me = this;
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/statistics/getFalseAnswerName',
+					headers: {
+						'Content-Type': 'application/json; charset=UTF-8'
+					},
+					data: JSON.stringify(param)
+				}).then(da => {
+					if (da.data.ret == 'success') {
+						/*  */
+						$me.isshowselectNamelist = true;
+						$me.selectNamelist = da.data.data;
+					} else {
+						$me.$toast.center('查询失败');
+					}
+				});
+			},
 			/* 下一题 */
 			nextQuestion() {
 				const $me = this;
@@ -1193,7 +2052,7 @@
 			prevQuestion() {
 				const $me = this;
 				if ($me.isScreening) {
-					$me.$toast.center('正在保存题干，请稍后');
+					$me.$toast.center('正在保存，请稍后');
 					return false;
 				}
 				$me.isScreening = true; //开始截屏
@@ -1220,7 +2079,7 @@
 						}
 						$me.totalNumber = da.data.data.totalNum; //答题总人数
 					} else {
-						$me.isScreening = false; //停止截屏
+						$me.isScreening = false; //开始截屏
 						$me.$toast.center(da.data.message);
 					}
 				});
@@ -1241,8 +2100,9 @@
 					}
 				});
 			},
-			/* 倒计时结束 */
+
 			stopCountDown() {
+				/* 倒计时结束 */
 				this.stopRace(1);
 			},
 			/* 开始计时 */
@@ -1250,10 +2110,45 @@
 				this.$nextTick(() => {
 					this.$refs.countdown.startCount();
 				})
+
+			},
+			// checkcountDown() {
+			// 	if (this.isAnswering) {
+			// 		return false;
+			// 	}
+			// 	this.countDownTime == 0;
+			// 	if (this.iscountDown) {
+			// 		this.iscountDown = false;
+			// 		this.showcountDown = false;
+			// 		if (this.timer) {
+			// 			clearInterval(this.timer);
+			// 		}
+			// 	} else {
+			// 		this.iscountDown = true;
+			// 		this.showcountDown = true;
+			// 	}
+			// },
+			// checkshowcountDown() {
+			// 	if (this.isAnswering) {
+			// 		return false;
+			// 	}
+			// 	this.showcountDown = !this.showcountDown;
+			// },
+			/* 切换先声题库类型 */
+			changeXSquestionType() {
+
+				if (this.XSquestionType == 0) {
+					this.xianshenglist = this.selectWordList;
+				} else {
+					this.xianshenglist = this.selectSentenceList;
+				}
+				this.XStalkName = null;
+				// console.log(this.xianshenglist)
 			},
 			/* 播放音频 */
 			startAudio() {
 				// console.log('开始播放音乐')
+				// console.log(this.xsAudioUrl);
 				const $me = this;
 				if (document.getElementById('xsmusic')) {
 					document.getElementById('xsmusic').play();
@@ -1667,6 +2562,7 @@
 				/* 触发随机点名语音测评 */
 				this.isSatrspeaker = true;
 				this.stuCode = stuCode;
+
 				if (this.subjecttitle == 7 || this.subjecttitle == 9) {
 					if (this.XStalkName) {
 						this.hasNotplay.unshift(this.XStalkName);
@@ -1679,17 +2575,18 @@
 				}
 
 			},
-			/* 显示先声题库弹出框 */
 			showXianshenWin() {
+				/* 显示先声题库弹出框 */
 				this.$refs.xianshenWin.showWin();
 			},
-			/* 选择了先声题库 题目*/
 			showGroup(groupName, list) {
+				/* 选择了先声题库 */
 				this.groupName = groupName;
 				this.sentenceList = list; //先声题库
 				this.hasNotplay = [...this.sentenceList];
+				console.log('groupName', this.hasNotplay)
 			},
-			/* 暂停或者继续倒计时 */
+
 			resumeCountDown(type) {
 				console.log('type' + type);
 				if (this.isCountDown == 1 && this.isAnswering) {
@@ -1708,44 +2605,49 @@
 				});
 				localStorage.removeItem('loginSendInfo')
 			},
-			/* 显示学生名单 */
-			showNamelist() {
-				this.isshowNamelist = !this.isshowNamelist;
-				this.$refs.namelist.show(this.isshowNamelist)
-			},
-			/* 显示或者隐藏临时题目 */
-			addSubject(type) {
-				this.isAddSubject = type;
-				this.$refs.temquestion.isShow(type)
-			},
-			prevtxtScreen() {
-				this.$nextTick(function() {
-					let scrollTop = $('.txtlist')[0].scrollTop;
-					let offsetHeight = $('.txtlist')[0].offsetHeight;
-					console.log(scrollTop)
-					console.log(offsetHeight)
-					$('.txtlist').animate({
-						scrollTop: (scrollTop - offsetHeight) > 0 ? (scrollTop - offsetHeight) : 0
-					}, 400);
-				});
-			},
-			nexttxtScreen() {
-				this.$nextTick(function() {
-					let scrollTop = $('.txtlist')[0].scrollTop;
-					let offsetHeight = $('.txtlist')[0].offsetHeight;
-					let scrollHeight = $('.txtlist')[0].scrollHeight
-					console.log(scrollTop)
-					console.log(offsetHeight)
-					$('.txtlist').animate({
-						scrollTop: (scrollTop + offsetHeight) > scrollHeight ? scrollHeight : (scrollTop + offsetHeight)
-					}, 400);
-				});
-			}
 		}
 	};
 </script>
 
 <style scoped="scoped">
+	.commonroom,
+	.talkroom {
+		width: 520px;
+		margin-bottom: 20px;
+	}
+
+	.mb20 {
+		margin-bottom: 20px;
+	}
+
+	.modbox.subject {
+		position: absolute;
+		top: 0;
+		left: 50%;
+		width: 600px;
+		margin-left: -300px;
+		z-index: 999;
+		padding-top: 10%;
+	}
+
+	@media screen and (max-height:720px) {
+		.modbox.subject {
+			padding-top: 6%;
+		}
+	}
+
+	.modbox.subject .startBtn {
+		width: 500px;
+	}
+
+	.commonroom .warn {
+		color: #f00;
+		font-size: 26px;
+		text-align: center;
+		margin-top: 10px;
+		/* margin-bottom: -10px; */
+	}
+
 	.setcountDown {
 		position: fixed;
 		right: 10px;
@@ -1820,6 +2722,27 @@
 		display: block;
 		width: 30px;
 	}
+
+	/* .sound>span {
+		margin-right: 15px;
+		background-repeat: no-repeat;
+		background-image: url(../../assets/index.png);
+		background-position: 0 -1046px;
+		height: 17px;
+		width: 19px;
+		display: block;
+	} */
+
+	/* .sound.active {
+		background-image: url(../../assets/notice.gif);
+		background-image: url(../../assets/notice2.gif)\9;
+		-webkit-background-size: 22px 21px;
+		-moz-background-size: 22px 21px;
+		background-size: 22px 21px;
+		background-repeat: no-repeat;
+		background-position: 7px -2px;
+
+	} */
 
 	.sound.active>span {
 		background: none;
@@ -1899,31 +2822,5 @@
 
 	/deep/ .ant-spin-container {
 		height: 100%;
-	}
-
-	.prevtxt,
-	.nexttxt {
-		position: fixed;
-		right: 15%;
-		z-index: 999;
-		width: 60px;
-		height: 60px;
-		margin-right: -60px;
-		background:#4fb57e no-repeat center center;
-		background-size: 40px auto;
-		border-radius: 100%;
-		border: 3px solid #fff;
-		box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.1)
-	}
-
-	.prevtxt {
-		bottom: 20%;
-		margin-bottom: 70px;
-		background-image: url(../../assets/prev.png);
-	}
-
-	.nexttxt {
-		bottom: 20%;
-		background-image: url(../../assets/next.png);
 	}
 </style>

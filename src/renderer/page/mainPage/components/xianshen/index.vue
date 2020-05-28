@@ -179,13 +179,10 @@
 				selectSentenceList: [],
 				selectWordList: [],
 				isSlectWord: false, //是否选中单词
-				isSlectSen: false ,//是否选择句子
-				groupName:null//单元名称
+				isSlectSen: false, //是否选择句子
+				groupName: null //单元名称
 
 			}
-
-		},
-		created() {
 
 		},
 		computed: {
@@ -305,7 +302,8 @@
 							this.unitList = da.data.data;
 							if (this.unitList && this.unitList.length > 0) {
 								this.getLessons(this.unitList[0])
-								this.groupName=this.unitList[0].group
+								this.groupName = this.unitList[0].group
+								console.log('groupName', this.groupName)
 							}
 
 						} else {
@@ -318,7 +316,8 @@
 			changeUnit(obj) {
 				this.getLessons(obj);
 				this.showUnitlist = false;
-				this.groupName=obj.group
+				this.groupName = obj.group;
+				console.log('groupName', this.groupName)
 			},
 			/* 查询课时 */
 			getLessons(group) {
@@ -431,29 +430,30 @@
 					this.selectSentenceList = this.sentenceList.filter(item => !item.cancel);
 					this.$store.commit('SET_selectSentenceList', this.selectSentenceList);
 				}
-				let list=[];
-				if(this.selectWordList&&this.selectWordList.length>0){
-					this.selectWordList.forEach(item=>{
+				let list = [];
+				if (this.selectWordList && this.selectWordList.length > 0) {
+					this.selectWordList.forEach(item => {
 						list.push({
-							sound_eng_url:item.sound_eng_url,
-							word:item.word,
-							type:1
+							sound_eng_url: item.sound_eng_url,
+							word: item.word,
+							type: 1
 						})
 					})
-					
+
 				}
-				if(this.selectSentenceList&&this.selectSentenceList.length>0){
-					this.selectSentenceList.forEach(item=>{
+				if (this.selectSentenceList && this.selectSentenceList.length > 0) {
+					this.selectSentenceList.forEach(item => {
 						list.push({
-							sound_eng_url:item.sound_eng_url,
-							word:item.text,
-							type:2
+							sound_eng_url: item.sound_eng_url,
+							word: item.text,
+							type: 2
 						})
 					})
-					
+
 				}
+
 				/* 传递单元名称 和选中数组 */
-				this.$emit('showGroup',this.groupName,list);
+				this.$emit('showGroup', this.groupName, list);
 
 			},
 			cancel() {

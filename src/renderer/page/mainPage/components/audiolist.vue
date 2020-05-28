@@ -15,7 +15,7 @@
 						<span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span></p>
 				</div>
 				<div class="list flex-1" v-if="hasNotplay&&hasNotplay.length>0&&!hasRead">
-					<p v-for="(item,index) in hasNotplay" :key="index">
+					<p v-for="(item,index) in hasNotplay" :key="index" >
 						<span class="notice" :class="{'active':playnum==index&&playlisttype==1}" @click="play(item.sound_eng_url,index,1)"></span>
 						<i class="num">{{index+1}}</i>
 						<span v-if='item'>{{item.word}}</span></p>
@@ -34,12 +34,16 @@
 							<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
 							<div class="item" v-for="(subitem, subindex) in namelist" :key="subindex">
 								<div>
-									<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
+									<div class="name">
+										<!-- <img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" /> -->
 										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
 									</div>
 									<div>
-										<p v-for="(path,subindex2) in subitem.filePaths" :key='subindex2'><i class="num">{{subindex2+1}}</i>
-											<span class="play" @click="payAudio(path)" :class="{active:usersoundurl&&usersoundurl==path}"></span></p>
+										<p :style="{color:video.score>80?'#f00':(video.score>60?'#1890ff':'#4fb57e')}" v-for="(video,subindex2) in subitem.xianShengResults" :key='subindex2'><i class="num">{{subindex2+1}}</i>
+											<span class="play" @click="payAudio(video.filePath)" :class="{active:usersoundurl&&usersoundurl==path}"></span>
+											({{video.score}}分)
+										</p>
+
 									</div>
 								</div>
 							</div>
@@ -94,7 +98,7 @@
 				isShow: false,
 				hsselectWordList: [],
 				playnum: -1,
-				playlisttype:0,
+				playlisttype: 0,
 				isreftex: false,
 				reftext: '',
 				sound_eng_url: null,
@@ -142,9 +146,9 @@
 			handleClick: function() {
 				this.show = !this.show
 			},
-			play(xsAudioUrl, index,type) {
+			play(xsAudioUrl, index, type) {
 				this.playnum = index;
-				this.playlisttype=type;
+				this.playlisttype = type;
 				this.isPlay = false;
 				this.payAudio("https://data.caidouenglish.com/" + xsAudioUrl)
 			},
@@ -280,7 +284,7 @@
 	}
 
 	.namelistbox p {
-		margin: 5px 0;
+		margin: 5px;
 	}
 
 	.namelistbox .num+span,
@@ -363,7 +367,7 @@
 		.list .num+span {
 			color: #1890ff;
 			font-size: 16px;
-			margin: 0 10px;
+			padding: 0 10px;
 		}
 	}
 
@@ -451,6 +455,7 @@
 
 				p {
 					float: left;
+					font-size: 12px;
 				}
 			}
 

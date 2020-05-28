@@ -1,6 +1,38 @@
+<!-- 绑定学生名单 -->
 <template>
 	<div>
-		
+		<div class="namelistbox animated fast" :class="[isshowNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowNamelist">
+			<div class="mask" @click.stop="hide"></div>
+			<div class="namelistbox-bd">
+				<a href="javascript:;" class="close" @click="hide"></a>
+				<ul class="clearfix">
+					<li v-for="(item, index) in namelist" :class="{ active: item.checked }">
+						<i :class="item.state == 0 ? 'warn' : 'success'" @click="checkOneStu(item)"></i>
+						<span @click="checkOneStu(item)">{{ item.stuName }}</span>
+						<img src="../assets/jiebang1.png" alt="" v-if="item.state == 1" @click="unBindOneStu(item)" style="opacity: .6;" />
+					</li>
+				</ul>
+
+				<div class="tag">
+					<span>已选择{{ checkbindStu }}个学生</span>
+					<a href="javascript:;" @click="unbindCheckedStu">解绑选中学生</a>
+					<a href="javascript:;" @click="checkAll">全选</a>
+					<a href="javascript:;" @click="uncheckAll">全不选</a>
+				</div>
+				<div @click="unBindAllStu" class="unbindAllStu" title="一键解绑"><img src="../assets/jiebang.png" alt="" /></div>
+			</div>
+		</div>
+		<div class="exitappWin animated fadeIn" v-if="isunbind">
+			<div class="confirm">
+				<div>
+					<div class="title">{{ unbindtext }}</div>
+					<div class="buttonGroup">
+						<a href="javascript:;" @click="isunbind = !isunbind">暂不</a>
+						<a href="javascript:;" class="comfirmBtn" @click="unBindStu">确定</a>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -14,50 +46,30 @@
 
 	} from '@/page/mainPage/utils/base';
 	export default {
-		name:'studentlist',
+		name: 'studentlist',
 		data() {
 			return {
 				isshowNamelist: false,
-				namelist: [],
-				isShow: false,
-				hsselectWordList: [],
-				playnum: -1,
-				isreftex: false,
-				reftext: '',
-				sound_eng_url: null,
-				isPlay: false,
-				hasRead: true, //已读列表
-				usersoundurl: null //学生语言地址
-
+				isunbind: false
 			}
 		},
 		computed: {
-			// ...mapState(['urlPath']),
-
+			checkbindStu() {
+				if (this.namelist && this.namelist.length > 0) {
+					return this.namelist.filter(item => item.checked).length;
+				} else {
+					return 0;
+				}
+			},
 		},
 		props: {
-			selectWordList: {
-				type: Array,
-				default: []
-			},
-			hasNotplay: {
+			namelist: {
 				type: [Array, Object],
 				default: []
 			}
 		},
 		mounted() {
-			let $me = this;
-			var audio = this.$refs.playmusic;
-			if (audio) {
-				audio.loop = false;
-				audio.addEventListener('ended', function() {
-					if ($me.playnum != -1) {
-						$me.playnum = -1;
-					}
-					$me.isPlay = false;
-					$me.usersoundurl = null
-				}, false);
-			}
+
 		},
 		watch: {
 
@@ -66,84 +78,116 @@
 
 		},
 		methods: {
-			handleClick: function() {
-				this.show = !this.show
+			show(type) {
+				this.isshowNamelist = type;
 			},
-			play(xsAudioUrl, index) {
-				this.playnum = index;
-				this.isPlay = false;
-				this.payAudio("https://data.caidouenglish.com/" + xsAudioUrl)
+			hide() {
+				this.isshowNamelist = false;
+				this.$emit('hide')
 			},
-			payAudio(xsAudioUrl) {
-				if (this.$refs.playmusic) {
-					this.$refs.playmusic.src = xsAudioUrl;
-					console.log(xsAudioUrl)
-					this.usersoundurl = xsAudioUrl;
-					this.$refs.playmusic.load();
-					this.$refs.playmusic.play();
+			/* 一键解绑学生名单 */
+			unBindStu() {
+				const $me = this;
+				$me.isunbind = false;
 
-				}
-			},
-			/* 查询语言答题记录 */
-			getVoiceRecord(item) {
-				// this.namelist = item.studentVoices;
-				// this.isshowNamelist = true;
-				this.reftext = item.wordtxt;
-				this.sound_eng_url = item.sound_eng_url;
 				this.$http({
 					method: 'post',
-					url: urlPath + 'teacher-client/voiceAnswer/getVoiceRecord',
+					url: urlPath + 'teacher-client/bingingCard/unBind',
 					headers: {
 						'Content-Type': 'application/json; charset=UTF-8'
 					},
-					data: item.wordtxt
+					data: JSON.stringify($me.ubindParams)
 				}).then(da => {
-					console.log(da)
-					if (da.data && da.data.ret == 'success') {
-						let studentVoices = da.data.data[0].studentVoices;
-						this.namelist = studentVoices;
-						// console.log(this.namelist)
-						this.isshowNamelist = true;
+					if (da.data.ret == 'success') {
+						$me.$toast.center('解绑成功');
+						/* 刷新名单 */
+						// $me.getNamelist('bingingCard/getAllBingdCardInfo');
+						$me.$emit('uploadNameList')
 					} else {
-						this.$toast.center(da.data.message);
+						$me.$toast.center('解绑失败');
 					}
 				});
 			},
-			startAudio() {
-				this.isPlay = true;
-				this.payAudio("https://data.caidouenglish.com/" + this.sound_eng_url)
-			},
-			splitArr(data, senArrLen) {
-				//处理成len个一组的数据
-				let data_len = data.length;
-				let arrOuter_len = data_len % senArrLen === 0 ? data_len / senArrLen : parseInt((data_len / senArrLen) + '') + 1;
-				let arrSec_len = data_len > senArrLen ? senArrLen : data_len; //内层数组的长度
-				let arrOuter = new Array(arrOuter_len); //最外层数组
-				let arrOuter_index = 0; //外层数组的子元素下标
-				// console.log(data_len % len);
-				for (let i = 0; i < data_len; i++) {
-					if (i % senArrLen === 0) {
-						arrOuter_index++;
-						let len = arrSec_len * arrOuter_index;
-						//将内层数组的长度最小取决于数据长度对len取余，平时最内层由下面赋值决定
-						arrOuter[arrOuter_index - 1] = new Array(data_len % senArrLen);
-						if (arrOuter_index === arrOuter_len) //最后一组
-							data_len % senArrLen === 0 ?
-							len = data_len % senArrLen + senArrLen * arrOuter_index :
-							len = data_len % senArrLen + senArrLen * (arrOuter_index - 1);
-						let arrSec_index = 0; //第二层数组的索引
-						for (let k = i; k < len; k++) { //第一层数组的开始取决于第二层数组长度*当前第一层的索引
-							arrOuter[arrOuter_index - 1][arrSec_index] = data[k];
-							arrSec_index++;
-						}
-					}
+			/* 解绑一个学生 */
+			unBindOneStu(stu) {
+				const $me = this;
+				if ($me.isAnswering) {
+					$me.$toast.center('答题过程中不能解绑');
+					return false;
 				}
-				return arrOuter
-
+				$me.isunbind = true;
+				$me.unbindtext = '确定解绑' + stu.stuName + '吗？';
+				$me.ubindParams = {
+					stuCodes: [stu.stuCode]
+				};
 			},
-			hideNamelist() {
-				this.isshowNamelist = false
-			}
+			/* 解绑选中学生 */
+			unbindCheckedStu() {
+				const $me = this;
+				if ($me.isAnswering) {
+					$me.$toast.center('答题过程中不能解绑');
+					return false;
+				}
+				var list = [];
+				if ($me.namelist && $me.namelist.length > 0) {
+					list = $me.namelist
+						.filter(item => {
+							return item.checked;
+						})
+						.map(item => item.stuCode);
+				}
+				if (list.length > 0) {
+					$me.isunbind = true;
+					$me.unbindtext = '确定解绑选中学生吗？';
+					$me.ubindParams = {
+						stuCodes: list
+					};
+				} else {
+					$me.$toast.center('请至少选择一个学生');
+				}
+			},
+			/* 解绑所有学生名单吗 */
+			unBindAllStu() {
+				const $me = this;
+				if ($me.isAnswering) {
+					$me.$toast.center('答题过程中不能解绑');
+					return false;
+				}
+				$me.isunbind = true;
+				$me.unbindtext = '确定解绑所有学生名单吗？';
+				$me.ubindParams = {
+					classCode: $me.sendInfo.classCode
+				};
+			},
+			/* 选中一个学生 */
+			checkOneStu(item) {
+				const $me = this;
+				if (item.state != 0) {
+					item.checked = !item.checked;
+				}
+			},
+			/* 全选 */
+			checkAll() {
+				const $me = this;
+				if ($me.namelist && $me.namelist.length > 0) {
+					$me.namelist.forEach(item => {
+						if (item.state == 1) {
+							item.checked = true;
+						}
+					});
+				}
+			},
+			/* 全不选 */
+			uncheckAll() {
+				const $me = this;
+				if ($me.namelist && $me.namelist.length > 0) {
+					$me.namelist.forEach(item => {
+						if (item.state == 1) {
+							item.checked = false;
+						}
+					});
+				}
+			},
 		}
 	}
 </script>
