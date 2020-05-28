@@ -39,7 +39,7 @@
 										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
 									</div>
 									<div>
-										<p :style="{color:video.score>80?'#f00':(video.score>60?'#1890ff':'#4fb57e')}" v-for="(video,subindex2) in subitem.xianShengResults" :key='subindex2'><i class="num">{{subindex2+1}}</i>
+										<p :style="{color:video.score>80?'#4fb57e':(video.score>60?'#1890ff':'#f00')}" v-for="(video,subindex2) in subitem.xianShengResults" :key='subindex2'><i class="num">{{subindex2+1}}</i>
 											<span class="play" @click="payAudio(video.filePath)" :class="{active:usersoundurl&&usersoundurl==path}"></span>
 											({{video.score}}分)
 										</p>
