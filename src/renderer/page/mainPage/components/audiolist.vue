@@ -15,7 +15,7 @@
 						<span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span></p>
 				</div>
 				<div class="list flex-1" v-if="hasNotplay&&hasNotplay.length>0&&!hasRead">
-					<p v-for="(item,index) in hasNotplay" :key="index" >
+					<p v-for="(item,index) in hasNotplay" :key="index">
 						<span class="notice" :class="{'active':playnum==index&&playlisttype==1}" @click="play(item.sound_eng_url,index,1)"></span>
 						<i class="num">{{index+1}}</i>
 						<span v-if='item'>{{item.word}}</span></p>
@@ -34,14 +34,19 @@
 							<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
 							<div class="item" v-for="(subitem, subindex) in namelist" :key="subindex">
 								<div>
-									<div class="name">
+									<div class="name flex flex-pack-justify">
 										<!-- <img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" /> -->
 										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
+										<a href="javascript:;" class="details">
+											<span class="num">6</span>
+											<span class="txt">答题详情</span></a>
 									</div>
 									<div>
-										<p :style="{color:video.score>80?'#4fb57e':(video.score>60?'#1890ff':'#f00')}" v-for="(video,subindex2) in subitem.xianShengResults" :key='subindex2'><i class="num">{{subindex2+1}}</i>
+										<p :style="{color:video.score>80?'#4fb57e':(video.score>60?'#1890ff':'#f00')}" v-for="(video,subindex2) in subitem.xianShengResults"
+										 :key='subindex2'>
+											<i class="num">{{subindex2+1}}</i>
 											<span class="play" @click="payAudio(video.filePath)" :class="{active:usersoundurl&&usersoundurl==path}"></span>
-											({{video.score}}分)
+											<span class="score">({{video.score}}分)</span>
 										</p>
 
 									</div>
@@ -439,6 +444,49 @@
 	}
 
 	.namelistbox {
+		.details {
+			position:relative;
+			.num {
+				background: #ec6d64;
+				margin-left: 20px;
+				border-radius: 100%;
+				height: 43px;
+				width: 43px;
+				line-height: 43px;
+				font-size: 14px;
+				color: #fff;
+				display: inline-block;
+				text-align: center;
+				position: absolute;
+				left:0;
+				top: 50%;
+				transform: translateY(-50%);
+				z-index:999;
+
+				&:after {
+					content: '';
+					display: block;
+					width: 31px;
+					height: 31px;
+					border: 1px solid #fff;
+					border-radius: 100%;
+					top: 50%;
+					left: 50%;
+					transform: translate(-50%, -50%);
+					position: absolute;
+				}
+			}
+
+			.txt {
+				color: #fff;
+				font-size: 14px;
+				background: #ec6d64;
+				line-height: 30px;
+				padding: 0 16px;
+				border-radius: 50px;
+			}
+		}
+
 		.item {
 			width: 25%;
 			padding: 10px;
@@ -456,6 +504,11 @@
 				p {
 					float: left;
 					font-size: 12px;
+				}
+
+				.score {
+					display: inline-block;
+					width: 4em;
 				}
 			}
 

@@ -65,10 +65,10 @@
 					</div>
 				</div>
 			</div>
-			<div class="prevtxt" @click="prevtxtScreen"  v-show="isanalysis&&txtlist.length>0" >
+			<div class="prevtxt" @click="prevtxtScreen" v-show="isanalysis&&txtlist.length>0">
 				<!-- <img src="../../assets/prev.png" alt=""> -->
 			</div>
-			<div class="nexttxt" @click="nexttxtScreen"  v-show="isanalysis&&txtlist.length>0" >
+			<div class="nexttxt" @click="nexttxtScreen" v-show="isanalysis&&txtlist.length>0">
 				<!-- <img src="../../assets/next.png" alt=""> -->
 			</div>
 
@@ -169,7 +169,7 @@
 		controlbar,
 		temquestion,
 		piechart,
-		barchart
+		barchart,
 	} from '@/page/mainPage/components';
 	import {
 		IndexMixin
@@ -534,7 +534,12 @@
 						if ($me.hasNotplay.length <= 0) {
 							this.hasNotplay = [...$me.sentenceList];
 						}
+						console.log($me.sentenceList)
+						let hasNotplay = this.hasNotplay;
 						$me.XStalkName = this.hasNotplay.shift();
+						this.hasNotplay = [...hasNotplay];
+						console.log(this.hasNotplay);
+						console.log($me.XStalkName)
 						this.xsAudioUrl = "https://data.caidouenglish.com/" + $me.XStalkName.sound_eng_url;
 						this.$refs.xsmusic.src = this.xsAudioUrl;
 						this.$refs.xsmusic.load();
@@ -683,7 +688,7 @@
 
 							$me.totalNumber = da.data.data; //答题总人数
 						} else {
-							$me.isScreening = false; //开始截屏
+							$me.isScreening = false; //停止截屏
 							$me.$toast.center(da.data.message);
 						}
 					})
@@ -916,7 +921,7 @@
 						if ($me.subjecttitle == 7) {
 							$me.getHighScores();
 						}
-						/*如果不直接进入下一题语音 显示语音测评结果 */
+						/*如果直接进入下一题语音 不显示语音测评结果 */
 						if ($me.subjecttitle == 9) {
 							/* 判断有没有 */
 							// let wordtxt = $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text;
@@ -925,7 +930,8 @@
 								.length == 0) {
 								$me.audiohistorylist.unshift({
 									wordtxt: $me.XStalkName.word,
-									sound_eng_url: $me.XStalkName.sound_eng_url
+									sound_eng_url: $me.XStalkName.sound_eng_url,
+									type: $me.XStalkName.type
 								});
 							}
 							if (isNext != 1) {
@@ -1156,8 +1162,13 @@
 			nextQuestion() {
 				const $me = this;
 				if ($me.isScreening) {
-					$me.$toast.center('正在保存，请稍后');
+					$me.$toast.center('正在保存题干，请稍后');
 					return false;
+				}
+				/* 需要判断是语音停的下一题还是普通题目 */
+				if ($me.subjecttitle == 9) {
+					$me.nextAudioQuestion();
+					return false
 				}
 				$me.isScreening = true; //开始截屏
 				// $me.startVIew();
@@ -1195,6 +1206,11 @@
 				if ($me.isScreening) {
 					$me.$toast.center('正在保存题干，请稍后');
 					return false;
+				}
+				/* 需要判断是语音停的下一题还是普通题目 */
+				if ($me.subjecttitle == 9) {
+					$me.prevAudioQuestion();
+					return false
 				}
 				$me.isScreening = true; //开始截屏
 				$me.$http({
@@ -1513,6 +1529,30 @@
 									$me.prevQuestion();
 									break;
 								}
+							case 22:
+								{
+									/*教鞭停止跟读测评 */
+									if ($me.isAnswering) {
+										$me.stopRace();
+									}
+									break;
+								}
+							case 23:
+								{
+									/*教鞭上一题跟读测评 */
+									if ($me.isAnswering) {
+										$me.nextAudioQuestion();
+									}
+									break;
+								}
+							case 24:
+								{
+									/*教鞭下一题跟读测评 */
+									if ($me.isAnswering) {
+										$me.prevAudioQuestion();
+									}
+									break;
+								}
 							default:
 								{
 									$me.$toast(msg.data);
@@ -1718,6 +1758,7 @@
 				this.isAddSubject = type;
 				this.$refs.temquestion.isShow(type)
 			},
+			/* 切换语音识别上一屏 */
 			prevtxtScreen() {
 				this.$nextTick(function() {
 					let scrollTop = $('.txtlist')[0].scrollTop;
@@ -1729,6 +1770,7 @@
 					}, 400);
 				});
 			},
+			/* 切换语音识别下一屏 */
 			nexttxtScreen() {
 				this.$nextTick(function() {
 					let scrollTop = $('.txtlist')[0].scrollTop;
@@ -1740,7 +1782,45 @@
 						scrollTop: (scrollTop + offsetHeight) > scrollHeight ? scrollHeight : (scrollTop + offsetHeight)
 					}, 400);
 				});
-			}
+			},
+			/* 跟读测评下一题 */
+			nextAudioQuestion() {
+				let $me = this;
+				if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == $me.XStalkName.word)) ||
+					$me.audiohistorylist
+					.length == 0) {
+					$me.audiohistorylist.unshift({
+						wordtxt: $me.XStalkName.word,
+						sound_eng_url: $me.XStalkName.sound_eng_url,
+						type: $me.XStalkName.type
+					});
+				}
+				this.startRace();
+
+			},
+			prevAudioQuestion() {
+				let $me = this;
+				if ($me.audiohistorylist.length > 0) {
+					let audiohistorylist = $me.audiohistorylist
+					let previtem = audiohistorylist.shift();
+					$me.audiohistorylist = audiohistorylist;
+					this.hasNotplay.unshift(this.XStalkName);
+					this.hasNotplay.unshift({
+						word: previtem.wordtxt,
+						sound_eng_url: previtem.sound_eng_url,
+						type: previtem.type
+					});
+					/* 数组去重 */
+					
+					this.startRace();
+				}else{
+					$me.$toast.center('没有上一题了');
+				}
+
+
+			},
+
+
 		}
 	};
 </script>
@@ -1909,7 +1989,7 @@
 		width: 60px;
 		height: 60px;
 		margin-right: -60px;
-		background:#4fb57e no-repeat center center;
+		background: #4fb57e no-repeat center center;
 		background-size: 40px auto;
 		border-radius: 100%;
 		border: 3px solid #fff;

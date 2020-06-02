@@ -241,6 +241,7 @@
 					$me.subjecttitle = '6';
 					$me.talkquestionType = 7;
 				}
+				this.updateAutoAnswerType();
 			},
 			/* 切换普通题型 */
 			selSubjecttitle(obj) {
@@ -453,6 +454,28 @@
 					}
 				}
 				return param
+			},
+			// 通知后端是语音题还是普通题
+			updateAutoAnswerType(){
+				this.$http({
+					method: 'post',
+					url: urlPath + 'teacher-client/common/updateAutoAnswerType?updateAutoAnswerType='+(this.subjectType-0+1)
+					
+				}).then(da => {
+					console.log(da)
+					if (da.data && da.data.ret == 'success') {
+						var list = da.data.data;
+						if (list && list.length > 0) {
+							list = list.map(item => {
+								item.isOpenBarrageflag = item.isOpenBarrage == 1;
+								return item
+							})
+						}
+						this.list = list;
+						// console.log(this.list)
+						this.$store.commit('SET_danmuinfolist', this.list);
+					}
+				});
 			}
 
 		}

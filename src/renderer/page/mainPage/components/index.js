@@ -16,6 +16,7 @@ import controlbar from '@/page/mainPage/components/controlbar';
 import temquestion from '@/page/mainPage/components/temquestion';
 import piechart from '@/page/mainPage/components/piechart';
 import barchart from '@/page/mainPage/components/barchart';
+import audioscore from '@/page/mainPage/components/audioscore';
 export {
 	notice,
 	progressbox,
@@ -33,5 +34,6 @@ export {
 	controlbar,
 	temquestion,
 	piechart,
-	barchart
+	barchart,
+	audioscore
 }
