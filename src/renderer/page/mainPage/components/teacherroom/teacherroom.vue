@@ -19,11 +19,11 @@
 		<!-- 左侧菜单 -->
 		<div class="leftmenu">
 			<i class="refresh" @click="getResource(2)" v-if="isshowResource==2"></i>
-			<i class="refresh refresh2" @click="getResource(3)" v-if="isshowResource==3"></i>
+			<!-- <i class="refresh refresh2" @click="getResource(3)" v-if="isshowResource==3"></i> -->
 			<a href="javascript:;" @click="showNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
 			<!-- <a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a> -->
 			<a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon2"></i>网校通</a>
-			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a>
+			<!-- <a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a> -->
 			<a href="javascript:;" @click.stop="showSet" :class="{'active':isshowSet}"><i class="icon4"></i>工具箱</a>
 		</div>
 		<!-- 显示 -->
@@ -534,7 +534,6 @@
 						if ($me.hasNotplay.length <= 0) {
 							this.hasNotplay = [...$me.sentenceList];
 						}
-						console.log($me.sentenceList)
 						let hasNotplay = this.hasNotplay;
 						$me.XStalkName = this.hasNotplay.shift();
 						this.hasNotplay = [...hasNotplay];

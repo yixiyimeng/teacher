@@ -1,20 +1,20 @@
 <template>
-	<div class="audioscorebox">
+	<div class="audioscorebox" v-if="isShow">
 		<div class="audiobox-hd flex flex-pack-justify flex-align-center">
 			<div class="flex flex-align-center">
-				<span>答题详情</span>
-				<span class="num">6</span>
+				<span>{{info.stuName}}答题详情</span>
+				<span class="num">{{info.xianShengResults.length}}</span>
 			</div>
-			<span class="close">
+			<span class="close" @click="isShow=false">
 				×
 			</span>
 		</div>
 		<div class="audiobox-bd">
-			<div class="item flex">
-				<span class="num">1</span>
-				<span class="score">(99)</span>
-				<div class="flex-1" >
-					<span v-for="(item,index) in 100">t</span>
+			<div class="item flex" v-for="(item,index) in info.xianShengResults" :key="index">
+				<span class="num">{{index+1}}</span>
+				<span class="score">({{item.score}})</span>
+				<div class="flex-1">
+					<span v-for="(subitem,subindex) in item.charlist" :style="{color:subitem.score>80?'#f00':(subitem.score>60?'#1890ff':'#4fb57e')}">{{subitem.ph2alpha}}</span>
 				</div>
 			</div>
 		</div>
@@ -32,7 +32,9 @@
 	export default {
 		data() {
 			return {
-
+				info: {},
+				isShow: false,
+				charlist: []
 			}
 		},
 		computed: {},
@@ -51,7 +53,16 @@
 		},
 		watch: {},
 		methods: {
-
+			show(info) {
+				console.log(122)
+				for (var i = 0; i < info.xianShengResults.length; i++) {
+					var item = info.xianShengResults[i];
+					let charlist = JSON.parse(item.detail)[0].phone;
+					info.xianShengResults[i].charlist = charlist;
+				}
+				this.info = info;
+				this.isShow = true;
+			}
 		}
 	}
 </script>
@@ -65,6 +76,7 @@
 		position: fixed;
 		top: 50%;
 		left: 50%;
+		z-index: 9999;
 		transform: translate(-50%, -50%);
 		padding: 0 25px 30px;
 
@@ -72,7 +84,7 @@
 			line-height: 85px;
 			color: #1890ff;
 			font-size: 30px;
-			border-bottom:1px solid #ccc;
+			border-bottom: 1px solid #ccc;
 
 			.num {
 				background: #ec6d64;
@@ -86,6 +98,7 @@
 				display: inline-block;
 				text-align: center;
 				position: relative;
+
 				&:after {
 					content: '';
 					display: block;
@@ -99,20 +112,26 @@
 					position: absolute;
 				}
 			}
-			.close{
+
+			.close {
 				font-size: 50px;
 				color: #ec6d64;
 				font-weight: bold;
+				cursor: pointer;
 			}
 		}
-		.item{
+
+		.item {
 			font-size: 30px;
 			color: #666;
-			margin-top:30px;
-			.num,.score{
+			margin-top: 30px;
+
+			.num,
+			.score {
 				color: #1890ff;
 			}
-			.num{
+
+			.num {
 				height: 30px;
 				min-width: 30px;
 				border: 1px solid #1890ff;
@@ -121,10 +140,12 @@
 				text-align: center;
 				line-height: 30px;
 			}
-			.score{
+
+			.score {
 				margin: 0 10px;
 			}
-			.flex-1{
+
+			.flex-1 {
 				word-break: break-all;
 				width: 100px;
 			}

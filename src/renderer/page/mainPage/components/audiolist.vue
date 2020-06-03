@@ -37,12 +37,12 @@
 									<div class="name flex flex-pack-justify">
 										<!-- <img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" /> -->
 										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
-										<a href="javascript:;" class="details">
-											<span class="num">6</span>
+										<a href="javascript:;" class="details" @click="showdetails(subitem)">
+											<span class="num">{{subitem.xianShengResults.length}}</span>
 											<span class="txt">答题详情</span></a>
 									</div>
-									<div>
-										<p :style="{color:video.score>80?'#4fb57e':(video.score>60?'#1890ff':'#f00')}" v-for="(video,subindex2) in subitem.xianShengResults"
+									<div class="mt10">
+										<p :style="{color:video.score>80?'#f00':(video.score>60?'#1890ff':'#4fb57e')}" v-for="(video,subindex2) in subitem.xianShengResults"
 										 :key='subindex2'>
 											<i class="num">{{subindex2+1}}</i>
 											<span class="play" @click="payAudio(video.filePath)" :class="{active:usersoundurl&&usersoundurl==path}"></span>
@@ -81,7 +81,7 @@
 				</span>
 			</div>
 		</div>
-
+		<audioscore ref="audioscore"></audioscore>
 
 	</div>
 </template>
@@ -95,6 +95,7 @@
 		urlPath,
 
 	} from '@/page/mainPage/utils/base';
+	import audioscore from './audioscore'
 	export default {
 		data() {
 			return {
@@ -112,6 +113,9 @@
 				usersoundurl: null //学生语言地址
 
 			}
+		},
+		components: {
+			audioscore
 		},
 		computed: {
 			// ...mapState(['urlPath']),
@@ -226,6 +230,10 @@
 			},
 			hideNamelist() {
 				this.isshowNamelist = false
+			},
+			showdetails(info) {
+				/* 查看详情 */
+				this.$refs.audioscore.show(info)
 			}
 		}
 	}
@@ -445,29 +453,30 @@
 
 	.namelistbox {
 		.details {
-			position:relative;
+			position: relative;
+
 			.num {
 				background: #ec6d64;
-				margin-left: 20px;
+				// margin-left: 20px;
 				border-radius: 100%;
-				height: 43px;
-				width: 43px;
-				line-height: 43px;
+				height: 36px;
+				width: 36px;
+				line-height: 36px;
 				font-size: 14px;
 				color: #fff;
 				display: inline-block;
 				text-align: center;
 				position: absolute;
-				left:0;
+				left: 0;
 				top: 50%;
 				transform: translateY(-50%);
-				z-index:999;
+				z-index: 999;
 
 				&:after {
 					content: '';
 					display: block;
-					width: 31px;
-					height: 31px;
+					width: 25px;
+					height: 25px;
 					border: 1px solid #fff;
 					border-radius: 100%;
 					top: 50%;
@@ -481,9 +490,13 @@
 				color: #fff;
 				font-size: 14px;
 				background: #ec6d64;
-				line-height: 30px;
+				line-height: 26px;
 				padding: 0 16px;
 				border-radius: 50px;
+				height: 26px;
+				padding-left: 40px;
+				display: block;
+
 			}
 		}
 

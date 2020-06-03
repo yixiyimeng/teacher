@@ -15,8 +15,8 @@ Copyright (c) 2015 Daniel Eden
 }
 
 .animated.fast{
-	 -webkit-animation-duration: .5s;
-	animation-duration: .5s;
+	 -webkit-animation-duration: .2s;
+	animation-duration: .2s;
 }
 .animated.infinite {
   -webkit-animation-iteration-count: infinite;
