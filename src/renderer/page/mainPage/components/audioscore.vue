@@ -14,7 +14,8 @@
 				<span class="num">{{index+1}}</span>
 				<span class="score">({{item.score}})</span>
 				<div class="flex-1">
-					<span v-for="(subitem,subindex) in item.charlist" :style="{color:subitem.score>80?'#f00':(subitem.score>60?'#1890ff':'#4fb57e')}">{{subitem.ph2alpha}}</span>
+					<span v-if="item.isword==1" v-for="(subitem,subindex) in item.charlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'##ec6d6')}">{{subitem.ph2alpha}}</span>
+					<span v-if="item.isword==0" style="margin-right: 10px;" v-for="(subitem,subindex) in item.wordlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'##ec6d6')}">{{subitem.char}}</span>
 				</div>
 			</div>
 		</div>
@@ -57,8 +58,14 @@
 				console.log(122)
 				for (var i = 0; i < info.xianShengResults.length; i++) {
 					var item = info.xianShengResults[i];
-					let charlist = JSON.parse(item.detail)[0].phone;
-					info.xianShengResults[i].charlist = charlist;
+					let charlist = JSON.parse(item.detail);
+					if (charlist.length >= 1) {
+						info.xianShengResults[i].wordlist = charlist;
+						info.xianShengResults[i].isword=0;
+					} else {
+						info.xianShengResults[i].charlist = charlist[0].phone;
+						info.xianShengResults[i].isword=1;
+					}
 				}
 				this.info = info;
 				this.isShow = true;

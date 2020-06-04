@@ -42,7 +42,7 @@
 											<span class="txt">答题详情</span></a>
 									</div>
 									<div class="mt10">
-										<p :style="{color:video.score>80?'#f00':(video.score>60?'#1890ff':'#4fb57e')}" v-for="(video,subindex2) in subitem.xianShengResults"
+										<p :style="{color:video.score>=90?'#4fb57e':(video.score>=60?'#1890ff':'##ec6d6')}" v-for="(video,subindex2) in subitem.xianShengResults"
 										 :key='subindex2'>
 											<i class="num">{{subindex2+1}}</i>
 											<span class="play" @click="payAudio(video.filePath)" :class="{active:usersoundurl&&usersoundurl==path}"></span>
