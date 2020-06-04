@@ -14,8 +14,8 @@
 				<span class="num">{{index+1}}</span>
 				<span class="score">({{item.score}})</span>
 				<div class="flex-1">
-					<span v-if="item.isword==1" v-for="(subitem,subindex) in item.charlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'##ec6d6')}">{{subitem.ph2alpha}}</span>
-					<span v-if="item.isword==0" style="margin-right: 10px;" v-for="(subitem,subindex) in item.wordlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'##ec6d6')}">{{subitem.char}}</span>
+					<span v-if="item.isword==1" v-for="(subitem,subindex) in item.charlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'#ec6d64')}">{{subitem.ph2alpha}}</span>
+					<span v-if="item.isword==0" style="margin-right: 10px;" v-for="(subitem,subindex) in item.wordlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'#ec6d64')}">{{subitem.char}}</span>
 				</div>
 			</div>
 		</div>

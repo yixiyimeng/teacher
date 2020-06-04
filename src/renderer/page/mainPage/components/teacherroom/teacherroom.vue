@@ -1794,7 +1794,7 @@
 						type: $me.XStalkName.type
 					});
 				}
-				this.startRace();
+				this.stopRace(1);
 
 			},
 			prevAudioQuestion() {
@@ -1811,7 +1811,7 @@
 					});
 					/* 数组去重 */
 					
-					this.startRace();
+					this.stopRace(1);
 				}else{
 					$me.$toast.center('没有上一题了');
 				}
