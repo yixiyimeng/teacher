@@ -1165,7 +1165,7 @@
 					return false;
 				}
 				/* 需要判断是语音停的下一题还是普通题目 */
-				if ($me.subjecttitle == 9) {
+				if ($me.subjecttitle == 9&&$me.isAnswering) {
 					$me.nextAudioQuestion();
 					return false
 				}
@@ -1207,7 +1207,7 @@
 					return false;
 				}
 				/* 需要判断是语音停的下一题还是普通题目 */
-				if ($me.subjecttitle == 9) {
+				if ($me.subjecttitle == 9&&$me.isAnswering) {
 					$me.prevAudioQuestion();
 					return false
 				}
@@ -1803,16 +1803,21 @@
 					let audiohistorylist = $me.audiohistorylist
 					let previtem = audiohistorylist.shift();
 					$me.audiohistorylist = audiohistorylist;
-					this.hasNotplay.unshift(this.XStalkName);
-					this.hasNotplay.unshift({
-						word: previtem.wordtxt,
-						sound_eng_url: previtem.sound_eng_url,
-						type: previtem.type
-					});
+					if (!this.hasNotplay.some(item => item.word == $me.XStalkName.word)) {
+						this.hasNotplay.unshift(this.XStalkName);
+					}
+					if (!this.hasNotplay.some(item => item.word == previtem.wordtxt)) {
+						this.hasNotplay.unshift({
+							word: previtem.wordtxt,
+							sound_eng_url: previtem.sound_eng_url,
+							type: previtem.type
+						});
+					}
+
 					/* 数组去重 */
-					
+					// this.hasNotplay = [...new Set(this.hasNotplay)]
 					this.stopRace(1);
-				}else{
+				} else {
 					$me.$toast.center('没有上一题了');
 				}
 
