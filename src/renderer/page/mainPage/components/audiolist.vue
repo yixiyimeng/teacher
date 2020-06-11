@@ -2,13 +2,13 @@
 	<div>
 		<!-- <audiotxt v-if="isshowNamelist" :reftext="reftext"></audiotxt> -->
 		<audio ref="playmusic" crossOrigin="anonymous" preload ended></audio>
-		<div class="rightbar" :class="{active:isShow}" v-if="selectWordList.length>0||hasNotplay.length>0">
+		<div class="rightbar" :class="{active:isShow}" v-if="sentenceList.length>0">
 			<div class="flex flex-v">
-				<div class="title flex">
+				<!-- <div class="title flex">
 					<span class="flex-1" @click="hasRead=true" :class="{active:hasRead}">已读{{selectWordList.length}}题</span>
 					<span class="flex-1" @click="hasRead=false" :class="{active:!hasRead}">未读{{hasNotplay.length}}题</span>
-				</div>
-				<div class="list flex-1" v-if="selectWordList&&selectWordList.length>0&&hasRead">
+				</div> -->
+				<!-- <div class="list flex-1" v-if="selectWordList&&selectWordList.length>0&&hasRead">
 					<p v-for="(item,index) in selectWordList" :key="index">
 						<span class="notice" :class="{'active':playnum==index&&playlisttype==0}" @click="play(item.sound_eng_url,index,0)"></span>
 						<i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
@@ -19,52 +19,52 @@
 						<span class="notice" :class="{'active':playnum==index&&playlisttype==1}" @click="play(item.sound_eng_url,index,1)"></span>
 						<i class="num">{{index+1}}</i>
 						<span v-if='item'>{{item.word}}</span></p>
+				</div> -->
+				<div class="list flex-1" v-if="sentenceList&&sentenceList.length>0">
+					<div v-for="(item,index) in sentenceList" :key="index" :class="{'has-read':item.hasRead==2}">
+						<div class="flex">
+							<span class="notice" :class="{'active':playnum==index&&playlisttype==0}" @click="play(item.sound_eng_url,index,0)"></span>
+							<i class="num">{{index+1}}</i>
+							<span v-if='item' class="wordtxt flex-1 animated infinite" :class="{pulse:item.hasRead==1}" >
+								<span>{{item.word}}</span>
+							</span>
+						</div>
+						<div class="btnlist">
+							<span @click="sendAudio(index)" v-if="item.hasRead==2" class="btn btn2">重发</span>
+							<span @click="sendAudio(index)" v-if="item.hasRead==0" class="btn btn1">发题</span>
+							<span @click="delAudio(index)" v-if="item.hasRead==0" class="btn btn2">删除</span>
+							<span @click="getVoiceRecord(item)" v-if="item.hasRead==2" class="btn btn3">详情</span>
+						</div>
+					</div>
 				</div>
 			</div>
 			<div class="arrow" @click="isShow=!isShow"></div>
 		</div>
+		<!--  -->
+		<div class="namelistbox " v-if="isshowNamelist">
 
-		<div class="namelistbox" v-if="isshowNamelist">
 			<div class="mask" @click.stop="isshowNamelist = !isshowNamelist"></div>
 			<transition name="bounce">
-				<div class="namelistbox-bd" style="margin: 5px 0; padding: 40px 0;">
-					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
-					<div style="height: 100%; overflow: auto; padding:0 40px">
-						<div class="clearfix flex" style="flex-wrap: wrap;">
-							<!-- <div v-for="(item, index) in namelist" :key="index" class="flex"> -->
-							<div class="item" v-for="(subitem, subindex) in namelist" :key="subindex">
-								<div>
-									<div class="name flex flex-pack-justify">
-										<!-- <img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" /> -->
-										<span style="vertical-align: middle;">{{ subitem.stuName }}</span>
-										<a href="javascript:;" class="details" @click="showdetails(subitem)">
-											<span class="num">{{subitem.xianShengResults.length}}</span>
-											<span class="txt">答题详情</span></a>
-									</div>
-									<div class="mt10">
-										<p :style="{color:video.score>=90?'#4fb57e':(video.score>=60?'#1890ff':'#ec6d64')}" v-for="(video,subindex2) in subitem.xianShengResults"
-										 :key='subindex2'>
-											<i class="num">{{subindex2+1}}</i>
-											<span class="play" @click="payAudio(video.filePath)" :class="{active:usersoundurl&&usersoundurl==path}"></span>
-											<span class="score">({{video.score}}分)</span>
-										</p>
 
+				<div class="rankborad">
+					<a href="javascript:;" class="close" @click="isshowNamelist = !isshowNamelist"></a>
+					<div>
+						<div class="item" :class="'item' + (index + 1)" v-for="(item, index) in namelist" :key="index">
+							<div class=" flex flex-align-center">
+								<div class="num">{{ index + 1 }}</div>
+								<div class="imgbox"><img src="../assets/1.png" /></div>
+								<div class="flex-1 ml20 flex flex-pack-justify">
+									<div>
+										<span class="name">{{ item.stuName }}</span>
+										<span class="ml20">({{ item.maxScore }}分)</span>
 									</div>
+									<a href="javascript:;" class="details" @click="showdetails(item)">
+										<span class="num">{{item.xianShengResults.length}}</span>
+										<span class="txt">答题详情</span></a>
 								</div>
 							</div>
-							<!-- </div> -->
 						</div>
 					</div>
-					<!-- <ul class="clearfix">
-						<li v-for="(item, index) in namelist">
-							<div class="name"><img src="../assets/1.png" style="width: 50px; height: 50px; vertical-align: middle;" />
-								<span style="vertical-align: middle;">{{ item.stuName }}</span></div>
-							<div>
-								<p v-for="(path,subindex) in item.filePaths" :key='subindex'><i class="num">{{subindex+1}}</i><span class="play"
-									 @click="payAudio(path)"></span></p>
-							</div>
-						</li>
-					</ul> -->
 				</div>
 			</transition>
 		</div>
@@ -81,7 +81,7 @@
 				</span>
 			</div>
 		</div>
-		<audioscore ref="audioscore"></audioscore>
+		<audioscore ref="audioscore" @playAudio="playAudio"></audioscore>
 
 	</div>
 </template>
@@ -129,6 +129,10 @@
 			hasNotplay: {
 				type: [Array, Object],
 				default: []
+			},
+			sentenceList: {
+				type: [Array, Object],
+				default: []
 			}
 		},
 		mounted() {
@@ -141,7 +145,8 @@
 						$me.playnum = -1;
 					}
 					$me.isPlay = false;
-					$me.usersoundurl = null
+					$me.usersoundurl = null;
+					$me.$refs.audioscore.endAudio()
 				}, false);
 			}
 		},
@@ -159,9 +164,9 @@
 				this.playnum = index;
 				this.playlisttype = type;
 				this.isPlay = false;
-				this.payAudio("https://data.caidouenglish.com/" + xsAudioUrl)
+				this.playAudio("https://data.caidouenglish.com/" + xsAudioUrl)
 			},
-			payAudio(xsAudioUrl) {
+			playAudio(xsAudioUrl) {
 				if (this.$refs.playmusic) {
 					this.$refs.playmusic.src = xsAudioUrl;
 					console.log(xsAudioUrl)
@@ -175,7 +180,7 @@
 			getVoiceRecord(item) {
 				// this.namelist = item.studentVoices;
 				// this.isshowNamelist = true;
-				this.reftext = item.wordtxt;
+				this.reftext = item.word;
 				this.sound_eng_url = item.sound_eng_url;
 				this.$http({
 					method: 'post',
@@ -183,7 +188,7 @@
 					headers: {
 						'Content-Type': 'application/json; charset=UTF-8'
 					},
-					data: item.wordtxt
+					data: item.word
 				}).then(da => {
 					console.log(da)
 					if (da.data && da.data.ret == 'success') {
@@ -198,7 +203,7 @@
 			},
 			startAudio() {
 				this.isPlay = true;
-				this.payAudio("https://data.caidouenglish.com/" + this.sound_eng_url)
+				this.playAudio("https://data.caidouenglish.com/" + this.sound_eng_url)
 			},
 			splitArr(data, senArrLen) {
 				//处理成len个一组的数据
@@ -234,6 +239,13 @@
 			showdetails(info) {
 				/* 查看详情 */
 				this.$refs.audioscore.show(info)
+			},
+			sendAudio(index) {
+				this.$emit('sendAudio', index)
+			},
+			delAudio(index) {
+				/* 删除 */
+				this.$emit('delAudio', index)
 			}
 		}
 	}
@@ -372,15 +384,46 @@
 		}
 
 
-		.list p {
-			padding: 10px 10px 30px 20px;
+		.list>div {
+			padding: 10px 10px 10px 20px;
 			cursor: pointer;
+			border-bottom: 1px solid #efefef;
 		}
 
-		.list .num+span {
+		.list .wordtxt {
 			color: #1890ff;
 			font-size: 16px;
 			padding: 0 10px;
+			line-height: 20px;
+		}
+
+		.list .has-read .wordtxt {
+			color: #666;
+			text-decoration: line-through;
+
+		}
+
+		.btnlist {
+			text-align: right;
+
+		}
+
+		.btn {
+			font-size: 10px;
+			background: #1890ff;
+			color: #fff;
+			display: inline-block;
+			border-radius: 5px;
+			padding: 5px 10px;
+			margin-top: 10px;
+
+			&.btn2 {
+				background: #b30027;
+			}
+
+			&.btn1 {
+				background: #72cb53;
+			}
 		}
 	}
 
@@ -501,7 +544,7 @@
 		}
 
 		.item {
-			width: 25%;
+			// width: 25%;
 			padding: 10px;
 
 			&>div {

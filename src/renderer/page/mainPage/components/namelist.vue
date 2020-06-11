@@ -66,11 +66,13 @@
 			namelist: {
 				type: [Array, Object],
 				default: []
+			},
+			sendInfo: {
+				type: Object,
+				default: {}
 			}
 		},
-		mounted() {
 
-		},
 		watch: {
 
 		},

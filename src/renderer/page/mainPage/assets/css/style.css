@@ -803,10 +803,13 @@ select {
 	right: 275px;
 	top: 20%;
 	bottom: 20%;
-	overflow: auto;
 	z-index: 9999;
 }
-
+.rankborad>div{
+	height: 100%;
+	width: 100%;
+	 overflow: auto;
+}
 .rankborad .item {
 	width: 33.33%;
 	float: left;

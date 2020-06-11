@@ -18,12 +18,12 @@
 
 		<!-- 左侧菜单 -->
 		<div class="leftmenu">
-			<i class="refresh" @click="getResource(2)" v-if="isshowResource==2"></i>
-			<!-- <i class="refresh refresh2" @click="getResource(3)" v-if="isshowResource==3"></i> -->
+			<!-- <i class="refresh" @click="getResource(2)" v-if="isshowResource==2"></i> -->
+			<i class="refresh" @click="getResource(3)" v-if="isshowResource==3"></i>
 			<a href="javascript:;" @click="showNamelist" :class="{'active':isshowNamelist}"><i class="icon1"></i>学生名单</a>
 			<!-- <a href="javascript:;" @click="showResource(1)" :class="{'active':isshowResource==1}"><i class="icon2"></i>学科网</a> -->
-			<a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon2"></i>网校通</a>
-			<!-- <a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a> -->
+			<!-- <a href="javascript:;" @click="showResource(2)" :class="{'active':isshowResource==2}"><i class="icon2"></i>网校通</a> -->
+			<a href="javascript:;" @click="showResource(3)" :class="{'active':isshowResource==3}"><i class="icon3"></i>组卷</a>
 			<a href="javascript:;" @click.stop="showSet" :class="{'active':isshowSet}"><i class="icon4"></i>工具箱</a>
 		</div>
 		<!-- 显示 -->
@@ -119,11 +119,12 @@
 			</a-spin>
 		</div>
 		<!-- 右侧先声题库历史 -->
-		<audiolist ref="audiolist" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"></audiolist>
+		<audiolist ref="audiolist" @sendAudio="sendAudio" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"
+		 :sentenceList="sentenceList" @delAudio="delAudio"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
 		<!-- 学生名单 -->
-		<namelist ref="namelist" :namelist="namelist" @hide="isshowNamelist=false" @uploadNameList="getNamelist"></namelist>
+		<namelist ref="namelist" :namelist="namelist" :sendInfo="sendInfo" @hide="isshowNamelist=false" @uploadNameList="getNamelist"></namelist>
 		<!-- statistics 统计答案的名单 -->
 		<div class="namelistbox animated fast" :class="[isshowselectNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowselectNamelist">
 			<div class="mask" @click.stop="isshowselectNamelist = !isshowselectNamelist"></div>
@@ -357,20 +358,22 @@
 				rankboradlist: [], //语音测评排名
 				xianshenglist: this.selectWordList, //先声题库数据
 				XSquestionType: 0, //先声题库类型
-				XStalkName: null,
+				XStalkName: null, //当前正在作答的先声题
 				xsAudioUrl: '', //音频文件地址
 				isPlay: false, //是否播放音频
 				resourceUrl1: null,
 				resourceUrllist: [],
 				isshowResource: 0, //是否显示注册地址
-				imgUrl: '',
+				imgUrl: '', //截图地址
 				isshowSet: false, //是否打开设置弹框
+
 				audiohistorylist: [],
 				stuCode: null, //点名学生code
 				namelist: [],
 				groupName: '', //题库名称
 				sentenceList: [],
 				hasNotplay: [], //未播放的先声题库列表
+
 				spinning: false, //加载loading
 				isScreening: false, //是否正则截屏
 
@@ -512,7 +515,7 @@
 			},
 
 			/* 开始下发题目 */
-			startRace() {
+			startRace(PrevIndex) {
 				const $me = this;
 				if ($me.isScreening) {
 					$me.$toast.center('正在保存题干，请稍后');
@@ -531,14 +534,23 @@
 					}
 					/* 判断是否是跟读测评 */
 					if ($me.subjecttitle == 9) {
-						if ($me.hasNotplay.length <= 0) {
-							this.hasNotplay = [...$me.sentenceList];
+						/* 取先声题库列表中的未读字段 */
+						let XStalkNameIndex = 0;
+						/* 如果发送上一题。则题号索引， */
+						console.log(PrevIndex)
+						if (PrevIndex || PrevIndex === 0) {
+							XStalkNameIndex = PrevIndex;
+						} else {
+							XStalkNameIndex = $me.sentenceList.findIndex(item => item.hasRead == 0);
+							if (XStalkNameIndex <= -1) {
+								$me.sentenceList.forEach(item => item.hasRead = 0);
+								XStalkNameIndex = 0;
+							}
 						}
-						let hasNotplay = this.hasNotplay;
-						$me.XStalkName = this.hasNotplay.shift();
-						this.hasNotplay = [...hasNotplay];
-						console.log(this.hasNotplay);
-						console.log($me.XStalkName)
+						console.log(XStalkNameIndex);
+						XStalkNameIndex = XStalkNameIndex || 0;
+						$me.sentenceList[XStalkNameIndex].hasRead = 1; //0 未读，1 在读，2 已读
+						$me.XStalkName = $me.sentenceList[XStalkNameIndex];
 						this.xsAudioUrl = "https://data.caidouenglish.com/" + $me.XStalkName.sound_eng_url;
 						this.$refs.xsmusic.src = this.xsAudioUrl;
 						this.$refs.xsmusic.load();
@@ -740,7 +752,6 @@
 									break;
 								}
 						}
-						console.log(num)
 						let index = this.danmuinfolist.findIndex(item => item.questionType == num);
 						if (index >= 0) {
 							let danmuinfo = this.danmuinfolist[index];
@@ -811,7 +822,7 @@
 				$me.$refs.audiolist.hideNamelist();
 				$me.isreftext = false; //语音测评
 			},
-			stopRace(isNext) {
+			stopRace(isNext, PrevIndex) {
 				/* 点击结束答题 */
 				const $me = this;
 				$me.clear();
@@ -834,12 +845,12 @@
 				} else if ($me.subjecttitle == 5) {
 					$me.redWarslist(urlPath);
 				} else if ($me.subjecttitle == 9) {
-					$me.Answerstop(isNext);
+					$me.Answerstop(isNext, PrevIndex);
 				} else {
 					$me.getspeedlist(urlPath);
 				}
 			},
-			Answerstop(isNext) {
+			Answerstop(isNext, PrevIndex) {
 				/* 结束答题 */
 				var url = '';
 				const $me = this;
@@ -922,24 +933,17 @@
 						}
 						/*如果直接进入下一题语音 不显示语音测评结果 */
 						if ($me.subjecttitle == 9) {
-							/* 判断有没有 */
-							// let wordtxt = $me.XSquestionType == 0 ? $me.XStalkName.word : $me.XStalkName.text;
-							if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == $me.XStalkName.word)) ||
-								$me.audiohistorylist
-								.length == 0) {
-								$me.audiohistorylist.unshift({
-									wordtxt: $me.XStalkName.word,
-									sound_eng_url: $me.XStalkName.sound_eng_url,
-									type: $me.XStalkName.type
-								});
-							}
-							if (isNext != 1) {
+							/* 结束以后设置 已读状态*/
+							var index = $me.sentenceList.findIndex(item => item.word == $me.XStalkName.word)
+							$me.sentenceList[index].hasRead = 2;
+							/* isNext 1 表示下一题，-1 表示上一题 */
+							if (isNext != 1 && isNext != -1) {
 								$me.getHighScores();
 							} else {
-								if (this.hasNotplay.length <= 0) {
+								if (isNext == 1 && ($me.sentenceList[$me.sentenceList.length - 1].word == $me.XStalkName.word)) {
 									$me.getHighScores();
 								} else {
-									$me.startRace();
+									$me.startRace(PrevIndex);
 								}
 
 							}
@@ -1165,7 +1169,7 @@
 					return false;
 				}
 				/* 需要判断是语音停的下一题还是普通题目 */
-				if ($me.subjecttitle == 9&&$me.isAnswering) {
+				if ($me.subjecttitle == 9 && $me.isAnswering) {
 					$me.nextAudioQuestion();
 					return false
 				}
@@ -1207,7 +1211,7 @@
 					return false;
 				}
 				/* 需要判断是语音停的下一题还是普通题目 */
-				if ($me.subjecttitle == 9&&$me.isAnswering) {
+				if ($me.subjecttitle == 9 && $me.isAnswering) {
 					$me.prevAudioQuestion();
 					return false
 				}
@@ -1243,18 +1247,20 @@
 			/* 语音测评统计 */
 			getHighScores() {
 				const $me = this;
-				$me.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/statistics/getHighScores'
-				}).then(da => {
-					if (da.data.ret == 'success') {
-						$me.isrankboradlist = true;
-						// $me.isreftext = false;
-						$me.rankboradlist = da.data.data;
-					} else {
-						$me.$toast.center(da.data.message);
-					}
-				});
+				// $me.$http({
+				// 	method: 'post',
+				// 	url: urlPath + 'teacher-client/statistics/getHighScores'
+				// }).then(da => {
+				// 	if (da.data.ret == 'success') {
+				// 		$me.isrankboradlist = true;
+				// 		// $me.isreftext = false;
+				// 		$me.rankboradlist = da.data.data;
+				// 	} else {
+				// 		$me.$toast.center(da.data.message);
+				// 	}
+				// });
+				/* 查询历史记录 */
+				this.$refs.audiolist.getVoiceRecord(this.XStalkName)
 			},
 			/* 倒计时结束 */
 			stopCountDown() {
@@ -1707,10 +1713,12 @@
 				this.isSatrspeaker = true;
 				this.stuCode = stuCode;
 				if (this.subjecttitle == 7 || this.subjecttitle == 9) {
-					if (this.XStalkName) {
-						this.hasNotplay.unshift(this.XStalkName);
-					}
-					this.startRace();
+					// if (this.XStalkName) {
+					// 	this.hasNotplay.unshift(this.XStalkName);
+					// }
+					var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word)
+					console.log(index)
+					this.startRace(index);
 				} else if (this.subjecttitle == 6) {
 					this.startRace();
 				} else {
@@ -1725,7 +1733,15 @@
 			/* 选择了先声题库 题目*/
 			showGroup(groupName, list) {
 				this.groupName = groupName;
-				this.sentenceList = list; //先声题库
+				if (list && list.length > 0) {
+					list.forEach(item => {
+						item.hasRead = 0;
+					});
+				}
+
+				this.sentenceList = [...this.sentenceList, ...list];
+				console.log('this.sentenceList', this.sentenceList)
+				//先声题库
 				this.hasNotplay = [...this.sentenceList];
 			},
 			/* 暂停或者继续倒计时 */
@@ -1785,45 +1801,39 @@
 			/* 跟读测评下一题 */
 			nextAudioQuestion() {
 				let $me = this;
-				if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == $me.XStalkName.word)) ||
-					$me.audiohistorylist
-					.length == 0) {
-					$me.audiohistorylist.unshift({
-						wordtxt: $me.XStalkName.word,
-						sound_eng_url: $me.XStalkName.sound_eng_url,
-						type: $me.XStalkName.type
-					});
-				}
-				this.stopRace(1);
+				// if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == $me.XStalkName.word)) ||
+				// 	$me.audiohistorylist
+				// 	.length == 0) {
+				// 	$me.audiohistorylist.unshift({
+				// 		wordtxt: $me.XStalkName.word,
+				// 		sound_eng_url: $me.XStalkName.sound_eng_url,
+				// 		type: $me.XStalkName.type
+				// 	});
+				// }
+				var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word)
+				this.stopRace(1, (index + 1));
 
 			},
 			prevAudioQuestion() {
 				let $me = this;
-				if ($me.audiohistorylist.length > 0) {
-					let audiohistorylist = $me.audiohistorylist
-					let previtem = audiohistorylist.shift();
-					$me.audiohistorylist = audiohistorylist;
-					if (!this.hasNotplay.some(item => item.word == $me.XStalkName.word)) {
-						this.hasNotplay.unshift(this.XStalkName);
-					}
-					if (!this.hasNotplay.some(item => item.word == previtem.wordtxt)) {
-						this.hasNotplay.unshift({
-							word: previtem.wordtxt,
-							sound_eng_url: previtem.sound_eng_url,
-							type: previtem.type
-						});
-					}
-
-					/* 数组去重 */
-					// this.hasNotplay = [...new Set(this.hasNotplay)]
-					this.stopRace(1);
+				var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word)
+				if (index <= 0) {
+					this.$toast.center('没有上一题了');
 				} else {
-					$me.$toast.center('没有上一题了');
+					/* 将上一题置为未读 */
+					this.stopRace(-1, (index - 1));
 				}
 
 
 			},
-
+			sendAudio(index) {
+				//随机发送先声题库
+				this.stopRace(-1, index);
+			},
+			delAudio(index){
+				/* 删除先声题目 */
+				this.sentenceList.splice(index,1)
+			}
 
 		}
 	};
