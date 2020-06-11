@@ -56,7 +56,7 @@
 								<div class="flex-1 ml20 flex flex-pack-justify">
 									<div>
 										<span class="name">{{ item.stuName }}</span>
-										<span class="ml20">({{ item.maxScore }}分)</span>
+										<span class="ml20" :style="{color:item.maxScore>=90?'#4fb57e':(item.maxScore>=60?'#1890ff':'#ec6d64')}">({{ item.maxScore }}分)</span>
 									</div>
 									<a href="javascript:;" class="details" @click="showdetails(item)">
 										<span class="num">{{item.xianShengResults.length}}</span>
