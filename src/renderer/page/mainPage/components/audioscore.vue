@@ -4,6 +4,9 @@
 			<div class="flex flex-align-center">
 				<span>{{info.stuName}}答题详情</span>
 				<span class="num">{{info.xianShengResults.length}}</span>
+				<div style="margin-left: 20px; font-size: 18px; color: #666;">
+					<span style="color: #ec6d64;" >红色:</span>(&lt;60分)<span style="color: #1890ff;" class="ml20">蓝色:</span>(&gt;=60分 &lt;90分)<span style="color: #4fb57e;" class="ml20">绿色:</span>(&gt;=90分)
+				</div>
 			</div>
 			<span class="close" @click="isShow=false">
 				×
@@ -13,8 +16,7 @@
 			<div class="item flex" v-for="(item,index) in info.xianShengResults" :key="index">
 				<span class="play" @click="playAudio(item.filePath)" :class="{active:usersoundurl&&usersoundurl==item.filePath}"></span>
 				<span class="num">{{index+1}}</span>
-				<span class="score">({{item.score}})</span>
-				{{item.isword}}
+				<span class="score" :style="{color:item.score>=90?'#4fb57e':(item.score>=60?'#1890ff':'#ec6d64')}">({{item.score}})</span>
 				<div class="flex-1">
 					<span v-if="item.isword==1" v-for="(subitem,subindex) in item.charlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'#ec6d64')}">{{subitem.ph2alpha}}</span>
 					<span v-if="item.isword==0" style="margin-right: 10px;" v-for="(subitem,subindex) in item.wordlist" :style="{color:subitem.score>=90?'#4fb57e':(subitem.score>=60?'#1890ff':'#ec6d64')}">{{subitem.char}}</span>

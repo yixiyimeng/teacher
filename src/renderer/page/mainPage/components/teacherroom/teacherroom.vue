@@ -119,7 +119,7 @@
 			</a-spin>
 		</div>
 		<!-- 右侧先声题库历史 -->
-		<audiolist ref="audiolist" @sendAudio="sendAudio" :selectWordList="audiohistorylist" :hasNotplay="hasNotplay"
+		<audiolist ref="audiolist" @sendAudio="sendAudio" :isAnswering="isAnswering"
 		 :sentenceList="sentenceList" @delAudio="delAudio"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
@@ -1734,15 +1734,37 @@
 			showGroup(groupName, list) {
 				this.groupName = groupName;
 				if (list && list.length > 0) {
-					list.forEach(item => {
-						item.hasRead = 0;
-					});
+					let newlist = [];
+					if (this.sentenceList.length > 0) {
+						let wordlist = this.sentenceList.map(item => item.word);
+						list.forEach(item=>{
+							console.log(item.word);
+							if (!wordlist.includes(item.word)) {
+								item.hasRead = 0;
+								newlist.push(item)
+							}
+						})
+						// for (var i = 0; i < list.lenght; i++) {
+						// 	console.log(list[i].word);
+						// 	if (!wordlist.includes(list[i].word)) {
+						// 		list[i].hasRead = 0;
+						// 		newlist.push(list[i])
+						// 	}
+						// }
+						
+					} else {
+						newlist = list.map(item => {
+							item.hasRead = 0;
+							return item
+						});
+					}
+					console.log(newlist)
+					this.sentenceList = [...this.sentenceList, ...newlist];
 				}
 
-				this.sentenceList = [...this.sentenceList, ...list];
 				console.log('this.sentenceList', this.sentenceList)
 				//先声题库
-				this.hasNotplay = [...this.sentenceList];
+				// this.hasNotplay = [...this.sentenceList];
 			},
 			/* 暂停或者继续倒计时 */
 			resumeCountDown(type) {
@@ -1830,9 +1852,9 @@
 				//随机发送先声题库
 				this.stopRace(-1, index);
 			},
-			delAudio(index){
+			delAudio(index) {
 				/* 删除先声题目 */
-				this.sentenceList.splice(index,1)
+				this.sentenceList.splice(index, 1)
 			}
 
 		}

@@ -30,8 +30,8 @@
 							</span>
 						</div>
 						<div class="btnlist">
-							<span @click="sendAudio(index)" v-if="item.hasRead==2" class="btn btn2">重发</span>
-							<span @click="sendAudio(index)" v-if="item.hasRead==0" class="btn btn1">发题</span>
+							<span @click="sendAudio(index)" v-if="item.hasRead==2&&isAnswering" class="btn btn2">重发</span>
+							<span @click="sendAudio(index)" v-if="item.hasRead==0&&isAnswering" class="btn btn1">发题</span>
 							<span @click="delAudio(index)" v-if="item.hasRead==0" class="btn btn2">删除</span>
 							<span @click="getVoiceRecord(item)" v-if="item.hasRead==2" class="btn btn3">详情</span>
 						</div>
@@ -122,17 +122,14 @@
 
 		},
 		props: {
-			selectWordList: {
-				type: Array,
-				default: []
-			},
-			hasNotplay: {
-				type: [Array, Object],
-				default: []
-			},
+			
 			sentenceList: {
 				type: [Array, Object],
 				default: []
+			},
+			isAnswering:{
+				type:Boolean,
+				default:false
 			}
 		},
 		mounted() {
