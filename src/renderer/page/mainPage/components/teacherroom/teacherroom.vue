@@ -119,7 +119,7 @@
 			</a-spin>
 		</div>
 		<!-- 右侧先声题库历史 -->
-		<audiolist ref="audiolist" @sendAudio="sendAudio" :isAnswering="isAnswering"
+		<audiolist ref="audiolist" @sendAudio="sendAudio" :isAnswering="isAnswering&&subjecttitle == 9"
 		 :sentenceList="sentenceList" @delAudio="delAudio"></audiolist>
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>

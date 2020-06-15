@@ -25,7 +25,7 @@
 						<div class="flex">
 							<span class="notice" :class="{'active':playnum==index&&playlisttype==0}" @click="play(item.sound_eng_url,index,0)"></span>
 							<i class="num">{{index+1}}</i>
-							<span v-if='item' class="wordtxt flex-1 animated infinite" :class="{pulse:item.hasRead==1}" >
+							<span v-if='item' class="wordtxt flex-1 animated infinite" :class="{pulse:item.hasRead==1}">
 								<span>{{item.word}}</span>
 							</span>
 						</div>
@@ -55,8 +55,8 @@
 								<div class="imgbox"><img src="../assets/1.png" /></div>
 								<div class="flex-1 ml20 flex flex-pack-justify">
 									<div>
-										<span class="name">{{ item.stuName }}</span>
-										<span class="ml20" :style="{color:item.maxScore>=90?'#4fb57e':(item.maxScore>=60?'#1890ff':'#ec6d64')}">({{ item.maxScore }}分)</span>
+										<div class="name">{{ item.stuName }}</div>
+										<div class="mt10" :style="{color:item.maxScore>=90?'#4fb57e':(item.maxScore>=60?'#1890ff':'#ec6d64')}">({{ item.maxScore }}分)</div>
 									</div>
 									<a href="javascript:;" class="details" @click="showdetails(item)">
 										<span class="num">{{item.xianShengResults.length}}</span>
@@ -122,14 +122,14 @@
 
 		},
 		props: {
-			
+
 			sentenceList: {
 				type: [Array, Object],
 				default: []
 			},
-			isAnswering:{
-				type:Boolean,
-				default:false
+			isAnswering: {
+				type: Boolean,
+				default: false
 			}
 		},
 		mounted() {
@@ -494,6 +494,7 @@
 	.namelistbox {
 		.details {
 			position: relative;
+			height: 26px;
 
 			.num {
 				background: #ec6d64;
