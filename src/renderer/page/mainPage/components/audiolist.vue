@@ -1,25 +1,8 @@
 <template>
 	<div>
-		<!-- <audiotxt v-if="isshowNamelist" :reftext="reftext"></audiotxt> -->
 		<audio ref="playmusic" crossOrigin="anonymous" preload ended></audio>
 		<div class="rightbar" :class="{active:isShow}" v-if="sentenceList.length>0">
 			<div class="flex flex-v">
-				<!-- <div class="title flex">
-					<span class="flex-1" @click="hasRead=true" :class="{active:hasRead}">已读{{selectWordList.length}}题</span>
-					<span class="flex-1" @click="hasRead=false" :class="{active:!hasRead}">未读{{hasNotplay.length}}题</span>
-				</div> -->
-				<!-- <div class="list flex-1" v-if="selectWordList&&selectWordList.length>0&&hasRead">
-					<p v-for="(item,index) in selectWordList" :key="index">
-						<span class="notice" :class="{'active':playnum==index&&playlisttype==0}" @click="play(item.sound_eng_url,index,0)"></span>
-						<i class="num" @click="getVoiceRecord(item)">{{index+1}}</i>
-						<span v-if='item' @click="getVoiceRecord(item)">{{item.wordtxt}}</span></p>
-				</div>
-				<div class="list flex-1" v-if="hasNotplay&&hasNotplay.length>0&&!hasRead">
-					<p v-for="(item,index) in hasNotplay" :key="index">
-						<span class="notice" :class="{'active':playnum==index&&playlisttype==1}" @click="play(item.sound_eng_url,index,1)"></span>
-						<i class="num">{{index+1}}</i>
-						<span v-if='item'>{{item.word}}</span></p>
-				</div> -->
 				<div class="list flex-1" v-if="sentenceList&&sentenceList.length>0">
 					<div v-for="(item,index) in sentenceList" :key="index" :class="{'has-read':item.hasRead==2}">
 						<div class="flex">
@@ -60,7 +43,7 @@
 									</div>
 									<a href="javascript:;" class="details" @click="showdetails(item)">
 										<span class="num">{{item.xianShengResults.length}}</span>
-										<span class="txt">答题详情</span></a>
+										<span class="txt">详情</span></a>
 								</div>
 							</div>
 						</div>
