@@ -373,7 +373,6 @@
 				groupName: '', //题库名称
 				sentenceList: [],
 				hasNotplay: [], //未播放的先声题库列表
-
 				spinning: false, //加载loading
 				isScreening: false, //是否正则截屏
 
@@ -704,7 +703,7 @@
 						}
 					})
 					.catch(function(err) {
-						// $me.$loading.close();
+						$me.isScreening = false; //停止截屏
 					});
 
 				//$me.$store.commit("SET_isShowbg", true);
