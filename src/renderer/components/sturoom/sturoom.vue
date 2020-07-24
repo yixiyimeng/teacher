@@ -452,7 +452,7 @@ export default {
 									}
 									case 'START_BUSINESS_TYPE_11': {
 										$me.Answerstar('yuyin');
-										$me.titlename = '群发麦克风';
+										$me.titlename = '自由麦';
 										break;
 									}
 									case 'STOP_BUSINESS_TYPE_11': {

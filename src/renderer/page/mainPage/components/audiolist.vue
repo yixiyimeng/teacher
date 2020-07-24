@@ -51,13 +51,13 @@
 				</div>
 			</transition>
 		</div>
-		<div class="videobox">
-			<div class="reftext active" v-if="isshowNamelist">
+		<div class="videobox"  v-if="isshowNamelist">
+			<div class="reftext active">
 				<div class="txt">
 					<div class="title">{{ reftext }}</div>
 				</div>
 			</div>
-			<div class="soundbox" v-if="isshowNamelist">
+			<div class="soundbox" v-if="sound_eng_url">
 				<span @click="startAudio" class="sound">
 					<img src="../assets/play.png" alt="" v-if="!isPlay">
 					<img src="../assets/play.gif" alt="" v-if="isPlay">
@@ -551,4 +551,8 @@
 
 		}
 	}
+	 .reftext.active> div.txt{
+		max-height: calc(20vh - 20px)
+	}
+	
 </style>

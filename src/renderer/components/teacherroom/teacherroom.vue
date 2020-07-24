@@ -788,7 +788,7 @@ export default {
 						$me.titlename = '抢麦';
 					} else {
 						url = 'microphone/start2';
-						$me.titlename = '群发麦克风';
+						$me.titlename = '自由麦';
 					}
 
 					break;

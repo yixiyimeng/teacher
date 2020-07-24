@@ -107,7 +107,7 @@
 							<input type="radio" name="iPhoneType" :value="1" v-model="iPhoneType" />
 							<span class="ant-radio-inner"></span>
 						</span>
-						<span>群发麦克风</span>
+						<span>自由麦</span>
 					</label>
 				</div>
 			</div>

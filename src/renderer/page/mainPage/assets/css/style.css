@@ -755,7 +755,7 @@ select {
 	bottom: 20%;
 	border-radius: 5px;
 	color: #b85e1e;
-	padding:0 20px;
+	padding: 0 20px;
 	font-size: 40px;
 	overflow: hidden;
 
@@ -799,17 +799,19 @@ select {
 	background: #fff;
 	/* width: 70%; */
 	position: fixed;
-	left:275px;
+	left: 275px;
 	right: 275px;
 	top: 20%;
 	bottom: 20%;
 	z-index: 9999;
 }
-.rankborad>div{
+
+.rankborad>div {
 	height: 100%;
 	width: 100%;
-	 overflow: auto;
+	overflow: auto;
 }
+
 .rankborad .item {
 	width: 33.33%;
 	float: left;
@@ -817,6 +819,12 @@ select {
 	padding-left: 30px;
 	box-sizing: border-box;
 	font-size: 18px;
+}
+
+@media screen and (max-width: 1300px) {
+	.rankborad .item {
+		width: 50%;
+	}
 }
 
 .rankborad .item .name {
