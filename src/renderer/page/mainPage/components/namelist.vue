@@ -70,6 +70,10 @@
 			sendInfo: {
 				type: Object,
 				default: {}
+			},
+			isAnswering:{
+				type:Boolean,
+				default:false
 			}
 		},
 

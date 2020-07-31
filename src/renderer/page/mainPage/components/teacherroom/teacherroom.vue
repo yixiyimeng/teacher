@@ -133,7 +133,7 @@
 		<!-- 先声题库 -->
 		<xianshen ref="xianshenWin" @showGroup="showGroup"></xianshen>
 		<!-- 学生名单 -->
-		<namelist ref="namelist" :namelist="namelist" :sendInfo="sendInfo" @hide="isshowNamelist = false" @uploadNameList="getNamelist"></namelist>
+		<namelist ref="namelist" :isAnswering="isAnswering" :namelist="namelist" :sendInfo="sendInfo" @hide="isshowNamelist = false" @uploadNameList="getNamelist"></namelist>
 		<!-- statistics 统计答案的名单 -->
 		<div class="namelistbox animated fast" :class="[isshowselectNamelist ? 'fadeIn' : 'fadeOut']" v-if="isshowselectNamelist">
 			<div class="mask" @click.stop="isshowselectNamelist = !isshowselectNamelist"></div>
@@ -157,7 +157,7 @@
 
 <script>
 function GetQueryString(searchurl, name) {
-	var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+	var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)');
 	var r = searchurl.match(reg);
 	if (r != null) return unescape(r[2]);
 	return null;
@@ -182,26 +182,15 @@ import {
 	controlbar,
 	temquestion,
 	piechart,
-	barchart,
+	barchart
 } from '@/page/mainPage/components';
-import {
-	IndexMixin
-} from '@/page/mainPage/mixins/index';
-import {
-	mapState,
-	mapGetters
-} from 'vuex';
-import {
-	urlPath,
-	urlwsPath,
-	htmlescpe,
-	allenglish,
-	allchinese
-} from '@/page/mainPage/utils/base';
+import { IndexMixin } from '@/page/mainPage/mixins/index';
+import { mapState, mapGetters } from 'vuex';
+import { urlPath, urlwsPath, htmlescpe, allenglish, allchinese } from '@/page/mainPage/utils/base';
 import $ from '@/page/mainPage/assets/js/jquery-vendor';
 import '@/page/mainPage/assets/js/jquery.danmu';
 
-import echarts from 'echarts'
+import echarts from 'echarts';
 export default {
 	mixins: [IndexMixin],
 	components: {
@@ -253,7 +242,8 @@ export default {
 
 			isStop: false, //是否显示结束按钮
 			reftitletype: 1, //语言测评类型
-			titletypeList: [{
+			titletypeList: [
+				{
 					name: '英文单词',
 					value: '1'
 				},
@@ -280,7 +270,8 @@ export default {
 				agreeNumber: [],
 				disagreeNumber: []
 			},
-			subjectitleList: [{
+			subjectitleList: [
+				{
 					name: '单题单选',
 					value: '1'
 				},
@@ -301,19 +292,24 @@ export default {
 					value: '5'
 				}
 			],
-			yysubjectitleList: [{
-				name: '语音识别',
-				value: '6'
-			}, {
-				name: '语音测评',
-				value: '7'
-			}, {
-				name: '麦克风',
-				value: '8'
-			}, {
-				name: '跟读测评',
-				value: '9'
-			}],
+			yysubjectitleList: [
+				{
+					name: '语音识别',
+					value: '6'
+				},
+				{
+					name: '语音测评',
+					value: '7'
+				},
+				{
+					name: '麦克风',
+					value: '8'
+				},
+				{
+					name: '跟读测评',
+					value: '9'
+				}
+			],
 			onesubjectitle: {
 				name: '单题单选',
 				value: '1'
@@ -335,7 +331,8 @@ export default {
 			isshowselectNamelist: false,
 			selectNamelist: [],
 			/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
-			titlenamelist: [{
+			titlenamelist: [
+				{
 					titlename: '单题单选',
 					subjecttitle: '1'
 				},
@@ -386,16 +383,24 @@ export default {
 			sentenceList: [],
 			hasNotplay: [], //未播放的先声题库列表
 			spinning: false, //加载loading
-			isScreening: false, //是否正则截屏
-
+			isScreening: false //是否正则截屏
 		};
 	},
 	computed: {
 		// ...mapState(['platformpath', 'interactiopath', 'foundationpath'])
-		...mapState(['platformpath', 'interactiopath', 'foundationpath', 'isminimizeAppState', 'directBroadcastCode',
-			'selectWordList', 'selectSentenceList', 'isCountDown', 'countDown', 'danmuinfolist'
+		...mapState([
+			'platformpath',
+			'interactiopath',
+			'foundationpath',
+			'isminimizeAppState',
+			'directBroadcastCode',
+			'selectWordList',
+			'selectSentenceList',
+			'isCountDown',
+			'countDown',
+			'danmuinfolist'
 		]),
-		...mapGetters(['getisminimizeApp', 'onEvent']),
+		...mapGetters(['getisminimizeApp', 'onEvent'])
 
 		// selectAnswerStr() {
 		// 	return this.checklist
@@ -404,7 +409,6 @@ export default {
 		// 		.sort()
 		// 		.join('');
 		// },
-
 	},
 	created() {
 		this.sendInfo = JSON.parse(this.$route.query.sendInfo);
@@ -425,7 +429,7 @@ export default {
 						iframeUrl = 'http://zkxl.school.zxxk.com' + wxtpath;
 					}
 				}
-				$me.$set($me.resourceUrllist, ($me.isshowResource - 1), iframeUrl)
+				$me.$set($me.resourceUrllist, $me.isshowResource - 1, iframeUrl);
 			}
 			/* 赋值地址后，主动将悬浮窗置为顶层 */
 			this.$electron.ipcRenderer.send('moveTop');
@@ -437,7 +441,6 @@ export default {
 		this.$electron.ipcRenderer.on('exitdirebro', (event, flag) => {
 			this.exitBtn();
 		});
-
 	},
 
 	mounted() {
@@ -454,18 +457,20 @@ export default {
 		var audio = document.getElementById('xsmusic');
 		if (audio) {
 			audio.loop = false;
-			audio.addEventListener('ended', function() {
-				console.log('停止播放音乐')
-				$me.isPlay = false;
-			}, false);
+			audio.addEventListener(
+				'ended',
+				function() {
+					console.log('停止播放音乐');
+					$me.isPlay = false;
+				},
+				false
+			);
 		}
 		/* 接受websock   */
 		this.onmessage();
-
-
 	},
 	watch: {
-
+		
 		checklist: {
 			handler(newName, oldName) {
 				const $me = this;
@@ -502,10 +507,9 @@ export default {
 			this.$loading('正在退出...');
 			this.$http({
 				method: 'post',
-				url: urlPath + 'teacher-client/common/endClass',
+				url: urlPath + 'teacher-client/common/endClass'
 			}).then(da => {
 				/* 关闭webscoket */
-
 			});
 			setTimeout(function() {
 				$me.$loading.close();
@@ -522,7 +526,6 @@ export default {
 					}
 				});
 			}, 5000);
-
 		},
 
 		/* 开始下发题目 */
@@ -537,7 +540,7 @@ export default {
 				$me.subjecttitle = $me.$refs.temquestion.subjecttitle;
 				/* 判读语音测评  题目*/
 				if ($me.subjecttitle == 7) {
-					$me.talkName = $me.$refs.temquestion.talkName
+					$me.talkName = $me.$refs.temquestion.talkName;
 				}
 				/* 判断麦克风是抢麦还是群发麦克风 */
 				if ($me.subjecttitle == 8) {
@@ -548,13 +551,13 @@ export default {
 					/* 取先声题库列表中的未读字段 */
 					let XStalkNameIndex = 0;
 					/* 如果发送上一题。则题号索引， */
-					console.log(PrevIndex)
+					console.log(PrevIndex);
 					if (PrevIndex || PrevIndex === 0) {
 						XStalkNameIndex = PrevIndex;
 					} else {
 						XStalkNameIndex = $me.sentenceList.findIndex(item => item.hasRead == 0);
 						if (XStalkNameIndex <= -1) {
-							$me.sentenceList.forEach(item => item.hasRead = 0);
+							$me.sentenceList.forEach(item => (item.hasRead = 0));
 							XStalkNameIndex = 0;
 						}
 					}
@@ -562,13 +565,13 @@ export default {
 					XStalkNameIndex = XStalkNameIndex || 0;
 					$me.sentenceList[XStalkNameIndex].hasRead = 1; //0 未读，1 在读，2 已读
 					$me.XStalkName = $me.sentenceList[XStalkNameIndex];
-					this.xsAudioUrl = "https://data.caidouenglish.com/" + $me.XStalkName.sound_eng_url;
+					this.xsAudioUrl = 'https://data.caidouenglish.com/' + $me.XStalkName.sound_eng_url;
 					this.$refs.xsmusic.src = this.xsAudioUrl;
 					this.$refs.xsmusic.load();
 					param = {
 						type: $me.XStalkName.type,
 						refText: $me.XStalkName.word
-					}
+					};
 				}
 				/* 显示正确答案 */
 				if (param.trueAnswer) {
@@ -585,107 +588,97 @@ export default {
 			// param = {};
 			//const uuid = $me.randomWord(false, 32);
 			switch ($me.subjecttitle) {
-				case '1':
-					{
-						judgetype = 1;
-						url = 'singleAnswer/start';
-						$me.titlename = '单题单选';
-						break;
+				case '1': {
+					judgetype = 1;
+					url = 'singleAnswer/start';
+					$me.titlename = '单题单选';
+					break;
+				}
+				case '2': {
+					judgetype = 4;
+					url = 'judgeAnswer/start';
+					$me.titlename = '判断题';
+					break;
+				}
+				case '3': {
+					judgetype = 2;
+					url = 'sMultiAnswer/start';
+					$me.titlename = '单题多选';
+					break;
+				}
+				case '4': {
+					judgetype = 5;
+					url = 'judgeAnswer/start';
+					$me.titlename = '主观题';
+					break;
+				}
+				case '5': {
+					judgetype = 6;
+					url = 'redWars/start';
+					$me.titlename = '抢红包';
+					break;
+				}
+				case '6': {
+					url = 'voiceAnswer/startDiscern';
+					if ($me.isSatrspeaker) {
+						url = 'voiceAnswer/startDiscernAndMicrophone';
+						param.stuCode = $me.stuCode;
 					}
-				case '2':
-					{
-						judgetype = 4;
-						url = 'judgeAnswer/start';
-						$me.titlename = '判断题';
-						break;
-					}
-				case '3':
-					{
-						judgetype = 2;
-						url = 'sMultiAnswer/start';
-						$me.titlename = '单题多选';
-						break;
-					}
-				case '4':
-					{
-						judgetype = 5;
-						url = 'judgeAnswer/start';
-						$me.titlename = '主观题';
-						break;
-					}
-				case '5':
-					{
-						judgetype = 6;
-						url = 'redWars/start';
-						$me.titlename = '抢红包';
-						break;
-					}
-				case '6':
-					{
-						url = 'voiceAnswer/startDiscern';
-						if ($me.isSatrspeaker) {
-							url = 'voiceAnswer/startDiscernAndMicrophone';
-							param.stuCode = $me.stuCode
-						}
-						$me.titlename = '语音识别';
-						break;
-					}
-				case '7':
-					{
-						url = 'voiceAnswer/startAppraisal';
-						if ($me.isSatrspeaker) {
-							if ($me.isAnswering) {
-								// url = 'voiceAnswer/startAppraisalAndMicrophone ';
-								url = 'voiceAnswer/startAppraisalAndMicrophoneNotClear';
-							} else {
-								url = 'voiceAnswer/startAppraisalAndMicrophoneClear'
-							}
-							param.stuCode = $me.stuCode
-						}
-						$me.titlename = '语音测评';
-						break;
-					}
-				case '8':
-					{
-						if ($me.iPhoneType == 0) {
-							url = 'microphone/start';
-							$me.titlename = '抢麦';
-						} else {
-							url = 'microphone/start2';
-							$me.titlename = '自由麦';
-						}
-						break;
-					}
-				case '9':
-					{
-						url = 'voiceAnswer/startAppraisal';
-						if ($me.isSatrspeaker) {
+					$me.titlename = '语音识别';
+					break;
+				}
+				case '7': {
+					url = 'voiceAnswer/startAppraisal';
+					if ($me.isSatrspeaker) {
+						if ($me.isAnswering) {
 							// url = 'voiceAnswer/startAppraisalAndMicrophone ';
-							if ($me.isAnswering) {
-								// url = 'voiceAnswer/startAppraisalAndMicrophone ';
-								url = 'voiceAnswer/startAppraisalAndMicrophoneNotClear';
-							} else {
-								url = 'voiceAnswer/startAppraisalAndMicrophoneClear'
-							}
-							param.stuCode = $me.stuCode;
-
+							url = 'voiceAnswer/startAppraisalAndMicrophoneNotClear';
+						} else {
+							url = 'voiceAnswer/startAppraisalAndMicrophoneClear';
 						}
-						param.refVoicePath = $me.xsAudioUrl
-						$me.titlename = '跟读测评';
-						break;
+						param.stuCode = $me.stuCode;
 					}
+					$me.titlename = '语音测评';
+					break;
+				}
+				case '8': {
+					if ($me.iPhoneType == 0) {
+						url = 'microphone/start';
+						$me.titlename = '抢麦';
+					} else {
+						url = 'microphone/start2';
+						$me.titlename = '自由麦';
+					}
+					break;
+				}
+				case '9': {
+					url = 'voiceAnswer/startAppraisal';
+					if ($me.isSatrspeaker) {
+						// url = 'voiceAnswer/startAppraisalAndMicrophone ';
+						if ($me.isAnswering) {
+							// url = 'voiceAnswer/startAppraisalAndMicrophone ';
+							url = 'voiceAnswer/startAppraisalAndMicrophoneNotClear';
+						} else {
+							url = 'voiceAnswer/startAppraisalAndMicrophoneClear';
+						}
+						param.stuCode = $me.stuCode;
+					}
+					param.refVoicePath = $me.xsAudioUrl;
+					$me.titlename = '跟读测评';
+					break;
+				}
 			}
 			if (judgetype) {
 				param.questionType = judgetype;
 			}
 			this.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/' + url,
-					headers: {
-						'Content-Type': 'application/json; charset=UTF-8'
-					},
-					data: JSON.stringify(param)
-				})
+				method: 'post',
+				url: urlPath + 'teacher-client/' + url,
+				headers: {
+					'Content-Type': 'application/json; charset=UTF-8'
+				},
+				data: JSON.stringify(param)
+			})
 				.then(da => {
 					if (da.data.ret == 'success') {
 						if ($me.isCountDown == 1) {
@@ -702,10 +695,8 @@ export default {
 							$me.$nextTick(() => {
 								setTimeout(() => {
 									$me.saveImgFullScreen();
-								}, 100)
-
-							})
-
+								}, 100);
+							});
 						}
 
 						$me.totalNumber = da.data.data; //答题总人数
@@ -731,37 +722,31 @@ export default {
 				$me.isprogress = true; //显示进度条
 			}
 			if ($me.subjecttitle != 5 && $me.subjecttitle != 8 && $me.subjecttitle != 6) {
-
 				/* 先获取弹幕的样式 */
 				if (this.danmuinfolist && this.danmuinfolist.length > 0) {
 					let num = 0;
 					switch ($me.subjecttitle) {
-						case '1':
-							{
-								num = 1;
-								break;
-							}
-						case '2':
-							{
-								num = 4;
-								break;
-							}
-						case '3':
-							{
-								num = 2;
-								break;
-							}
-						case '4':
-							{
-								num = 5;
-								break;
-							}
+						case '1': {
+							num = 1;
+							break;
+						}
+						case '2': {
+							num = 4;
+							break;
+						}
+						case '3': {
+							num = 2;
+							break;
+						}
+						case '4': {
+							num = 5;
+							break;
+						}
 						case '7':
-						case '9':
-							{
-								num = 7
-								break;
-							}
+						case '9': {
+							num = 7;
+							break;
+						}
 					}
 					let index = this.danmuinfolist.findIndex(item => item.questionType == num);
 					if (index >= 0) {
@@ -773,14 +758,9 @@ export default {
 							/* 设置弹幕位置和透明度 */
 							$('#danmu').danmu('setOpacity', danmuinfo.diaphaneity / 100);
 							$('#danmu').danmu('setLocation', danmuinfo.location);
-
-
 						}
 					}
-
-
 				}
-
 			}
 			if ($me.subjecttitle == 5) {
 				if (document.getElementById('music')) {
@@ -815,7 +795,6 @@ export default {
 				}
 				//$me.isparticlesbox = true;
 			}
-
 		},
 		clearView() {
 			/* 是否教鞭切换发题是，清屏页面 */
@@ -866,56 +845,48 @@ export default {
 			var url = '';
 			const $me = this;
 			switch ($me.subjecttitle) {
-				case '1':
-					{
-						url = 'singleAnswer/stop';
-						break;
-					}
-				case '3':
-					{
-						url = 'sMultiAnswer/stop';
-						break;
-					}
-				case '5':
-					{
-						url = 'redWars/stop';
-						break;
-					}
-				case '6':
-					{
-						/*停止语音 */
-						url = 'voiceAnswer/stop';
-						break;
-					}
-				case '7':
-					{
-						/*停止语音测评 */
-						url = 'voiceAnswer/stop';
-						break;
-					}
-				case '8':
-					{
-						/*停止麦克风 */
-						url = 'microphone/stop';
-						break;
-					}
-				case '9':
-					{
-						/*停止跟读测评 */
-						url = 'voiceAnswer/stop';
-						break;
-					}
-				default:
-					{
-						/*2或者4*/
-						url = 'judgeAnswer/stop';
-						break;
-					}
+				case '1': {
+					url = 'singleAnswer/stop';
+					break;
+				}
+				case '3': {
+					url = 'sMultiAnswer/stop';
+					break;
+				}
+				case '5': {
+					url = 'redWars/stop';
+					break;
+				}
+				case '6': {
+					/*停止语音 */
+					url = 'voiceAnswer/stop';
+					break;
+				}
+				case '7': {
+					/*停止语音测评 */
+					url = 'voiceAnswer/stop';
+					break;
+				}
+				case '8': {
+					/*停止麦克风 */
+					url = 'microphone/stop';
+					break;
+				}
+				case '9': {
+					/*停止跟读测评 */
+					url = 'voiceAnswer/stop';
+					break;
+				}
+				default: {
+					/*2或者4*/
+					url = 'judgeAnswer/stop';
+					break;
+				}
 			}
 			this.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/' + url
-				})
+				method: 'post',
+				url: urlPath + 'teacher-client/' + url
+			})
 				.then(da => {
 					/*结束答题*/
 					console.log($me.subjecttitle);
@@ -945,18 +916,17 @@ export default {
 					/*如果直接进入下一题语音 不显示语音测评结果 */
 					if ($me.subjecttitle == 9) {
 						/* 结束以后设置 已读状态*/
-						var index = $me.sentenceList.findIndex(item => item.word == $me.XStalkName.word)
+						var index = $me.sentenceList.findIndex(item => item.word == $me.XStalkName.word);
 						$me.sentenceList[index].hasRead = 2;
 						/* isNext 1 表示下一题，-1 表示上一题 */
 						if (isNext != 1 && isNext != -1) {
 							$me.getHighScores();
 						} else {
-							if (isNext == 1 && ($me.sentenceList[$me.sentenceList.length - 1].word == $me.XStalkName.word)) {
+							if (isNext == 1 && $me.sentenceList[$me.sentenceList.length - 1].word == $me.XStalkName.word) {
 								$me.getHighScores();
 							} else {
 								$me.startRace(PrevIndex);
 							}
-
 						}
 						// $me.XStalkName = null;
 						// this.getVoiceRecord()
@@ -967,7 +937,7 @@ export default {
 						clearInterval(this.timer);
 					}
 					/* 去掉随机和点名 */
-					this.isSatrspeaker = false
+					this.isSatrspeaker = false;
 					// $me.countDownTime = 0;
 					// $me.iscountDown = false;
 					// $me.showcountDown = false;
@@ -984,7 +954,8 @@ export default {
 				url: urlPath + 'teacher-client/statistics/getAnswerAccuracy'
 			}).then(da => {
 				var list = da.data.data;
-				var option = [{
+				var option = [
+					{
 						value: list.trueNum,
 						name: '正确'
 					},
@@ -1005,7 +976,8 @@ export default {
 			}).then(da => {
 				var list = da.data.data;
 				console.log('主观题统计' + JSON.stringify(da.data.data.unAnswerNum));
-				var option = [{
+				var option = [
+					{
 						value: list.agreeNumber,
 						name: '懂'
 					},
@@ -1042,8 +1014,8 @@ export default {
 				}
 				let max = Math.max(...data);
 				dataShadow = data.map(item => {
-					return max
-				})
+					return max;
+				});
 				//var title = Object.keys(list);
 				//var data = title.map(item => list[item]);
 				$me.getCorrectChartData({
@@ -1058,22 +1030,19 @@ export default {
 		getCorrectChartData(myoption) {
 			const $me = this;
 			$me.isCorrectchart = true;
-			this.$refs.barchart.setOption(myoption)
-
+			this.$refs.barchart.setOption(myoption);
 		},
 		/* 正确率显示 */
 		getCorrectChartpieData(myoption) {
 			const $me = this;
 			$me.isChart = true;
-			this.$refs.piechart.setOption(myoption, '正确率')
-
+			this.$refs.piechart.setOption(myoption, '正确率');
 		},
 		/* 主观题统计 饼状图 显示*/
 		getChartData(myoption, title) {
 			const $me = this;
 			$me.isChart = true;
-			this.$refs.piechart.setOption(myoption, '主观题统计')
-
+			this.$refs.piechart.setOption(myoption, '主观题统计');
 		},
 		/* piechart 点击事件
 		@handtitle 点击标题，
@@ -1081,9 +1050,12 @@ export default {
 		*/
 		handPiechart(handtitle, seriesname) {
 			if (seriesname == '正确率') {
-				this.getEveryAnswerName({
-					answer: this.trueAnswer
-				}, (handtitle != '正确'));
+				this.getEveryAnswerName(
+					{
+						answer: this.trueAnswer
+					},
+					handtitle != '正确'
+				);
 			} else {
 				this.getEveryAnswerName({
 					answer: handtitle
@@ -1138,13 +1110,12 @@ export default {
 			const $me = this;
 			$me.clear();
 			$me.isSubject = true;
-			$me.isreftext = false
+			$me.isreftext = false;
 			$me.titlename = '';
 			$me.trueAnswer = '';
 			$me.stuName = ''; //麦克风学生名称
 			$me.isSatrspeaker = false; //是否开启扬声器
 		},
-
 
 		/* 获取选项答题人数 */
 		getEveryAnswerName(param, isFalseAnswer) {
@@ -1182,7 +1153,7 @@ export default {
 			/* 需要判断是语音停的下一题还是普通题目 */
 			if ($me.subjecttitle == 9 && $me.isAnswering) {
 				$me.nextAudioQuestion();
-				return false
+				return false;
 			}
 			$me.isScreening = true; //开始截屏
 			// $me.startVIew();
@@ -1201,9 +1172,8 @@ export default {
 					$me.$nextTick(() => {
 						setTimeout(() => {
 							$me.saveImgFullScreen();
-						}, 100)
-
-					})
+						}, 100);
+					});
 					if ($me.isCountDown == 1) {
 						$me.timeDown();
 					}
@@ -1224,7 +1194,7 @@ export default {
 			/* 需要判断是语音停的下一题还是普通题目 */
 			if ($me.subjecttitle == 9 && $me.isAnswering) {
 				$me.prevAudioQuestion();
-				return false
+				return false;
 			}
 			$me.isScreening = true; //开始截屏
 			$me.$http({
@@ -1242,9 +1212,8 @@ export default {
 					$me.$nextTick(() => {
 						setTimeout(() => {
 							$me.saveImgFullScreen();
-						}, 100)
-
-					})
+						}, 100);
+					});
 					if ($me.isCountDown == 1) {
 						$me.timeDown();
 					}
@@ -1272,14 +1241,14 @@ export default {
 			// });
 			/* 查询历史记录 */
 			/* 先判断是跟读测评。还是语音测评 */
-			var param={};
-			if(this.subjecttitle==7){
-				param.word=this.talkName;
-				param.sound_eng_url='';
-			}else{
-				param=this.XStalkName;
+			var param = {};
+			if (this.subjecttitle == 7) {
+				param.word = this.talkName;
+				param.sound_eng_url = '';
+			} else {
+				param = this.XStalkName;
 			}
-			this.$refs.audiolist.getVoiceRecord(param)
+			this.$refs.audiolist.getVoiceRecord(param);
 		},
 		/* 倒计时结束 */
 		stopCountDown() {
@@ -1289,7 +1258,7 @@ export default {
 		timeDown() {
 			this.$nextTick(() => {
 				this.$refs.countdown.startCount();
-			})
+			});
 		},
 		/* 播放音频 */
 		startAudio() {
@@ -1303,292 +1272,278 @@ export default {
 		onmessage() {
 			let $me = this;
 			/* 连接websock */
-			this.$store.dispatch('STAFF_WEBSOCKET')
+			this.$store.dispatch('STAFF_WEBSOCKET');
 			console.log(this.$store.getters.STAFF_UPDATE);
 			this.$store.getters.STAFF_UPDATE.onmessage = function(evt) {
 				var received_msg = evt.data;
-				console.log(received_msg)
+				console.log(received_msg);
 				if (received_msg != '连接成功') {
 					var msg = JSON.parse(received_msg);
 					var obj = msg.data;
 					switch (msg.reqType) {
-						case 0:
-							{
-								var time = $('#danmu').data('nowTime') + 1;
-								/*当渲染弹幕过多的时候,延迟处理弹幕*/
-								if ($('#danmu .danmaku').length > 500) {
-									time += 200; //2000毫秒。
-								}
-								var answer = '';
-								/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
-								if (msg.businessType == 1 || msg.businessType == 2 || msg.businessType == 3) {
-									answer = obj.answer;
-								} else if (msg.businessType == 4) {
-									answer = obj.answer == 'E' ? '✔' : '✖';
-								} else if (msg.businessType == 5) {
-									answer = obj.answer == 'E' ? '懂' : '不懂';
-								}
-								if (msg.businessType == 6) {
-									/*抢红包*/
-									$me.addredenvelope(msg.data);
-								} else {
-									$('#danmu').danmu('addDanmu', [{
+						case 0: {
+							var time = $('#danmu').data('nowTime') + 1;
+							/*当渲染弹幕过多的时候,延迟处理弹幕*/
+							if ($('#danmu .danmaku').length > 500) {
+								time += 200; //2000毫秒。
+							}
+							var answer = '';
+							/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
+							if (msg.businessType == 1 || msg.businessType == 2 || msg.businessType == 3) {
+								answer = obj.answer;
+							} else if (msg.businessType == 4) {
+								answer = obj.answer == 'E' ? '✔' : '✖';
+							} else if (msg.businessType == 5) {
+								answer = obj.answer == 'E' ? '懂' : '不懂';
+							}
+							if (msg.businessType == 6) {
+								/*抢红包*/
+								$me.addredenvelope(msg.data);
+							} else {
+								$('#danmu').danmu('addDanmu', [
+									{
 										text: obj.stuName,
 										color: 'white',
 										size: 0,
 										position: 0,
 										time: time
-									}]);
-								}
-								break;
-							}
-						case 1:
-							{
-								/*刷新名单*/
-								for (var i = 0; i < msg.urlPaths.length; i++) {
-									if (msg.urlPaths[i].method == 'getNamelist') {
-										$me.getNamelist(msg.urlPaths[i].url);
-									} else if (msg.urlPaths[i].method == 'getprogress') {
-										$me.getprogress(urlPath);
 									}
+								]);
+							}
+							break;
+						}
+						case 1: {
+							/*刷新名单*/
+							for (var i = 0; i < msg.urlPaths.length; i++) {
+								if (msg.urlPaths[i].method == 'getNamelist') {
+									$me.getNamelist(msg.urlPaths[i].url);
+								} else if (msg.urlPaths[i].method == 'getprogress') {
+									$me.getprogress(urlPath);
 								}
-								break;
 							}
-						case 4:
-							{
-								if (msg.order == 'START_BUSINESS_TYPE_10') {
-									var obj = msg.data;
-									$me.stuName = obj.stuName;
-									$me.ismicrophone = true;
-								}
-								break;
-							}
-						case 6:
-							{
-								$me.chartDate.title.push(msg.data.className);
-								$me.chartDate.agreeNumber.push(msg.data.agreeNumber);
-								$me.chartDate.disagreeNumber.push(msg.data.disagreeNumber);
-								$me.chartDate.unAnswerNum.push(msg.data.unAnswerNum);
-								var option = [{
-										name: '懂',
-										type: 'bar',
-										stack: '主观题',
-										barWidth: 60,
-										data: $me.chartDate.agreeNumber,
-										label: {
-											normal: {
-												show: true,
-												position: 'inside',
-												color: '#fff',
-												formatter: function(param) {
-													return param.value > 0 ? param.value + '人' : '';
-												},
-												textStyle: {
-													fontSize: 24
-												}
-											}
-										}
-									},
-									{
-										name: '不懂',
-										type: 'bar',
-										stack: '主观题',
-										barWidth: 60,
-										data: $me.chartDate.disagreeNumber,
-										label: {
-											normal: {
-												show: true,
-												position: 'inside',
-												color: '#fff',
-												formatter: function(param) {
-													return param.value > 0 ? param.value + '人' : '';
-												},
-												textStyle: {
-													fontSize: 24
-												}
-											}
-										}
-									},
-									{
-										name: '未作答',
-										type: 'bar',
-										stack: '主观题',
-										barWidth: 60,
-										data: $me.chartDate.unAnswerNum,
-										label: {
-											normal: {
-												show: true,
-												position: 'inside',
-												color: '#fff',
-												formatter: function(param) {
-													return param.value > 0 ? param.value + '人' : '';
-												},
-												textStyle: {
-													fontSize: 24
-												}
-											}
-										}
-									}
-								];
-								$me.getChartData(option, $me.chartDate.title);
-								break;
-							}
-						case 7:
-							{
-								/* 语音测评 */
-								// $me.ismicrophone = false;
+							break;
+						}
+						case 4: {
+							if (msg.order == 'START_BUSINESS_TYPE_10') {
 								var obj = msg.data;
-
-								var time = $('#danmu').data('nowTime') + 1;
-								/*当渲染弹幕过多的时候,延迟处理弹幕*/
-								if ($('#danmu .danmaku').length > 500) {
-									time += 200; //2000毫秒。
+								$me.stuName = obj.stuName;
+								$me.ismicrophone = true;
+							}
+							break;
+						}
+						case 6: {
+							$me.chartDate.title.push(msg.data.className);
+							$me.chartDate.agreeNumber.push(msg.data.agreeNumber);
+							$me.chartDate.disagreeNumber.push(msg.data.disagreeNumber);
+							$me.chartDate.unAnswerNum.push(msg.data.unAnswerNum);
+							var option = [
+								{
+									name: '懂',
+									type: 'bar',
+									stack: '主观题',
+									barWidth: 60,
+									data: $me.chartDate.agreeNumber,
+									label: {
+										normal: {
+											show: true,
+											position: 'inside',
+											color: '#fff',
+											formatter: function(param) {
+												return param.value > 0 ? param.value + '人' : '';
+											},
+											textStyle: {
+												fontSize: 24
+											}
+										}
+									}
+								},
+								{
+									name: '不懂',
+									type: 'bar',
+									stack: '主观题',
+									barWidth: 60,
+									data: $me.chartDate.disagreeNumber,
+									label: {
+										normal: {
+											show: true,
+											position: 'inside',
+											color: '#fff',
+											formatter: function(param) {
+												return param.value > 0 ? param.value + '人' : '';
+											},
+											textStyle: {
+												fontSize: 24
+											}
+										}
+									}
+								},
+								{
+									name: '未作答',
+									type: 'bar',
+									stack: '主观题',
+									barWidth: 60,
+									data: $me.chartDate.unAnswerNum,
+									label: {
+										normal: {
+											show: true,
+											position: 'inside',
+											color: '#fff',
+											formatter: function(param) {
+												return param.value > 0 ? param.value + '人' : '';
+											},
+											textStyle: {
+												fontSize: 24
+											}
+										}
+									}
 								}
-								var answer = obj.score;
-								$('#danmu').danmu('addDanmu', [{
+							];
+							$me.getChartData(option, $me.chartDate.title);
+							break;
+						}
+						case 7: {
+							/* 语音测评 */
+							// $me.ismicrophone = false;
+							var obj = msg.data;
+
+							var time = $('#danmu').data('nowTime') + 1;
+							/*当渲染弹幕过多的时候,延迟处理弹幕*/
+							if ($('#danmu .danmaku').length > 500) {
+								time += 200; //2000毫秒。
+							}
+							var answer = obj.score;
+							$('#danmu').danmu('addDanmu', [
+								{
 									text: obj.stuName + '(' + answer + ')',
 									color: 'white',
 									size: 0,
 									position: 0,
 									time: time
-								}]);
-								break;
-							}
-						case 8:
-							{
-								/* 语言解析 */
-								$me.ismicrophone = false;
-								var obj = msg.data;
-								if (obj.ret == 'success') {
-									$me.txtlist.push(obj.data);
-									$me.$nextTick(function() {
-										$('.txtlist').animate({
+								}
+							]);
+							break;
+						}
+						case 8: {
+							/* 语言解析 */
+							$me.ismicrophone = false;
+							var obj = msg.data;
+							if (obj.ret == 'success') {
+								$me.txtlist.push(obj.data);
+								$me.$nextTick(function() {
+									$('.txtlist').animate(
+										{
 											scrollTop: $('.txtlist')[0].scrollHeight
-										}, 400);
-									});
-								}
-								break;
+										},
+										400
+									);
+								});
 							}
-						case 9:
-							{
-								var obj = msg.data;
-								var stuName = obj.stuName;
-								$me.stuName = obj.stuName;
-								$me.isparticlesbox = false;
-								$me.ismicrophone = true;
-								break;
+							break;
+						}
+						case 9: {
+							var obj = msg.data;
+							var stuName = obj.stuName;
+							$me.stuName = obj.stuName;
+							$me.isparticlesbox = false;
+							$me.ismicrophone = true;
+							break;
+						}
+						case 11: {
+							var obj = msg.data;
+							$me.stuName = obj.stuName;
+							break;
+						}
+						case 12: {
+							/* 网络连接断开 */
+							$me.$toast('网络连接断开');
+							break;
+						}
+						case 13: {
+							/* 网络连接连接 */
+							$me.$toast('网络连接成功');
+							/* 重新加载学科网地址 */
+							$me.getResource(3, 1);
+							$me.getResource(2, 1);
+							break;
+						}
+						case 14: {
+							/* 网络连接连接 */
+							$me.$toast('USB连接断开');
+							break;
+						}
+						case 15: {
+							/* 网络连接连接 */
+							$me.$toast('USB连接成功');
+							break;
+						}
+						case 16: {
+							/* 随机抽查人 */
+							var obj = msg.data;
+							$me.stuName = obj.stuName;
+							console.log($me.stuName);
+							break;
+						}
+						case 17: {
+							/* 显示软件 */
+							$me.$electron.ipcRenderer.send('maxApp');
+							break;
+						}
+						case 18: {
+							/* 隐藏软件 */
+							$me.$electron.ipcRenderer.send('minApp');
+							break;
+						}
+						case 19: {
+							/* 停止答题 */
+							if ($me.isAnswering) {
+								$me.stopRace();
 							}
-						case 11:
-							{
-								var obj = msg.data;
-								$me.stuName = obj.stuName;
-								break;
+							break;
+						}
+						case 20: {
+							/*下一题 */
+							// $me.clearView();
+							$me.nextQuestion();
+							break;
+						}
+						case 21: {
+							/*上一题 */
+							// $me.clearView();
+							$me.prevQuestion();
+							break;
+						}
+						case 22: {
+							/*教鞭停止跟读测评 */
+							if ($me.isAnswering) {
+								$me.stopRace();
 							}
-						case 12:
-							{
-								/* 网络连接断开 */
-								$me.$toast('网络连接断开');
-								break;
+							break;
+						}
+						case 23: {
+							/*教鞭上一题跟读测评 */
+							if ($me.isAnswering) {
+								$me.nextAudioQuestion();
 							}
-						case 13:
-							{
-								/* 网络连接连接 */
-								$me.$toast('网络连接成功');
-								/* 重新加载学科网地址 */
-								$me.getResource(3, 1);
-								$me.getResource(2, 1);
-								break;
+							break;
+						}
+						case 24: {
+							/*教鞭下一题跟读测评 */
+							if ($me.isAnswering) {
+								$me.prevAudioQuestion();
 							}
-						case 14:
-							{
-								/* 网络连接连接 */
-								$me.$toast('USB连接断开');
-								break;
-							}
-						case 15:
-							{
-								/* 网络连接连接 */
-								$me.$toast('USB连接成功');
-								break;
-							}
-						case 16:
-							{
-								/* 随机抽查人 */
-								var obj = msg.data;
-								$me.stuName = obj.stuName;
-								console.log($me.stuName);
-								break;
-							}
-						case 17:
-							{
-								/* 显示软件 */
-								$me.$electron.ipcRenderer.send('maxApp');
-								break;
-							}
-						case 18:
-							{
-								/* 隐藏软件 */
-								$me.$electron.ipcRenderer.send('minApp');
-								break;
-							}
-						case 19:
-							{
-								/* 停止答题 */
-								if ($me.isAnswering) {
-									$me.stopRace();
-								}
-								break;
-							}
-						case 20:
-							{
-								/*下一题 */
-								// $me.clearView();
-								$me.nextQuestion();
-								break;
-							}
-						case 21:
-							{
-								/*上一题 */
-								// $me.clearView();
-								$me.prevQuestion();
-								break;
-							}
-						case 22:
-							{
-								/*教鞭停止跟读测评 */
-								if ($me.isAnswering) {
-									$me.stopRace();
-								}
-								break;
-							}
-						case 23:
-							{
-								/*教鞭上一题跟读测评 */
-								if ($me.isAnswering) {
-									$me.nextAudioQuestion();
-								}
-								break;
-							}
-						case 24:
-							{
-								/*教鞭下一题跟读测评 */
-								if ($me.isAnswering) {
-									$me.prevAudioQuestion();
-								}
-								break;
-							}
-						default:
-							{
-								$me.$toast(msg.data);
-								break;
-							}
+							break;
+						}
+						default: {
+							$me.$toast(msg.data);
+							break;
+						}
 					}
 				} else {
 					$('#danmu').data('danmuList', {});
 					$('#danmu').danmu('danmuStop');
 					$('#danmu').danmu('danmuStart');
 				}
-			}
+			};
 		},
 		saveImgFullScreen() {
 			/* 全屏截图 */
@@ -1596,28 +1551,28 @@ export default {
 			$me.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/common/saveQuestionImgAndSend'
-			}).then(da => {
-				if (da.data.ret == 'success') {
-					/* 截图保存给后端 */
-					this.imgUrl = 'data:image/jpg;base64,' + da.data.data
-				} else {
-					$me.$toast.center(da.data.message);
-				}
-
-			}).finally(() => {
-				/* 提示截屏完成 */
-				this.isScreening = false;
-			});
+			})
+				.then(da => {
+					if (da.data.ret == 'success') {
+						/* 截图保存给后端 */
+						this.imgUrl = 'data:image/jpg;base64,' + da.data.data;
+					} else {
+						$me.$toast.center(da.data.message);
+					}
+				})
+				.finally(() => {
+					/* 提示截屏完成 */
+					this.isScreening = false;
+				});
 		},
 		showSet() {
 			/* 打开工具箱 */
-			this.isshowSet = !this.isshowSet
+			this.isshowSet = !this.isshowSet;
 			if (this.isshowSet) {
 				this.$refs.toolbar.showSet();
 			} else {
 				this.$refs.toolbar.hide();
 			}
-
 		},
 		/* 获取题库资源 */
 		getResource(type, state) {
@@ -1634,21 +1589,21 @@ export default {
 					if (da.data.ret == 'success') {
 						$me.$set($me.resourceUrllist, 2, '');
 						$me.$set($me.resourceUrllist, 2, da.data.data);
-						$me.setResoule(type, state)
+						$me.setResoule(type, state);
 						// this.resourceUrl = da.data.data
 					} else {
 						$me.$toast.center(da.data.message);
 						if (da.data.code == 401) {
 							setTimeout(function() {
-								$me.returnback()
-							}, 500)
+								$me.returnback();
+							}, 500);
 						}
 					}
 				});
 			} else {
 				$me.$set($me.resourceUrllist, 1, '');
 				$me.$set($me.resourceUrllist, 1, 'http://zkxl.school.zxxk.com/ThirdParty/CustomJump?_m=http://localhost:8080');
-				$me.setResoule(type, state)
+				$me.setResoule(type, state);
 			}
 		},
 		setResoule(type, state) {
@@ -1667,7 +1622,7 @@ export default {
 					let iframe = $me.$refs['iframe' + (type - 1)];
 					if (iframe) {
 						if (iframe.attachEvent) {
-							iframe.attachEvent("onload", function() {
+							iframe.attachEvent('onload', function() {
 								$me.spinning = false;
 							});
 						} else {
@@ -1679,22 +1634,20 @@ export default {
 				} catch (e) {
 					//TODO handle the exception
 				}
-			})
+			});
 		},
 		showResource(type) {
 			/* 显示资源网 */
 			// this.getResource(type)
 			if (this.isshowResource == type) {
-				this.isshowResource = 0
+				this.isshowResource = 0;
 			} else {
 				let resourceUrl = this.resourceUrllist[type - 1];
 				if (!resourceUrl) {
-					this.getResource(type)
+					this.getResource(type);
 				} else {
 					this.isshowResource = type;
 				}
-
-
 			}
 			// this.spinning=true;
 			// if (this.isshowResource != 0) {
@@ -1705,27 +1658,26 @@ export default {
 			/* 查询弹幕设置 */
 			this.$http({
 				method: 'post',
-				url: urlPath + 'teacher-client/teacherHabit/queryTeacHabit/45',
+				url: urlPath + 'teacher-client/teacherHabit/queryTeacHabit/45'
 			}).then(da => {
-				console.log(da)
+				console.log(da);
 				if (da.data && da.data.ret == 'success') {
 					var list = da.data.data;
 					if (list && list.length > 0) {
 						list = list.map(item => {
 							item.isOpenBarrageflag = item.isOpenBarrage == 1;
-							return item
-						})
+							return item;
+						});
 					}
 					this.list = list;
 					// console.log(this.list)
 					this.$store.commit('SET_danmuinfolist', this.list);
 				}
 			});
-
 		},
 		callname(type) {
 			/* 随机或者点名 */
-			this.$refs.toolbar.show(type == 0 ? 5 : 6)
+			this.$refs.toolbar.show(type == 0 ? 5 : 6);
 		},
 		Satrspeaker(stuCode) {
 			/* 触发随机点名语音测评 */
@@ -1735,15 +1687,14 @@ export default {
 				// if (this.XStalkName) {
 				// 	this.hasNotplay.unshift(this.XStalkName);
 				// }
-				var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word)
-				console.log(index)
+				var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+				console.log(index);
 				this.startRace(index);
 			} else if (this.subjecttitle == 6) {
 				this.startRace();
 			} else {
 				this.$toast.center('请先选择一个语音题目');
 			}
-
 		},
 		/* 显示先声题库弹出框 */
 		showXianshenWin() {
@@ -1756,13 +1707,13 @@ export default {
 				let newlist = [];
 				if (this.sentenceList.length > 0) {
 					let wordlist = this.sentenceList.map(item => item.word);
-					list.forEach(item=>{
+					list.forEach(item => {
 						console.log(item.word);
 						if (!wordlist.includes(item.word)) {
 							item.hasRead = 0;
-							newlist.push(item)
+							newlist.push(item);
 						}
-					})
+					});
 					// for (var i = 0; i < list.lenght; i++) {
 					// 	console.log(list[i].word);
 					// 	if (!wordlist.includes(list[i].word)) {
@@ -1770,18 +1721,17 @@ export default {
 					// 		newlist.push(list[i])
 					// 	}
 					// }
-
 				} else {
 					newlist = list.map(item => {
 						item.hasRead = 0;
-						return item
+						return item;
 					});
 				}
-				console.log(newlist)
+				console.log(newlist);
 				this.sentenceList = [...this.sentenceList, ...newlist];
 			}
 
-			console.log('this.sentenceList', this.sentenceList)
+			console.log('this.sentenceList', this.sentenceList);
 			//先声题库
 			// this.hasNotplay = [...this.sentenceList];
 		},
@@ -1802,28 +1752,31 @@ export default {
 				//页面跳转
 				path: 'login'
 			});
-			localStorage.removeItem('loginSendInfo')
+			localStorage.removeItem('loginSendInfo');
 		},
 		/* 显示学生名单 */
 		showNamelist() {
 			this.isshowNamelist = !this.isshowNamelist;
-			this.$refs.namelist.show(this.isshowNamelist)
+			this.$refs.namelist.show(this.isshowNamelist);
 		},
 		/* 显示或者隐藏临时题目 */
 		addSubject(type) {
 			this.isAddSubject = type;
-			this.$refs.temquestion.isShow(type)
+			this.$refs.temquestion.isShow(type);
 		},
 		/* 切换语音识别上一屏 */
 		prevtxtScreen() {
 			this.$nextTick(function() {
 				let scrollTop = $('.txtlist')[0].scrollTop;
 				let offsetHeight = $('.txtlist')[0].offsetHeight;
-				console.log(scrollTop)
-				console.log(offsetHeight)
-				$('.txtlist').animate({
-					scrollTop: (scrollTop - offsetHeight) > 0 ? (scrollTop - offsetHeight) : 0
-				}, 400);
+				console.log(scrollTop);
+				console.log(offsetHeight);
+				$('.txtlist').animate(
+					{
+						scrollTop: scrollTop - offsetHeight > 0 ? scrollTop - offsetHeight : 0
+					},
+					400
+				);
 			});
 		},
 		/* 切换语音识别下一屏 */
@@ -1831,12 +1784,15 @@ export default {
 			this.$nextTick(function() {
 				let scrollTop = $('.txtlist')[0].scrollTop;
 				let offsetHeight = $('.txtlist')[0].offsetHeight;
-				let scrollHeight = $('.txtlist')[0].scrollHeight
-				console.log(scrollTop)
-				console.log(offsetHeight)
-				$('.txtlist').animate({
-					scrollTop: (scrollTop + offsetHeight) > scrollHeight ? scrollHeight : (scrollTop + offsetHeight)
-				}, 400);
+				let scrollHeight = $('.txtlist')[0].scrollHeight;
+				console.log(scrollTop);
+				console.log(offsetHeight);
+				$('.txtlist').animate(
+					{
+						scrollTop: scrollTop + offsetHeight > scrollHeight ? scrollHeight : scrollTop + offsetHeight
+					},
+					400
+				);
 			});
 		},
 		/* 跟读测评下一题 */
@@ -1851,21 +1807,18 @@ export default {
 			// 		type: $me.XStalkName.type
 			// 	});
 			// }
-			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word)
-			this.stopRace(1, (index + 1));
-
+			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+			this.stopRace(1, index + 1);
 		},
 		prevAudioQuestion() {
 			let $me = this;
-			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word)
+			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
 			if (index <= 0) {
 				this.$toast.center('没有上一题了');
 			} else {
 				/* 将上一题置为未读 */
-				this.stopRace(-1, (index - 1));
+				this.stopRace(-1, index - 1);
 			}
-
-
 		},
 		sendAudio(index) {
 			//随机发送先声题库
@@ -1873,9 +1826,8 @@ export default {
 		},
 		delAudio(index) {
 			/* 删除先声题目 */
-			this.sentenceList.splice(index, 1)
+			this.sentenceList.splice(index, 1);
 		}
-
 	}
 };
 </script>
