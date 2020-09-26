@@ -4,9 +4,9 @@
 		<audio :src="prizeAudio" autoplay="autoplay" autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
 		<audio :src="rankAudio" autoplay="autoplay" autobuffer id="rankaudio" style="z-index: 999;position: absolute;"></audio>
 		<div class="stage" :class="{ active: isActive }">
-			<img src="/static/img/11.png" class="title" />
-			<img src="/static/img/12.png" class="map" />
-			<img src="/static/img/14.png" class="pirate" @click="playbgAudio" />
+			<img src="static/img/11.png" class="title" />
+			<img src="static/img/12.png" class="map" />
+			<img src="static/img/14.png" class="pirate" @click="playbgAudio" />
 			<div class="bg">
 				<div class="lamp"></div>
 				<div class="chest"></div>
@@ -385,7 +385,7 @@ export default {
 	.bg {
 		width: 100%;
 		height: 100%;
-		background: url(/static/img/bg.png) no-repeat center bottom;
+		background: url(../../assets/img/bg.png) no-repeat center bottom;
 		background-size: 100% auto;
 		position: absolute;
 		bottom: -30%;
@@ -394,7 +394,7 @@ export default {
 		.lamp {
 			height: 154px;
 			width: 365px;
-			background: url(/static/img/10.png) no-repeat center center;
+			background: url(../../assets/10.png) no-repeat center center;
 			position: absolute;
 			bottom: -30px;
 			left: 50%;
@@ -403,7 +403,7 @@ export default {
 		.chest {
 			width: calc(880px / 4);
 			height: 241px;
-			background: url(/static/img/5.png);
+			background: url(../../assets/img/5.png);
 			background-size: 880px;
 			animation: sprite5 0.5s steps(3) 1.1s 1 both;
 			position: absolute;
@@ -526,7 +526,7 @@ export default {
 }
 .prizebox .num i {
 	display: inline-block;
-	background: url(/static/img/15.png) no-repeat center center;
+	background: url(../../assets/img/15.png) no-repeat center center;
 	height: 23px;
 	width: 23px;
 	margin-right: 8px;
@@ -560,22 +560,22 @@ export default {
 			animation: fadeOutUp2 0.5s 1 both;
 		}
 		&:first-child > div {
-			background-image: url(/static/img/rank/1.png);
+			background-image: url(../../assets/img/rank/1.png);
 		}
 		&:nth-child(2) > div {
-			background-image: url(/static/img/rank/2.png);
+			background-image: url(../../assets/img/rank/2.png);
 			animation-delay: 0.2s;
 		}
 		&:nth-child(3) > div {
-			background-image: url(/static/img/rank/3.png);
+			background-image: url(../../assets/img/rank/3.png);
 			animation-delay: 0.2s;
 		}
 		&:nth-child(4) > div {
-			background-image: url(/static/img/rank/4.png);
+			background-image: url(../../assets/img/rank/4.png);
 			animation-delay: 0.4s;
 		}
 		&:nth-child(5) > div {
-			background-image: url(/static/img/rank/5.png);
+			background-image: url(../../assets/img/rank/5.png);
 			animation-delay: 0.4s;
 		}
 		&:first-child {
@@ -631,7 +631,7 @@ export default {
 		}
 		.num i {
 			display: inline-block;
-			background: url(/static/img/15.png) no-repeat center center;
+			background: url(../../assets/img/15.png) no-repeat center center;
 			background-size: cover;
 			height: 16px;
 			width: 16px;
@@ -643,97 +643,7 @@ export default {
 		}
 	}
 }
-// .rank .rank .rank-item > div {
-// }
-// .rank .rank-item.fadeInUp > div {
-// 	animation: fadeInUp 1s 1 both;
-// }
-// .rank .rank-item.fadeOutUp > div {
-// 	animation: fadeOutUp2 0.5s 1 both;
-// }
-// .rank .rank-item:first-child > div {
-// 	background-image: url(/static/img/rank/1.png);
-// }
-// .rank .rank-item:nth-child(2) > div {
-// 	background-image: url(/static/img/rank/2.png);
-// 	animation-delay: 0.2s;
-// }
-// .rank .rank-item:nth-child(3) > div {
-// 	background-image: url(/static/img/rank/3.png);
-// 	animation-delay: 0.2s;
-// }
-// .rank .rank-item:nth-child(4) > div {
-// 	background-image: url(/static/img/rank/4.png);
-// 	animation-delay: 0.4s;
-// }
-// .rank .rank-item:nth-child(5) > div {
-// 	background-image: url(/static/img/rank/5.png);
-// 	animation-delay: 0.4s;
-// }
-// .rank .rank-item:first-child {
-// 	left: 50%;
-// 	transform: translate(-50%, -36px);
-// }
 
-// .rank .rank-item:nth-child(2) {
-// 	left: 50%;
-// 	transform: translateX(-350px);
-// 	top: 60px;
-// }
-// .rank .rank-item:nth-child(3) {
-// 	left: 50%;
-// 	transform: translateX(150px);
-// 	top: 60px;
-// }
-// .rank .rank-item:nth-child(4) {
-// 	left: 50%;
-// 	transform: translateX(-50%);
-// 	transform: translateX(-600px);
-// 	top: 120px;
-// }
-// .rank .rank-item:nth-child(5) {
-// 	left: 50%;
-// 	transform: translateX(400px);
-// 	top: 120px;
-// }
-// .rank .rank-item:first-child > div > div {
-// 	bottom: 20px;
-// }
-// .rank .rank-item > div > div {
-// 	position: absolute;
-// 	bottom: 36px;
-// 	width: 100%;
-// 	text-align: center;
-// }
-// .rank .rank-item .name {
-// 	color: #8b5731;
-// 	font-size: 24px;
-// 	text-align: center;
-// 	font-weight: 500;
-// 	width: 110px;
-// 	margin: 0 auto;
-// 	overflow: hidden;
-// 	text-overflow: ellipsis;
-// 	white-space: nowrap;
-// }
-// .rank .rank-item .num {
-// 	text-align: center;
-// 	color: #1d58b9;
-// 	font-size: 14px;
-// 	width: 100%;
-// }
-// .rank .rank-item .num i {
-// 	display: inline-block;
-// 	background: url(/static/img/15.png) no-repeat center center;
-// 	background-size: cover;
-// 	height: 16px;
-// 	width: 16px;
-// 	margin-right: 8px;
-// }
-// .rank .rank-item .num i,
-// .rank .rank-item .num span {
-// 	vertical-align: middle;
-// }
 @-webkit-keyframes fadeOutUp {
 	0% {
 		opacity: 1;
