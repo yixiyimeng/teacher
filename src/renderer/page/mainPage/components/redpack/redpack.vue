@@ -1,7 +1,7 @@
 <template>
 	<div class="pageview">
-		<audio :src="bgAudio"  autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
-		<audio :src="prizeAudio" autoplay="autoplay"  autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
+		<audio :src="bgAudio" autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
+		<audio :src="prizeAudio" autoplay="autoplay" autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
 		<audio :src="rankAudio" autoplay="autoplay" autobuffer id="rankaudio" style="z-index: 999;position: absolute;"></audio>
 		<div class="stage" :class="{ active: isActive }">
 			<img src="../../assets/img/11.png" class="title" />
@@ -15,18 +15,17 @@
 		</div>
 		<div class="couten"></div>
 		<div class="rankbox">
-			<div class="rank-item" v-for="(item,index) in ranklist" :key="index">
+			<div class="rank-item" v-for="(item, index) in ranklist" :key="index">
 				<div>
 					<div>
-						<div class="name">{{item.stuName}}</div>
+						<div class="name">{{ item.stuName }}</div>
 						<div class="num">
 							<i></i>
-							<span>+{{item.score}}</span>
+							<span>+{{ item.score }}</span>
 						</div>
 					</div>
 				</div>
 			</div>
-			
 		</div>
 	</div>
 </template>
@@ -69,7 +68,7 @@ function addredenvelope(info) {
 		}
 	}
 	list[Left] = time;
-	$('.couten').append("<li class='li" + time + "' ><a href='javascript:;'><img src='static/img/8.png'/>" + '</a></li>');
+	$('.couten').append("<li class='li" + time + "' ><a href='javascript:;'><img src='" + __static + "/img/8.png'/>" + '</a></li>');
 	var h = ($('.li' + time).height() + deybottom + 40) * -1;
 	$('.li' + time).css({
 		left: Left * 200,
@@ -94,10 +93,14 @@ function addredenvelope(info) {
 		});
 		$('.li' + time).on('transitionend webkitTransitionEnd', function() {
 			// console.log($(this).css('left'))
-			borad({
-				left: $(this).css('left'),
-				top: hhh2
-			},info.score,info.stuName);
+			borad(
+				{
+					left: $(this).css('left'),
+					top: hhh2
+				},
+				info.score,
+				info.stuName
+			);
 			$(this).remove();
 			//document.getElementById('jbaudio').fastSeek(0);
 			// $('#jbaudio')[0].fastSeek(0);
@@ -118,7 +121,7 @@ function addredenvelope(info) {
 	}
 }
 
-function borad(info,score,stuName) {
+function borad(info, score, stuName) {
 	var time = new Date().getTime();
 	$('.couten').append(
 		"<div class='prizebox" +
@@ -127,7 +130,13 @@ function borad(info,score,stuName) {
 			(parseInt(info.left) + 100) +
 			'px;top:' +
 			info.top +
-			"px'><div class='imgbox'><img src='"+__static+"/img/13.png'/></div><div class='name'>"+stuName+"</div><div class='num'><i></i><span>+"+score+"</span></div></div>"
+			"px'><div class='imgbox'><img src='" +
+			__static +
+			"/img/13.png'/></div><div class='name'>" +
+			stuName +
+			"</div><div class='num'><i></i><span>+" +
+			score +
+			'</span></div></div>'
 	);
 	$('.prizebox' + time).on('animationEnd webkitAnimationEnd', function() {
 		$(this).remove();
@@ -140,7 +149,7 @@ export default {
 			bgAudio: __static + '/img/2.mp3',
 			prizeAudio: __static + '/img/preview.mp3',
 			rankAudio: __static + '/img/rank.mp3',
-			ranklist:[]
+			ranklist: []
 		};
 	},
 	mounted() {
@@ -159,7 +168,7 @@ export default {
 			var snum = 30;
 
 			var redboxheight = $('.redbox').height();
-			var assets = [__static+'/img/7.png', __static+'/img/8.png'];
+			var assets = [__static + '/img/7.png', __static + '/img/8.png'];
 			assets.forEach(function(src, index) {
 				assets[index] = new Promise(function(resolve) {
 					var img = new Image();
@@ -195,10 +204,9 @@ export default {
 				}, 6000);
 				/* 出现排行榜 */
 				setTimeout(() => {
-					// $('#rankaudio')[0].play();
 					clearInterval(timer);
 					$('.couten').html('');
-					_this.redWarslist()
+					_this.redWarslist();
 				}, 16000);
 			});
 
@@ -264,7 +272,8 @@ export default {
 			this.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/' + url
-			}).then(da => {
+			})
+				.then(da => {
 					$('#audio')[0].paused();
 				})
 				.catch(function(err) {});
@@ -286,16 +295,15 @@ export default {
 				$me.ranklist = list.length > 5 ? list.slice(0, 5) : list;
 				$me.isRank = true;
 				$me.Answerstop();
-				this.$nextTick(()=>{
+				this.$nextTick(() => {
+					$('#rankaudio')[0].play();
 					$('.rankbox .rank-item').addClass('fadeInUp');
 					setTimeout(() => {
 						$('.rankbox .rank-item')
 							.removeClass('fadeInUp')
 							.addClass('fadeOutUp');
-					},2000);
-				})
-				
-				
+					}, 2000);
+				});
 			});
 		},
 		onmessage() {
@@ -312,15 +320,14 @@ export default {
 							if (msg.businessType == 6) {
 								/*抢红包*/
 								addredenvelope(msg.data);
-							} 
+							}
 							break;
 						}
 					}
 				} else {
-				
 				}
 			};
-		},
+		}
 	}
 };
 </script>
