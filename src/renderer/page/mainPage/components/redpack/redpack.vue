@@ -1,12 +1,12 @@
 <template>
 	<div class="pageview">
-		<audio :src="bgAudio" autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
+		<audio src="./static/img/2.mp3" controls="controls" autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
 		<audio :src="prizeAudio" autoplay="autoplay" autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
 		<audio :src="rankAudio" autoplay="autoplay" autobuffer id="rankaudio" style="z-index: 999;position: absolute;"></audio>
 		<div class="stage" :class="{ active: isActive }">
-			<img src="static/img/11.png" class="title" />
-			<img src="static/img/12.png" class="map" />
-			<img src="static/img/14.png" class="pirate" @click="playbgAudio" />
+			<img src="../../assets/img/11.png" class="title" />
+			<img src="../../assets/img/12.png" class="map" />
+			<img src="../../assets/img/14.png" class="pirate" @click="playbgAudio" />
 			<div class="bg">
 				<div class="lamp"></div>
 				<div class="chest"></div>
@@ -26,50 +26,7 @@
 					</div>
 				</div>
 			</div>
-			<!-- <div class="rank-item">
-				<div>
-					<div>
-						<div class="name">张三</div>
-						<div class="num">
-							<i></i>
-							<span>+12</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="rank-item">
-				<div>
-					<div>
-						<div class="name">张三</div>
-						<div class="num">
-							<i></i>
-							<span>+12</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="rank-item">
-				<div>
-					<div>
-						<div class="name">张三</div>
-						<div class="num">
-							<i></i>
-							<span>+12</span>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="rank-item">
-				<div>
-					<div>
-						<div class="name">张三</div>
-						<div class="num">
-							<i></i>
-							<span>+12</span>
-						</div>
-					</div>
-				</div>
-			</div> -->
+			
 		</div>
 	</div>
 </template>
@@ -202,7 +159,7 @@ export default {
 			var snum = 30;
 
 			var redboxheight = $('.redbox').height();
-			var assets = ['/static/img/7.png', '/static/img/8.png'];
+			var assets = ['./static/img/7.png', './static/img/8.png'];
 			assets.forEach(function(src, index) {
 				assets[index] = new Promise(function(resolve) {
 					var img = new Image();
