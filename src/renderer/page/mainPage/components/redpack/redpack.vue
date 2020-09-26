@@ -1,7 +1,7 @@
 <template>
 	<div class="pageview">
 		<audio src="static/img/2.mp3" controls="controls" autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
-		<audio :src="prizeAudio" autoplay="autoplay" autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
+		<audio :src="prizeAudio" autoplay="autoplay"  controls="controls"  autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
 		<audio :src="rankAudio" autoplay="autoplay" autobuffer id="rankaudio" style="z-index: 999;position: absolute;"></audio>
 		<div class="stage" :class="{ active: isActive }">
 			<img src="../../assets/img/11.png" class="title" />
