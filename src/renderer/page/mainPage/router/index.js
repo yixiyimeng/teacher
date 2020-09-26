@@ -41,6 +41,11 @@ export default new Router({
 					path: '/teacherroom',
 					name: 'teacherroom',
 					component: require('@/page/mainPage/components/teacherroom/teacherroom').default,
+				},
+				{
+					path: '/redpack',
+					name: 'redpack',
+					component: require('@/page/mainPage/components/redpack/redpack').default,
 				}
 			]
 		},
