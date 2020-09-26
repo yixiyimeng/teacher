@@ -1,7 +1,7 @@
 <template>
 	<div class="pageview">
-		<audio src="static/img/2.mp3" controls="controls" autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
-		<audio :src="prizeAudio" autoplay="autoplay"  controls="controls"  autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
+		<audio :src="bgAudio"  autoplay="autoplay" autobuffer loop="loop" id="audio" style="z-index: 999;position: absolute;"></audio>
+		<audio :src="prizeAudio" autoplay="autoplay"  autobuffer id="prizeaudio" style="z-index: 999;position: absolute;"></audio>
 		<audio :src="rankAudio" autoplay="autoplay" autobuffer id="rankaudio" style="z-index: 999;position: absolute;"></audio>
 		<div class="stage" :class="{ active: isActive }">
 			<img src="../../assets/img/11.png" class="title" />
@@ -127,7 +127,7 @@ function borad(info,score,stuName) {
 			(parseInt(info.left) + 100) +
 			'px;top:' +
 			info.top +
-			"px'><div class='imgbox'><img src='static/img/13.png'/></div><div class='name'>"+stuName+"</div><div class='num'><i></i><span>+"+score+"</span></div></div>"
+			"px'><div class='imgbox'><img src='"+__static+"/img/13.png'/></div><div class='name'>"+stuName+"</div><div class='num'><i></i><span>+"+score+"</span></div></div>"
 	);
 	$('.prizebox' + time).on('animationEnd webkitAnimationEnd', function() {
 		$(this).remove();
@@ -159,7 +159,7 @@ export default {
 			var snum = 30;
 
 			var redboxheight = $('.redbox').height();
-			var assets = ['./static/img/7.png', './static/img/8.png'];
+			var assets = [__static+'/img/7.png', __static+'/img/8.png'];
 			assets.forEach(function(src, index) {
 				assets[index] = new Promise(function(resolve) {
 					var img = new Image();
