@@ -394,7 +394,7 @@ export default {
 		.lamp {
 			height: 154px;
 			width: 365px;
-			background: url(../../assets/10.png) no-repeat center center;
+			background: url(../../assets/img/10.png) no-repeat center center;
 			position: absolute;
 			bottom: -30px;
 			left: 50%;
