@@ -452,7 +452,7 @@
 						if (da.data.ret == 'success') {
 							$me.$loading.close();
 							$me.$router.push({
-								path: 'redpack',
+								path: 'teacherroom',
 								query: {
 									sendInfo: JSON.stringify(param)
 								}

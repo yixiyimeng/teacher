@@ -2,6 +2,8 @@
 	<div style="height: 100%; overflow: hidden;">
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
+		<audio id="startAudio" :src="startAudioMp3"  autobuffer  style="z-index: 999;position: absolute;"></audio>
+		<audio id="endAudio" :src="endAudio"  autobuffer   style="z-index: 999;position: absolute;"></audio>
 		<!-- 工具箱 -->
 		<toolbar ref="toolbar" @close="isshowSet = false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown" :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
 		<controlbar
@@ -383,7 +385,9 @@ export default {
 			sentenceList: [],
 			hasNotplay: [], //未播放的先声题库列表
 			spinning: false, //加载loading
-			isScreening: false //是否正则截屏
+			isScreening: false, //是否正则截屏
+			startAudioMp3: __static + '/mp3/start.mp3',
+			endAudio: __static + '/mp3/end.mp3',
 		};
 	},
 	computed: {
@@ -718,6 +722,7 @@ export default {
 			$me.clearView();
 			$me.isAnswering = true; //开始答题
 			/*开始答题*/
+			
 			if ($me.subjecttitle != 6 && $me.subjecttitle != 7 && $me.subjecttitle != 8 && $me.subjecttitle != 9) {
 				$me.isprogress = true; //显示进度条
 			}
@@ -765,6 +770,11 @@ export default {
 			if ($me.subjecttitle == 5) {
 				if (document.getElementById('music')) {
 					document.getElementById('music').play();
+				}
+			}else{
+				/* 播放开始提示语 */
+				if (document.getElementById('startAudio')) {
+					document.getElementById('startAudio').play();
 				}
 			}
 			$me.isSubject = false; //不显示题目
@@ -1227,19 +1237,6 @@ export default {
 		/* 语音测评统计 */
 		getHighScores() {
 			const $me = this;
-			// $me.$http({
-			// 	method: 'post',
-			// 	url: urlPath + 'teacher-client/statistics/getHighScores'
-			// }).then(da => {
-			// 	if (da.data.ret == 'success') {
-			// 		$me.isrankboradlist = true;
-			// 		// $me.isreftext = false;
-			// 		$me.rankboradlist = da.data.data;
-			// 	} else {
-			// 		$me.$toast.center(da.data.message);
-			// 	}
-			// });
-			/* 查询历史记录 */
 			/* 先判断是跟读测评。还是语音测评 */
 			var param = {};
 			if (this.subjecttitle == 7) {
@@ -1249,6 +1246,10 @@ export default {
 				param = this.XStalkName;
 			}
 			this.$refs.audiolist.getVoiceRecord(param);
+			/* 播放语音结束声音 */
+			if (document.getElementById('endAudio')) {
+				document.getElementById('endAudio').play();
+			}
 		},
 		/* 倒计时结束 */
 		stopCountDown() {
