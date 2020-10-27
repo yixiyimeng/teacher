@@ -2,8 +2,8 @@
 	<div style="height: 100%; overflow: hidden;">
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
-		<audio id="startAudio" :src="startAudioMp3"  autobuffer  style="z-index: 999;position: absolute;"></audio>
-		<audio id="endAudio" :src="endAudio"  autobuffer   style="z-index: 999;position: absolute;"></audio>
+		<audio id="startAudio" :src="startAudioMp3" autobuffer style="z-index: 999;position: absolute;"></audio>
+		<audio id="endAudio" :src="endAudio" autobuffer style="z-index: 999;position: absolute;"></audio>
 		<!-- 工具箱 -->
 		<toolbar ref="toolbar" @close="isshowSet = false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown" :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
 		<controlbar
@@ -377,7 +377,6 @@ export default {
 			isshowResource: 0, //是否显示注册地址
 			imgUrl: '', //截图地址
 			isshowSet: false, //是否打开设置弹框
-
 			audiohistorylist: [],
 			stuCode: null, //点名学生code
 			namelist: [],
@@ -388,6 +387,7 @@ export default {
 			isScreening: false, //是否正则截屏
 			startAudioMp3: __static + '/mp3/start.mp3',
 			endAudio: __static + '/mp3/end.mp3',
+			isVoice: false //当前是否在语音题目。后台会发送语音题目的websock
 		};
 	},
 	computed: {
@@ -474,7 +474,6 @@ export default {
 		this.onmessage();
 	},
 	watch: {
-		
 		checklist: {
 			handler(newName, oldName) {
 				const $me = this;
@@ -588,7 +587,8 @@ export default {
 			/* 普通题目调用接口 */
 			const $me = this;
 			var url = '',
-				judgetype = '';
+				judgetype = '',
+				setVoive = 0;
 			// param = {};
 			//const uuid = $me.randomWord(false, 32);
 			switch ($me.subjecttitle) {
@@ -643,6 +643,7 @@ export default {
 						param.stuCode = $me.stuCode;
 					}
 					$me.titlename = '语音测评';
+					setVoive = 1;
 					break;
 				}
 				case '8': {
@@ -653,6 +654,7 @@ export default {
 						url = 'microphone/start2';
 						$me.titlename = '自由麦';
 					}
+					setVoive = 1;
 					break;
 				}
 				case '9': {
@@ -669,8 +671,13 @@ export default {
 					}
 					param.refVoicePath = $me.xsAudioUrl;
 					$me.titlename = '跟读测评';
+					setVoive = 1;
 					break;
 				}
+			}
+			/* 通知后台切换是语音题目，还是一般题目 */
+			if (this.isVoice != (setVoive == 1)) {
+				this.updateAutoAnswerType(setVoive);
 			}
 			if (judgetype) {
 				param.questionType = judgetype;
@@ -722,7 +729,7 @@ export default {
 			$me.clearView();
 			$me.isAnswering = true; //开始答题
 			/*开始答题*/
-			
+
 			if ($me.subjecttitle != 6 && $me.subjecttitle != 7 && $me.subjecttitle != 8 && $me.subjecttitle != 9) {
 				$me.isprogress = true; //显示进度条
 			}
@@ -771,7 +778,7 @@ export default {
 				if (document.getElementById('music')) {
 					document.getElementById('music').play();
 				}
-			}else{
+			} else {
 				/* 播放开始提示语 */
 				if (document.getElementById('startAudio')) {
 					document.getElementById('startAudio').play();
@@ -1165,34 +1172,53 @@ export default {
 				$me.nextAudioQuestion();
 				return false;
 			}
+
 			$me.isScreening = true; //开始截屏
 			// $me.startVIew();
 			$me.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/common/nextQuestion'
-			}).then(da => {
-				if (da.data.ret == 'success') {
-					console.log('下一题' + JSON.stringify(da));
-					/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
-					$me.trueAnswer = da.data.data.trueAnswer;
-					$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
-					$me.subjectType = 0;
-					$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
-					$me.startVIew();
-					$me.$nextTick(() => {
-						setTimeout(() => {
-							$me.saveImgFullScreen();
-						}, 100);
-					});
-					if ($me.isCountDown == 1) {
-						$me.timeDown();
+			})
+				.then(da => {
+					if (da.data.ret == 'success') {
+						console.log('下一题' + JSON.stringify(da));
+						/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
+						$me.trueAnswer = da.data.data.trueAnswer;
+						$me.titlename = '第' + da.data.data.questionId + '题<br>';
+						let setVoive = 0;
+						if (da.data.data.type == 'voice') {
+							$me.titlename = $me.titlename + '语音测评';
+							$me.subjectType = 1;
+							$me.subjecttitle = '7';
+							$me.talkName = da.data.data.question;
+							setVoive = 1;
+						} else {
+							$me.titlename = $me.titlename + $me.titlenamelist[da.data.data.questionType - 1].titlename;
+							$me.subjectType = 0;
+							$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
+							setVoive = 0;
+						}
+						if (this.isVoice != (setVoive == 1)) {
+							this.updateAutoAnswerType(setVoive);
+						}
+						$me.startVIew();
+						$me.$nextTick(() => {
+							setTimeout(() => {
+								$me.saveImgFullScreen();
+							}, 100);
+						});
+						if ($me.isCountDown == 1) {
+							$me.timeDown();
+						}
+						$me.totalNumber = da.data.data.totalNum; //答题总人数
+					} else {
+						$me.isScreening = false; //开始截屏
+						$me.$toast.center(da.data.message);
 					}
-					$me.totalNumber = da.data.data.totalNum; //答题总人数
-				} else {
-					$me.isScreening = false; //开始截屏
-					$me.$toast.center(da.data.message);
-				}
-			});
+				})
+				.catch(e => {
+					$me.isScreening = false;
+				});
 		},
 		/* 上一题 */
 		prevQuestion() {
@@ -1210,29 +1236,41 @@ export default {
 			$me.$http({
 				method: 'post',
 				url: urlPath + 'teacher-client/common/prevQuestion'
-			}).then(da => {
-				if (da.data.ret == 'success') {
-					console.log('上一题' + JSON.stringify(da));
-					/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
-					$me.trueAnswer = da.data.data.trueAnswer;
-					$me.titlename = '第' + da.data.data.questionId + '题<br>' + $me.titlenamelist[da.data.data.questionType - 1].titlename;
-					$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
-					$me.subjectType = 0;
-					$me.startVIew();
-					$me.$nextTick(() => {
-						setTimeout(() => {
-							$me.saveImgFullScreen();
-						}, 100);
-					});
-					if ($me.isCountDown == 1) {
-						$me.timeDown();
+			})
+				.then(da => {
+					if (da.data.ret == 'success') {
+						console.log('上一题' + JSON.stringify(da));
+						/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
+						$me.trueAnswer = da.data.data.trueAnswer;
+						$me.titlename = '第' + da.data.data.questionId + '题<br>';
+						if (da.data.data.type == 'voice') {
+							$me.titlename = $me.titlename + '语音测评';
+							$me.subjectType = 1;
+							$me.subjecttitle = '7';
+							$me.talkName = da.data.data.question;
+						} else {
+							$me.titlename = $me.titlename + $me.titlenamelist[da.data.data.questionType - 1].titlename;
+							$me.subjectType = 0;
+							$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
+						}
+						$me.startVIew();
+						$me.$nextTick(() => {
+							setTimeout(() => {
+								$me.saveImgFullScreen();
+							}, 100);
+						});
+						if ($me.isCountDown == 1) {
+							$me.timeDown();
+						}
+						$me.totalNumber = da.data.data.totalNum; //答题总人数
+					} else {
+						$me.isScreening = false; //停止截屏
+						$me.$toast.center(da.data.message);
 					}
-					$me.totalNumber = da.data.data.totalNum; //答题总人数
-				} else {
-					$me.isScreening = false; //停止截屏
-					$me.$toast.center(da.data.message);
-				}
-			});
+				})
+				.catch(e => {
+					$me.isScreening = false;
+				});
 		},
 		/* 语音测评统计 */
 		getHighScores() {
@@ -1799,15 +1837,6 @@ export default {
 		/* 跟读测评下一题 */
 		nextAudioQuestion() {
 			let $me = this;
-			// if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == $me.XStalkName.word)) ||
-			// 	$me.audiohistorylist
-			// 	.length == 0) {
-			// 	$me.audiohistorylist.unshift({
-			// 		wordtxt: $me.XStalkName.word,
-			// 		sound_eng_url: $me.XStalkName.sound_eng_url,
-			// 		type: $me.XStalkName.type
-			// 	});
-			// }
 			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
 			this.stopRace(1, index + 1);
 		},
@@ -1828,6 +1857,15 @@ export default {
 		delAudio(index) {
 			/* 删除先声题目 */
 			this.sentenceList.splice(index, 1);
+		},
+		// 通知后端是语音题还是普通题
+		updateAutoAnswerType(setVoice) {
+			this.$http({
+				method: 'post',
+				url: urlPath + 'teacher-client/common/updateAutoAnswerType?updateAutoAnswerType=' + setVoice
+			}).then(da => {
+				this.isVoice = setVoice === 1;
+			});
 		}
 	}
 };
