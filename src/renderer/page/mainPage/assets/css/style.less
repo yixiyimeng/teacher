@@ -392,10 +392,18 @@ a {
 .setupload a.setbtn {
 	background: @baseColor;
 	color: #fff;
+	position: relative;
 }
 .setupload a.setbtn i {
 	background-image: url(../../assets/icon16.png);
 	background-size: 34px auto;
+}
+.setupload a.setbtn input{
+	position: absolute;
+	z-index: 999;
+	font-size: 400px;
+	right: 0;
+	top: 0;
 }
 .setupload a.setuploadbtn i {
 	background-image: url(../../assets/icon17.png);
