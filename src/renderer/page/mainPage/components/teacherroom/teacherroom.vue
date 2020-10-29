@@ -387,7 +387,7 @@ export default {
 			isScreening: false, //是否正则截屏
 			startAudioMp3: __static + '/mp3/start.mp3',
 			endAudio: __static + '/mp3/end.mp3',
-			isVoice: false //当前是否在语音题目。后台会发送语音题目的websock
+			isVoice: false //当前是否在跟读测评。后台会发送语音题目的websock
 		};
 	},
 	computed: {
@@ -643,7 +643,6 @@ export default {
 						param.stuCode = $me.stuCode;
 					}
 					$me.titlename = '语音测评';
-					setVoive = 1;
 					break;
 				}
 				case '8': {
@@ -654,7 +653,6 @@ export default {
 						url = 'microphone/start2';
 						$me.titlename = '自由麦';
 					}
-					setVoive = 1;
 					break;
 				}
 				case '9': {
@@ -675,10 +673,7 @@ export default {
 					break;
 				}
 			}
-			/* 通知后台切换是语音题目，还是一般题目 */
-			if (this.isVoice != (setVoive == 1)) {
-				this.updateAutoAnswerType(setVoive);
-			}
+			
 			if (judgetype) {
 				param.questionType = judgetype;
 			}
@@ -1132,6 +1127,9 @@ export default {
 			$me.trueAnswer = '';
 			$me.stuName = ''; //麦克风学生名称
 			$me.isSatrspeaker = false; //是否开启扬声器
+			if (this.isVoice != (setVoive == 1)) {
+				this.updateAutoAnswerType(setVoive);
+			}
 		},
 
 		/* 获取选项答题人数 */
@@ -1185,22 +1183,19 @@ export default {
 						/*1 单题单选  2单题多选 3多题单选 4  判断题 5主观题  6 抢红包*/
 						$me.trueAnswer = da.data.data.trueAnswer;
 						$me.titlename = '第' + da.data.data.questionId + '题<br>';
-						let setVoive = 0;
 						if (da.data.data.type == 'voice') {
 							$me.titlename = $me.titlename + '语音测评';
 							$me.subjectType = 1;
 							$me.subjecttitle = '7';
 							$me.talkName = da.data.data.question;
-							setVoive = 1;
+						
 						} else {
 							$me.titlename = $me.titlename + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 							$me.subjectType = 0;
 							$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
-							setVoive = 0;
+							
 						}
-						if (this.isVoice != (setVoive == 1)) {
-							this.updateAutoAnswerType(setVoive);
-						}
+						
 						$me.startVIew();
 						$me.$nextTick(() => {
 							setTimeout(() => {
