@@ -2,8 +2,8 @@
 	<div style="height: 100%; overflow: hidden;">
 		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
-		<audio id="startAudio" :src="startAudioMp3"  autobuffer  style="z-index: 999;position: absolute;"></audio>
-		<audio id="endAudio" :src="endAudio"  autobuffer   style="z-index: 999;position: absolute;"></audio>
+		<audio id="startAudio" :src="startAudioMp3" autobuffer style="z-index: 999;position: absolute;"></audio>
+		<audio id="endAudio" :src="endAudio" autobuffer style="z-index: 999;position: absolute;"></audio>
 		<!-- 工具箱 -->
 		<toolbar ref="toolbar" @close="isshowSet = false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown" :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
 		<controlbar
@@ -388,6 +388,7 @@ export default {
 			isScreening: false, //是否正则截屏
 			startAudioMp3: __static + '/mp3/start.mp3',
 			endAudio: __static + '/mp3/end.mp3',
+			selectOrVoice: 1
 		};
 	},
 	computed: {
@@ -416,8 +417,6 @@ export default {
 	},
 	created() {
 		this.sendInfo = JSON.parse(this.$route.query.sendInfo);
-		//console.log(this.$route.query.sendInfo)
-		// this.onlinedirectBroadcastCode = this.sendInfo.directBroadcastCode;
 		this.$store.commit('SET_startClass', true);
 		this.$electron.ipcRenderer.send('onlinedirebro', true);
 		this.getNamelist('bingingCard/getAllBingdCardInfo');
@@ -445,6 +444,7 @@ export default {
 		this.$electron.ipcRenderer.on('exitdirebro', (event, flag) => {
 			this.exitBtn();
 		});
+		this.selectOrVoice = 1;
 	},
 
 	mounted() {
@@ -474,7 +474,6 @@ export default {
 		this.onmessage();
 	},
 	watch: {
-		
 		checklist: {
 			handler(newName, oldName) {
 				const $me = this;
@@ -555,7 +554,7 @@ export default {
 					/* 取先声题库列表中的未读字段 */
 					let XStalkNameIndex = 0;
 					/* 如果发送上一题。则题号索引， */
-					console.log(PrevIndex);
+					console.log('PrevIndex', PrevIndex);
 					if (PrevIndex || PrevIndex === 0) {
 						XStalkNameIndex = PrevIndex;
 					} else {
@@ -565,7 +564,7 @@ export default {
 							XStalkNameIndex = 0;
 						}
 					}
-					console.log(XStalkNameIndex);
+					console.log('XStalkNameIndex', XStalkNameIndex);
 					XStalkNameIndex = XStalkNameIndex || 0;
 					$me.sentenceList[XStalkNameIndex].hasRead = 1; //0 未读，1 在读，2 已读
 					$me.XStalkName = $me.sentenceList[XStalkNameIndex];
@@ -668,6 +667,10 @@ export default {
 						param.stuCode = $me.stuCode;
 					}
 					param.refVoicePath = $me.xsAudioUrl;
+					/* 切换 为 跟读测评 */
+					if ($me.selectOrVoice == 1) {
+						$me.updateAutoAnswerType(2);
+					}
 					$me.titlename = '跟读测评';
 					break;
 				}
@@ -722,7 +725,7 @@ export default {
 			$me.clearView();
 			$me.isAnswering = true; //开始答题
 			/*开始答题*/
-			
+
 			if ($me.subjecttitle != 6 && $me.subjecttitle != 7 && $me.subjecttitle != 8 && $me.subjecttitle != 9) {
 				$me.isprogress = true; //显示进度条
 			}
@@ -771,7 +774,7 @@ export default {
 				if (document.getElementById('music')) {
 					document.getElementById('music').play();
 				}
-			}else{
+			} else {
 				/* 播放开始提示语 */
 				if (document.getElementById('startAudio')) {
 					document.getElementById('startAudio').play();
@@ -1125,6 +1128,10 @@ export default {
 			$me.trueAnswer = '';
 			$me.stuName = ''; //麦克风学生名称
 			$me.isSatrspeaker = false; //是否开启扬声器
+			/* 切换回普通题 */
+			if ($me.selectOrVoice == 2) {
+				$me.updateAutoAnswerType(1);
+			}
 		},
 
 		/* 获取选项答题人数 */
@@ -1522,16 +1529,16 @@ export default {
 						}
 						case 23: {
 							/*教鞭上一题跟读测评 */
-							if ($me.isAnswering) {
-								$me.nextAudioQuestion();
-							}
+							// if ($me.isAnswering) {
+							$me.nextAudioQuestion();
+							// }
 							break;
 						}
 						case 24: {
 							/*教鞭下一题跟读测评 */
-							if ($me.isAnswering) {
-								$me.prevAudioQuestion();
-							}
+							// if ($me.isAnswering) {
+							$me.prevAudioQuestion();
+							// }
 							break;
 						}
 						default: {
@@ -1799,25 +1806,34 @@ export default {
 		/* 跟读测评下一题 */
 		nextAudioQuestion() {
 			let $me = this;
-			// if (($me.audiohistorylist.length > 0 && !$me.audiohistorylist.some(item => item.wordtxt == $me.XStalkName.word)) ||
-			// 	$me.audiohistorylist
-			// 	.length == 0) {
-			// 	$me.audiohistorylist.unshift({
-			// 		wordtxt: $me.XStalkName.word,
-			// 		sound_eng_url: $me.XStalkName.sound_eng_url,
-			// 		type: $me.XStalkName.type
-			// 	});
-			// }
-			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
-			this.stopRace(1, index + 1);
+			if (!this.sentenceList || this.sentenceList.length == 0) {
+				return false;
+			}
+			this.subjecttitle = 9;
+			var index = -1;
+			if (this.XStalkName && this.XStalkName.word) {
+				index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+				this.stopRace(1, index + 1);
+			} else {
+				this.startRace();
+			}
 		},
 		prevAudioQuestion() {
 			let $me = this;
-			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+			if (!this.sentenceList || this.sentenceList.length == 0) {
+				return false;
+			}
+			this.subjecttitle = 9;
+			var index = 0;
+			if (this.XStalkName && this.XStalkName.word) {
+				index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+			}
+			// var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
 			if (index <= 0) {
 				this.$toast.center('没有上一题了');
 			} else {
 				/* 将上一题置为未读 */
+				this.subjecttitle = 9;
 				this.stopRace(-1, index - 1);
 			}
 		},
@@ -1828,6 +1844,14 @@ export default {
 		delAudio(index) {
 			/* 删除先声题目 */
 			this.sentenceList.splice(index, 1);
+		},
+		// 通知后端是语音题还是普通题
+		updateAutoAnswerType(selectOrVoice) {
+			this.selectOrVoice = selectOrVoice;
+			this.$http({
+				method: 'post',
+				url: urlPath + 'teacher-client/common/updateAutoAnswerType?updateAutoAnswerType=' + selectOrVoice
+			});
 		}
 	}
 };

@@ -241,7 +241,7 @@
 					$me.subjecttitle = '6';
 					$me.talkquestionType = 7;
 				}
-				this.updateAutoAnswerType();
+				
 			},
 			/* 切换普通题型 */
 			selSubjecttitle(obj) {
@@ -455,13 +455,7 @@
 				}
 				return param
 			},
-			// 通知后端是语音题还是普通题
-			updateAutoAnswerType(){
-				this.$http({
-					method: 'post',
-					url: urlPath + 'teacher-client/common/updateAutoAnswerType?updateAutoAnswerType='+(this.subjectType-0+1)
-				})
-			}
+			
 
 		}
 	}
