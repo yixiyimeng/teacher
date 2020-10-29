@@ -1558,16 +1558,16 @@ export default {
 						}
 						case 23: {
 							/*教鞭上一题跟读测评 */
-							if ($me.isAnswering) {
+							// if ($me.isAnswering) {
 								$me.nextAudioQuestion();
-							}
+							// }
 							break;
 						}
 						case 24: {
 							/*教鞭下一题跟读测评 */
-							if ($me.isAnswering) {
+							// if ($me.isAnswering) {
 								$me.prevAudioQuestion();
-							}
+							// }
 							break;
 						}
 						default: {
