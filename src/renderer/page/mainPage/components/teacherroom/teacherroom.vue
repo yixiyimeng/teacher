@@ -1833,18 +1833,33 @@ export default {
 			});
 		},
 		/* 跟读测评下一题 */
+		/* 跟读测评下一题 */
 		nextAudioQuestion() {
 			let $me = this;
-			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
-			this.stopRace(1, index + 1);
+			if (!this.sentenceList || this.sentenceList.length == 0) {
+				return false;
+			}
+			if (this.XStalkName && this.XStalkName.word) {
+				this.subjecttitle = '9';
+				var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+				this.stopRace(1, index + 1);
+			}
 		},
 		prevAudioQuestion() {
 			let $me = this;
-			var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+			if (!this.sentenceList || this.sentenceList.length == 0) {
+				return false;
+			}
+			var index = 0;
+			if (this.XStalkName && this.XStalkName.word) {
+				index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
+			}
+			// var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
 			if (index <= 0) {
 				this.$toast.center('没有上一题了');
 			} else {
 				/* 将上一题置为未读 */
+				this.subjecttitle = '9';
 				this.stopRace(-1, index - 1);
 			}
 		},
