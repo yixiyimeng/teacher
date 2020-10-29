@@ -1809,13 +1809,11 @@ export default {
 			if (!this.sentenceList || this.sentenceList.length == 0) {
 				return false;
 			}
-			this.subjecttitle = 9;
 			var index = -1;
 			if (this.XStalkName && this.XStalkName.word) {
+				this.subjecttitle = '9';
 				index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
 				this.stopRace(1, index + 1);
-			} else {
-				this.startRace();
 			}
 		},
 		prevAudioQuestion() {
@@ -1823,7 +1821,6 @@ export default {
 			if (!this.sentenceList || this.sentenceList.length == 0) {
 				return false;
 			}
-			this.subjecttitle = 9;
 			var index = 0;
 			if (this.XStalkName && this.XStalkName.word) {
 				index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
@@ -1833,7 +1830,7 @@ export default {
 				this.$toast.center('没有上一题了');
 			} else {
 				/* 将上一题置为未读 */
-				this.subjecttitle = 9;
+				this.subjecttitle = '9';
 				this.stopRace(-1, index - 1);
 			}
 		},
