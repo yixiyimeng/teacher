@@ -387,7 +387,7 @@ export default {
 			isScreening: false, //是否正则截屏
 			startAudioMp3: __static + '/mp3/start.mp3',
 			endAudio: __static + '/mp3/end.mp3',
-			isVoice: false //当前是否在跟读测评。后台会发送语音题目的websock
+			selectOrVoice: false //当前是否在跟读测评。后台会发送语音题目的websock
 		};
 	},
 	computed: {
@@ -669,7 +669,10 @@ export default {
 					}
 					param.refVoicePath = $me.xsAudioUrl;
 					$me.titlename = '跟读测评';
-					setVoive = 1;
+					/* 切换 为 跟读测评 */
+					if ($me.selectOrVoice == 1) {
+						$me.updateAutoAnswerType(2);
+					}
 					break;
 				}
 			}
@@ -1127,8 +1130,8 @@ export default {
 			$me.trueAnswer = '';
 			$me.stuName = ''; //麦克风学生名称
 			$me.isSatrspeaker = false; //是否开启扬声器
-			if (this.isVoice != (setVoive == 1)) {
-				this.updateAutoAnswerType(setVoive);
+			if ($me.selectOrVoice == 2) {
+				$me.updateAutoAnswerType(1);
 			}
 		},
 
@@ -1854,12 +1857,11 @@ export default {
 			this.sentenceList.splice(index, 1);
 		},
 		// 通知后端是语音题还是普通题
-		updateAutoAnswerType(setVoice) {
+		updateAutoAnswerType(selectOrVoice) {
+			this.selectOrVoice = selectOrVoice;
 			this.$http({
 				method: 'post',
-				url: urlPath + 'teacher-client/common/updateAutoAnswerType?updateAutoAnswerType=' + setVoice
-			}).then(da => {
-				this.isVoice = setVoice === 1;
+				url: urlPath + 'teacher-client/common/updateAutoAnswerType?updateAutoAnswerType=' + selectOrVoice
 			});
 		}
 	}
