@@ -776,9 +776,9 @@ export default {
 				}
 			} else {
 				/* 播放开始提示语 */
-				if (document.getElementById('startAudio')) {
-					document.getElementById('startAudio').play();
-				}
+				// if (document.getElementById('startAudio')) {
+				// 	document.getElementById('startAudio').play();
+				// }
 			}
 			$me.isSubject = false; //不显示题目
 			$me.isStop = true; //显示停止按钮
@@ -1254,9 +1254,9 @@ export default {
 			}
 			this.$refs.audiolist.getVoiceRecord(param);
 			/* 播放语音结束声音 */
-			if (document.getElementById('endAudio')) {
-				document.getElementById('endAudio').play();
-			}
+			// if (document.getElementById('endAudio')) {
+			// 	document.getElementById('endAudio').play();
+			// }
 		},
 		/* 倒计时结束 */
 		stopCountDown() {
