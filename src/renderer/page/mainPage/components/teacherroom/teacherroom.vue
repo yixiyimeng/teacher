@@ -1,6 +1,6 @@
 <template>
 	<div style="height: 100%; overflow: hidden;">
-		<audio id="music" :src="platformpath + '/plat/files/test.mp3'" crossOrigin="anonymous" preload loop></audio>
+		<audio id="music" :src="bgAudio" crossOrigin="anonymous" preload loop></audio>
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<audio id="startAudio" :src="startAudioMp3" autobuffer style="z-index: 999;position: absolute;"></audio>
 		<audio id="endAudio" :src="endAudio" autobuffer style="z-index: 999;position: absolute;"></audio>
@@ -387,7 +387,9 @@ export default {
 			isScreening: false, //是否正则截屏
 			startAudioMp3: __static + '/mp3/start.mp3',
 			endAudio: __static + '/mp3/end.mp3',
-			selectOrVoice: false //当前是否在跟读测评。后台会发送语音题目的websock
+			bgAudio: __static + '/mp3/bg.mp3', //抢红包背景音乐
+			selectOrVoice: false, //当前是否在跟读测评。后台会发送语音题目的websock
+			isVoiceWordType: 1 // 保存记录再模板导入语音题的类型 1 英文单词 2，英文句子 4，中文句子
 		};
 	},
 	computed: {
@@ -532,18 +534,22 @@ export default {
 		},
 
 		/* 开始下发题目 */
-		startRace(PrevIndex) {
+		startRace(PrevIndex, talkName) {
 			const $me = this;
 			if ($me.isScreening) {
 				$me.$toast.center('正在保存题干，请稍后');
 				return false;
 			}
-			var param = $me.$refs.temquestion.start();
+			var param = $me.$refs.temquestion.start() || {};
 			if (param) {
-				$me.subjecttitle = $me.$refs.temquestion.subjecttitle;
+				$me.subjecttitle = talkName ? '7' : $me.$refs.temquestion.subjecttitle;
 				/* 判读语音测评  题目*/
 				if ($me.subjecttitle == 7) {
-					$me.talkName = $me.$refs.temquestion.talkName;
+					$me.talkName = talkName || $me.$refs.temquestion.talkName;
+					if (talkName) {
+						param.type = $me.isVoiceWordType;
+						param.refText = talkName;
+					}
 				}
 				/* 判断麦克风是抢麦还是群发麦克风 */
 				if ($me.subjecttitle == 8) {
@@ -676,7 +682,7 @@ export default {
 					break;
 				}
 			}
-			
+
 			if (judgetype) {
 				param.questionType = judgetype;
 			}
@@ -1191,20 +1197,21 @@ export default {
 							$me.subjectType = 1;
 							$me.subjecttitle = '7';
 							$me.talkName = da.data.data.question;
-						
+							$me.reftext = $me.talkName;
+							$me.isVoiceWordType = da.data.data.questionType == 'cnSentence' ? 4 : da.data.data.questionType == 'enWord' ? 1 : 2;
+							$me.isScreening = false; //截屏
+							$me.startVIew();
 						} else {
 							$me.titlename = $me.titlename + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 							$me.subjectType = 0;
 							$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
-							
+							$me.startVIew();
+							$me.$nextTick(() => {
+								setTimeout(() => {
+									$me.saveImgFullScreen();
+								}, 100);
+							});
 						}
-						
-						$me.startVIew();
-						$me.$nextTick(() => {
-							setTimeout(() => {
-								$me.saveImgFullScreen();
-							}, 100);
-						});
 						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
@@ -1246,17 +1253,22 @@ export default {
 							$me.subjectType = 1;
 							$me.subjecttitle = '7';
 							$me.talkName = da.data.data.question;
+							$me.reftext = $me.talkName;
+							$me.isVoiceWordType = da.data.data.questionType == 'cnSentence' ? 4 : da.data.data.questionType == 'enWord' ? 1 : 2;
+							$me.isScreening = false; //截屏
+							$me.startVIew();
 						} else {
 							$me.titlename = $me.titlename + $me.titlenamelist[da.data.data.questionType - 1].titlename;
 							$me.subjectType = 0;
 							$me.subjecttitle = $me.titlenamelist[da.data.data.questionType - 1].subjecttitle;
+							$me.startVIew();
+							$me.$nextTick(() => {
+								setTimeout(() => {
+									$me.saveImgFullScreen();
+								}, 100);
+							});
 						}
-						$me.startVIew();
-						$me.$nextTick(() => {
-							setTimeout(() => {
-								$me.saveImgFullScreen();
-							}, 100);
-						});
+
 						if ($me.isCountDown == 1) {
 							$me.timeDown();
 						}
@@ -1559,14 +1571,14 @@ export default {
 						case 23: {
 							/*教鞭上一题跟读测评 */
 							// if ($me.isAnswering) {
-								$me.nextAudioQuestion();
+							$me.nextAudioQuestion();
 							// }
 							break;
 						}
 						case 24: {
 							/*教鞭下一题跟读测评 */
 							// if ($me.isAnswering) {
-								$me.prevAudioQuestion();
+							$me.prevAudioQuestion();
 							// }
 							break;
 						}
@@ -1720,12 +1732,11 @@ export default {
 			/* 触发随机点名语音测评 */
 			this.isSatrspeaker = true;
 			this.stuCode = stuCode;
-			if (this.subjecttitle == 7 || this.subjecttitle == 9) {
-				// if (this.XStalkName) {
-				// 	this.hasNotplay.unshift(this.XStalkName);
-				// }
+			console.log('Satrspeaker=>', this.subjecttitle);
+			if (this.subjecttitle == 7) {
+				this.startRace('', this.talkName);
+			} else if (this.subjecttitle == 9) {
 				var index = this.sentenceList.findIndex(item => item.word == this.XStalkName.word);
-				console.log(index);
 				this.startRace(index);
 			} else if (this.subjecttitle == 6) {
 				this.startRace();
