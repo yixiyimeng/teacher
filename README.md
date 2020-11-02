@@ -30,3 +30,5 @@ npm run build
 1. Run wmave.exe
 2. The default music directory is **C:\Users\XXX\AppData\Roaming\Electron**, right click the **troy icon** and click **'choose folder'** to change it.
 3. Click the **play** button.
+"build": "node .electron-vue/build.js && electron-builder --platform=win32  --arch=ia32",
+"build": "node .electron-vue/build.js && electron-builder --win",
