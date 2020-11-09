@@ -903,7 +903,12 @@ export default {
 				.then(da => {
 					/*结束答题*/
 					console.log($me.subjecttitle);
-
+					/* 判断倒计时 */
+					if ($me.countDownTime > 0) {
+						clearInterval(this.timer);
+					}
+					/* 去掉随机和点名 */
+					this.isSatrspeaker = false;
 					/* 如果是语言题就不显示下发题目按钮。直接显示开始按钮  测试*/
 					if ($me.subjecttitle == 6 || $me.subjecttitle == 8) {
 						$me.sendtitle();
@@ -944,13 +949,7 @@ export default {
 						// $me.XStalkName = null;
 						// this.getVoiceRecord()
 					}
-					/* 判断倒计时 */
 
-					if ($me.countDownTime > 0) {
-						clearInterval(this.timer);
-					}
-					/* 去掉随机和点名 */
-					this.isSatrspeaker = false;
 					// $me.countDownTime = 0;
 					// $me.iscountDown = false;
 					// $me.showcountDown = false;
