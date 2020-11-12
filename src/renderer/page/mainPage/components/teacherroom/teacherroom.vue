@@ -4,6 +4,7 @@
 		<audio id="xsmusic" ref="xsmusic" crossOrigin="anonymous" preload ended></audio>
 		<audio id="startAudio" :src="startAudioMp3" autobuffer style="z-index: 999;position: absolute;"></audio>
 		<audio id="endAudio" :src="endAudio" autobuffer style="z-index: 999;position: absolute;"></audio>
+		<audio id="endAudio2" :src="endAudio2" autobuffer style="z-index: 999;position: absolute;"></audio>
 		<!-- 工具箱 -->
 		<toolbar ref="toolbar" @close="isshowSet = false" @Satrspeaker="Satrspeaker" @resumeCountDown="resumeCountDown" :namelist="namelist" :ifTemporary="isAnswering"></toolbar>
 		<controlbar
@@ -387,6 +388,7 @@ export default {
 			isScreening: false, //是否正则截屏
 			startAudioMp3: __static + '/mp3/start.mp3',
 			endAudio: __static + '/mp3/end.mp3',
+			endAudio2: __static + '/mp3/end2.mp3',
 			bgAudio: __static + '/mp3/bg.mp3', //抢红包背景音乐
 			selectOrVoice: false, //当前是否在跟读测评。后台会发送语音题目的websock
 			isVoiceWordType: 1 // 保存记录再模板导入语音题的类型 1 英文单词 2，英文句子 4，中文句子
@@ -911,7 +913,12 @@ export default {
 				.then(da => {
 					/*结束答题*/
 					console.log($me.subjecttitle);
-
+					/* 判断倒计时 */
+					if ($me.countDownTime > 0) {
+						clearInterval(this.timer);
+					}
+					/* 去掉随机和点名 */
+					this.isSatrspeaker = false;
 					/* 如果是语言题就不显示下发题目按钮。直接显示开始按钮  测试*/
 					if ($me.subjecttitle == 6 || $me.subjecttitle == 8) {
 						$me.sendtitle();
@@ -924,6 +931,10 @@ export default {
 					$me.isAnswering = false; //停止答题
 					if ($me.subjecttitle == 1 || $me.subjecttitle == 2 || $me.subjecttitle == 3 || $me.subjecttitle == 4) {
 						$me.getEveryAnswerNum();
+						/* 播放语音结束声音 */
+						if (document.getElementById('endAudio2')) {
+							document.getElementById('endAudio2').play();
+						}
 					}
 					if ($me.trueAnswer && ($me.subjecttitle == 1 || $me.subjecttitle == 2 || $me.subjecttitle == 3)) {
 						$me.getAnswerAccuracy();
@@ -952,13 +963,7 @@ export default {
 						// $me.XStalkName = null;
 						// this.getVoiceRecord()
 					}
-					/* 判断倒计时 */
 
-					if ($me.countDownTime > 0) {
-						clearInterval(this.timer);
-					}
-					/* 去掉随机和点名 */
-					this.isSatrspeaker = false;
 					// $me.countDownTime = 0;
 					// $me.iscountDown = false;
 					// $me.showcountDown = false;
