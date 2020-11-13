@@ -48,7 +48,7 @@
 									return params.name + params.value + '人\n(' + params.percent + '%)';
 								},
 								textStyle: {
-									fontSize: fontSize > 18 ? 18 : fontSize
+									fontSize: fontSize > 24 ? 18 : 12
 								}
 							}
 						},

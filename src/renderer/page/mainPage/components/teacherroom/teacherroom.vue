@@ -1996,7 +1996,54 @@ export default {
 .leftmenu .refresh.refresh2 {
 	top: 140px;
 }
-
+@media screen and (max-width: 1280px) {
+	.leftmenu > a {
+		width: 130px;
+		height: 50px;
+		border: 4px solid #fff;
+		padding-left: 6px;
+		font-size: 18px;
+		line-height: 42px;
+		box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+	}
+	.leftmenu > a i {
+		height: 24px;
+		width: 24px;
+		background-size: contain;
+		margin-right: 2px;
+	}
+	.leftmenu .refresh {
+		top: 60px;
+		background-size: contain;
+		cursor: pointer;
+	}
+}
+@media screen and (max-width: 1152px) {
+	.leftmenu > a {
+		width: 100px;
+		height: 40px;
+		border: 2px solid #fff;
+		padding-left: 6px;
+		font-size: 14px;
+		line-height: 36px;
+		box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+	}
+	.leftmenu > a i {
+		height: 20px;
+		width: 20px;
+		background-size: contain;
+		margin-right: 2px;
+	}
+	.leftmenu .refresh {
+		height: 35px;
+		width: 35px;
+		right: -40px;
+		position: absolute;
+		top: 45px;
+		background-size: contain;
+		cursor: pointer;
+	}
+}
 /deep/ .ant-spin-container {
 	height: 100%;
 }

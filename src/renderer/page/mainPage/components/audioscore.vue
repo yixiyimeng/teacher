@@ -113,6 +113,10 @@ export default {
 	z-index: 9999;
 	top: 20%;
 	padding: 0 25px 30px;
+	@media screen and (max-width: 1300px) {
+		right: 10%;
+		left: 10%;
+	}
 
 	.audiobox-hd {
 		line-height: 85px;
@@ -133,7 +137,7 @@ export default {
 		}
 		.num {
 			background: #ec6d64;
-			margin:0 10px;
+			margin: 0 10px;
 			border-radius: 100%;
 			height: 43px;
 			width: 43px;
@@ -159,12 +163,11 @@ export default {
 			@media screen and (max-width: 1300px) {
 				height: 33px;
 				width: 33px;
-				line-height:33px;
+				line-height: 33px;
 				font-size: 12px;
 				&:after {
 					width: 21px;
 					height: 21px;
-					
 				}
 			}
 		}
@@ -187,7 +190,10 @@ export default {
 		color: #666;
 		margin-top: 30px;
 		line-height: 30px;
-
+		@media screen and (max-width: 1300px) {
+			font-size: 24px;
+			line-height: 24px;
+		}
 		.num,
 		.score {
 			color: #1890ff;
@@ -203,6 +209,12 @@ export default {
 			text-align: center;
 			line-height: 30px;
 			margin-left: 10px;
+			@media screen and (max-width: 1300px) {
+				font-size: 14px;
+				line-height: 24px;
+				height: 24px;
+				min-width: 24px;
+			}
 		}
 
 		.score {
@@ -222,7 +234,7 @@ export default {
 	vertical-align: middle;
 	width: 20px;
 	height: 20px;
-	margin-top: 5px;
+	margin-top: .125em;
 	cursor: pointer;
 	background: url(../assets/icon24.png) no-repeat left center !important;
 

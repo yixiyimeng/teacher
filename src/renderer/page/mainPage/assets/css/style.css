@@ -516,6 +516,12 @@ select {
 .resultbox .sendtitle {
 	margin: 0 auto
 }
+@media screen and (max-width: 1300px) {
+	.resultbox {
+		left: 10%;
+		right: 10%;
+	}
+}
 
 .rank {
 	width: 180px;
@@ -805,7 +811,13 @@ select {
 	bottom: 20%;
 	z-index: 9999;
 }
-
+@media screen and (max-width: 1300px) {
+	.rankborad  {
+		left: 10%;
+		right: 10%;
+		padding: 20px;
+	}
+}
 .rankborad>div {
 	height: 100%;
 	width: 100%;
