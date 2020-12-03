@@ -7,8 +7,10 @@
 				<div>
 					<span style="color: #ec6d64;">红色:</span>
 					(&lt;60分)
+					<span style="color: #fad111;" class="ml20">黄色:</span>
+					(&gt;=60分 &lt;80分)
 					<span style="color: #1890ff;" class="ml20">蓝色:</span>
-					(&gt;=60分 &lt;90分)
+					(&gt;=80分 &lt;90分)
 					<span style="color: #4fb57e;" class="ml20">绿色:</span>
 					(&gt;=90分)
 				</div>
@@ -19,12 +21,12 @@
 			<div class="item flex" v-for="(item, index) in info.xianShengResults" :key="index">
 				<span class="play" @click="playAudio(item.filePath)" :class="{ active: usersoundurl && usersoundurl == item.filePath }"></span>
 				<span class="num">{{ index + 1 }}</span>
-				<span class="score" :style="{ color: item.score >= 90 ? '#4fb57e' : item.score >= 60 ? '#1890ff' : '#ec6d64' }">({{ item.score }})</span>
+				<!-- <span class="score" :style="{ color: item.score >= 90 ? '#4fb57e' : item.score >= 60 ? '#1890ff' : '#ec6d64' }">({{ item.score }})</span> -->
 				<div class="flex-1">
 					<span
 						v-if="item.isword == 1"
 						v-for="(subitem, subindex) in item.charlist"
-						:style="{ color: subitem.score >= 90 ? '#4fb57e' : subitem.score >= 60 ? '#1890ff' : '#ec6d64' }"
+						:style="{ color: subitem.score >= 90 ? '#4fb57e' : subitem.score >= 80 ? '#1890ff' : subitem.score >= 60 ? '#fad111' : '#ec6d64' }"
 					>
 						{{ subitem.ph2alpha }}
 					</span>
@@ -32,7 +34,7 @@
 						v-if="item.isword == 0"
 						style="margin-right: 10px;"
 						v-for="(subitem, subindex) in item.wordlist"
-						:style="{ color: subitem.score >= 90 ? '#4fb57e' : subitem.score >= 60 ? '#1890ff' : '#ec6d64' }"
+						:style="{ color: subitem.score >= 90 ? '#4fb57e' : subitem.score >= 80 ? '#1890ff' : subitem.score >= 60 ? '#fad111' : '#ec6d64' }"
 					>
 						{{ subitem.char }}
 					</span>
@@ -133,7 +135,7 @@ export default {
 		}
 		.num {
 			background: #ec6d64;
-			margin:0 10px;
+			margin: 0 10px;
 			border-radius: 100%;
 			height: 43px;
 			width: 43px;
@@ -159,12 +161,11 @@ export default {
 			@media screen and (max-width: 1300px) {
 				height: 33px;
 				width: 33px;
-				line-height:33px;
+				line-height: 33px;
 				font-size: 12px;
 				&:after {
 					width: 21px;
 					height: 21px;
-					
 				}
 			}
 		}

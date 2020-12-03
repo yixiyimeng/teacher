@@ -1418,7 +1418,17 @@ export default {
 							if ($('#danmu .danmaku').length > 500) {
 								time += 200; //2000毫秒。
 							}
-							var answer = obj.score;
+							var score = obj.score;
+							var answer = '';
+							if (score >= 90) {
+								answer = '非常棒';
+							} else if (score < 90 && score >= 80) {
+								answer = '优秀';
+							} else if (score < 80 && score >= 60) {
+								answer = '良好';
+							} else if (score < 60) {
+								answer = '继续努力';
+							}
 							$('#danmu').danmu('addDanmu', [
 								{
 									text: obj.stuName + '(' + answer + ')',
