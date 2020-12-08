@@ -33,11 +33,12 @@
 		</a>
 		<!-- 添加题目 -->
 		<a href="javascript:;" class="addSubject" @click="addSubject" v-show="isSubject"></a>
-		<div class="scoretip" v-if="subjecttitle == 9 && isAnswering">
+		<div class="scoretip" v-if="(subjecttitle == 7||subjecttitle==9) && isAnswering">
+			<span>弹幕提示</span>
 			<span style="color: #4fb57e;" class="ml20">非常棒:(&gt;=90分)</span>
 			<span style="color: #1890ff;" class="ml20">优秀:(&gt;=80分 &lt;90分)</span>
 			<span style="color: #fad111;" class="ml20">良好:(&gt;=60分 &lt;80分)</span>
-			<span style="color: #ec6d64;">继续努力:(&lt;60分)</span>	
+			<span style="color: #ec6d64;"  class="ml20">继续努力:(&lt;60分)</span>	
 		</div>
 	</div>
 </template>
@@ -114,9 +115,10 @@ export default {
 <style scoped="scoped" lang="less">
 .scoretip {
 	position: fixed;
-	right: -350px;
+	right: -370px;
 	bottom: -30px;
 	text-align: center;
-	width: 700px;
+	width: 800px;
+	font-size: 14px;
 }
 </style>

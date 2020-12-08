@@ -2,9 +2,9 @@
 	<div class="audioscorebox flex flex-v" v-if="isShow">
 		<div class="audiobox-hd flex flex-pack-justify flex-align-center">
 			<div class="flex flex-align-center">
-				<span class="name">{{ info.stuName }}答题详情</span>
+				<span class="name flex-1">{{ info.stuName }}{{info.stuName.length>3?'':'答题详情'}}</span>
 				<span class="num">{{ info.xianShengResults.length }}</span>
-				<div>
+				<div style="width: 680px;">
 					<span style="color: #ec6d64;">红色:</span>
 					(&lt;60分)
 					<span style="color: #fad111;" class="ml20">黄色:</span>
@@ -128,6 +128,7 @@ export default {
 		}
 		.name {
 			font-size: 30px;
+			white-space: nowrap;
 			color: #1890ff;
 			@media screen and (max-width: 1300px) {
 				font-size: 20px;
