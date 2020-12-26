@@ -94,14 +94,10 @@
 							<a href="javascript:;" class="setbtn" @click="settest">
 								<i></i>
 								<p>本地导入</p>
-								<input
-									v-if="sendInfo.classCode && sendInfo.subjectCode && !isLoadFile"
-									type="file"
-									@change="uploadFile"
-									id="upload"
-									accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-								/>
 							</a>
+							<!-- <a href="javascript:;" class="setuploadbtn" @click="showitembank=!showitembank;showXianshenWin()"><i></i>
+								<p>语音题导入</p>
+							</a> -->
 							<a
 								href="javascript:;"
 								class="setEnglishbtn"
@@ -115,6 +111,7 @@
 							</a>
 						</div>
 					</div>
+					<!--   -->
 				</div>
 
 				<upload class="upload animated fast" :class="[isCloseUpload ? 'fadeIn' : 'fadeOut']" :isCloseUpload.sync="isCloseUpload" v-if="isCloseUpload"></upload>
@@ -157,8 +154,7 @@ export default {
 			isSend: false,
 			isClearquestion: false, //是否清空之前作答结果
 			isShowclear: false,
-			showitembank: false,
-			isLoadFile: false //是否正在刷新上传input。方便在上传以后，重置一下input
+			showitembank: false
 		};
 	},
 	components: {
@@ -266,6 +262,7 @@ export default {
 					if (da.data.ret == 'success') {
 						var list = da.data.data;
 						$me.titlesearchList = list;
+						$me.titleCode = null;
 					} else {
 						$me.titlesearchList = [];
 						$me.titleCode = null;
@@ -358,6 +355,7 @@ export default {
 			}).then(da => {
 				if (da.data.ret == 'success') {
 					$me.reftitletypelist = da.data.data;
+					$me.selTalkName();
 				} else {
 					this.$toast.center(da.data.message);
 				}
@@ -371,10 +369,10 @@ export default {
 		/* 切换 主题小标题 */
 		selTalkName(topic) {
 			const $me = this;
-			$me.topicName = topic.topicName;
-			$me.topicCode = topic.topicCode;
-			$me.questionId = topic.questionId;
-			$me.tempQuestionId = topic.tempQuestionId;
+			$me.topicName = topic ? topic.topicName : '';
+			$me.topicCode = topic ? topic.topicCode : '';
+			$me.questionId = topic ? topic.questionId : '';
+			$me.tempQuestionId = topic ? topic.tempQuestionId : '';
 			if ($me.questionId > 0 || $me.tempQuestionId > 0) {
 				$me.isShowclear = true;
 			} else {
@@ -437,7 +435,7 @@ export default {
 			}
 
 			/* 通知悬浮窗 上传 */
-			// this.$electron.ipcRenderer.send('uploadfile', true);
+			this.$electron.ipcRenderer.send('uploadfile', true);
 		},
 		/* 同步题目 */
 		synchronizedCoursewareQuestions() {
@@ -518,58 +516,9 @@ export default {
 		},
 		settest() {
 			if (this.sendInfo.classCode && this.sendInfo.subjectCode) {
-				// this.showitembank = !this.showitembank;
+				this.showitembank = !this.showitembank;
 			} else {
 				this.$toast.center('请先选择班级和主题');
-			}
-		},
-		uploadFile() {
-			const $me = this;
-			var file = $('#upload')[0];
-
-			if (file.files[0] && $me.sendInfo) {
-				var strFileName = $('#upload')
-					.val()
-					.replace(/^.+?\\([^\\]+?)(\.[^\.\\]*?)?$/gi, '$1'); //正则表达式获取文件名，不带后缀
-				var FileExt = $('#upload')
-					.val()
-					.replace(/.+\./, ''); //正则表达式获取后缀
-				var formData = new FormData();
-				if (FileExt != 'xls' && FileExt != 'xlsx') {
-					$me.$toast.center('请上传excel文件');
-					return false;
-				}
-				$me.titleName = strFileName;
-				formData.append('file', file.files[0]);
-				formData.append('titleName', $me.titleName);
-				formData.append('classCode', $me.sendInfo.classCode);
-				formData.append('className', $me.sendInfo.className);
-				formData.append('subjectCode', $me.sendInfo.subjectCode);
-				formData.append('subjectName', $me.sendInfo.subjectName);
-				this.$http({
-					method: 'post',
-					url: urlPath + '/teacher-client/platform/importQuesrions',
-					data: formData,
-					processData: false, // jQuery不要去处理发送的数据
-					contentType: false
-				})
-					.then(da => {
-						if (da.data.ret == 'success') {
-							$me.$toast.center('上传成功');
-							$me.titleCode = da.data.data;
-							sessionStorage.setItem('titleCode', $me.titleCode);
-							this.getTitleList();
-						} else {
-							$me.$toast.center(da.data.message);
-						}
-					})
-					.finally(() => {
-						this.isLoadFile = true;
-						this.isLoadFile = false;
-					});
-				file.value = '';
-			} else {
-				this.$toast.center('请选择文件');
 			}
 		}
 	}
