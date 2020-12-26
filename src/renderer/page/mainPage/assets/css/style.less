@@ -398,7 +398,7 @@ a {
 	background-image: url(../../assets/icon16.png);
 	background-size: 34px auto;
 }
-.setupload a.setbtn input{
+.setupload a.setbtn input {
 	position: absolute;
 	z-index: 999;
 	font-size: 400px;
@@ -537,14 +537,20 @@ a {
 /* 语音文本显示 */
 .reftext {
 	position: fixed;
-	top: 20px;
+	top: 50%;
+	transform: translateY(-50%);
+	// top: 20px;
 	// left: 50%;
 	left: 20%;
 	right: 20%;
-	text-align: center;
+	// text-align: center;
 	z-index: 998;
 }
-
+.videobox .reftext {
+	top: 20px;
+	transform: translateY(0);
+	text-align: center;
+}
 .reftext > div.txt {
 	display: inline-block;
 	// border: 5px dashed @baseColor;
@@ -554,7 +560,7 @@ a {
 	// padding: 5px;
 	// border-radius: 15px;
 	border: 5px solid @baseColor;
-	max-width: 75%;
+	max-width: 65%;
 	border-radius: 15px;
 	text-align: left;
 	// position:absolute;
@@ -563,12 +569,15 @@ a {
 	height: 100%;
 	overflow: auto;
 }
+.videobox .reftext> div.txt{
+	max-width: 95%;
+}
 .reftext.active {
 	z-index: 9998;
 }
 
 .reftext > div.txt .title {
-	font-size: 40px;
+	font-size: 50px;
 	font-weight: bold;
 	min-height: 30px;
 	line-height: 1.5em;
@@ -577,6 +586,9 @@ a {
 	padding: 16px 50px;
 	text-align: center;
 	min-width: 200px;
+}
+.videobox .reftext > div.txt .title {
+	font-size: 40px;
 }
 .reftext > div.txt .questionlist {
 	height: 0;

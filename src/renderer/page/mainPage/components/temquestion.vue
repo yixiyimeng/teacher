@@ -222,7 +222,7 @@
 		watch: {
 			talkName(newValue, oldValue) {
 				if (newValue != oldValue) {
-					var maxnum = this.reftitletype == 4 ? 50 : 70;
+					var maxnum = this.reftitletype == 4 ? 50 : 140;
 					if (this.talkName.length > maxnum) {
 						this.talkName = this.talkName.slice(0, maxnum);
 						this.$toast.center(`题目长度不能大于${maxnum}`);

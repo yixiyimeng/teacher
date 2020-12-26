@@ -557,7 +557,7 @@ export default {
 						if (da.data.ret == 'success') {
 							$me.$toast.center('上传成功');
 							$me.titleCode = da.data.data;
-							sessionStorage.setItem('titleCode',$me.titleCode);
+							sessionStorage.setItem('titleCode', $me.titleCode);
 							this.getTitleList();
 						} else {
 							$me.$toast.center(da.data.message);

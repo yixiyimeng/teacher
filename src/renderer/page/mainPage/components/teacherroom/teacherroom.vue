@@ -69,8 +69,10 @@
 				</div>
 			</div>
 			<!-- 语音文本显示 -->
-			<transition name="bounce"><audiotxt v-if="isreftext" :reftext="reftext" :questionType="XSquestionType" :class="{ active: !isAnswering }"></audiotxt></transition>
-			<div class="soundbox" v-if="isreftext && subjecttitle == 9">
+			<transition name="bounce">
+				<audiotxt class="audiotxt" v-if="isreftext" :reftext="reftext" :questionType="XSquestionType" :class="{ active: !isAnswering }"></audiotxt>
+			</transition>
+			<div class="soundbox" :style="{top:soundboxTop+'px',left:soundboxLeft+'px'}" v-if="isreftext && subjecttitle == 9">
 				<span @click="startAudio" class="sound" v-if="subjecttitle == 9">
 					<img src="../../assets/play.png" alt="" v-if="!isPlay" />
 					<img src="../../assets/play.gif" alt="" v-if="isPlay" />
@@ -391,7 +393,9 @@ export default {
 			endAudio2: __static + '/mp3/end2.mp3',
 			bgAudio: __static + '/mp3/bg.mp3', //抢红包背景音乐
 			selectOrVoice: false, //当前是否在跟读测评。后台会发送语音题目的websock
-			isVoiceWordType: 1 // 保存记录再模板导入语音题的类型 1 英文单词 2，英文句子 4，中文句子
+			isVoiceWordType: 1, // 保存记录再模板导入语音题的类型 1 英文单词 2，英文句子 4，中文句子
+			soundboxTop: 5,
+			soundboxLeft: 0
 		};
 	},
 	computed: {
@@ -815,6 +819,16 @@ export default {
 					if ($me.isSatrspeaker) {
 						$me.ismicrophone = true;
 					}
+					$me.soundboxTop = 5;
+					this.$nextTick(() => {
+						if ($me.subjecttitle == 9) {
+							console.log('高度', $('.audiotxt')[0].offsetTop);
+							$me.soundboxTop = $('.audiotxt')[0].offsetTop - $('.audiotxt')[0].offsetHeight / 2 - 15;
+							console.log('宽度', $('.audiotxt .txt')[0].offsetWidth,document.body.offsetWidth);
+							$(window).width
+							$me.soundboxLeft = $('.audiotxt .txt')[0].offsetWidth / 2+document.body.offsetWidth*.2
+						}
+					});
 				}
 				//$me.isparticlesbox = true;
 			}
