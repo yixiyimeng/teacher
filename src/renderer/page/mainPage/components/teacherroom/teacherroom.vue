@@ -826,7 +826,7 @@ export default {
 							$me.soundboxTop = $('.audiotxt')[0].offsetTop - $('.audiotxt')[0].offsetHeight / 2 - 15;
 							console.log('宽度', $('.audiotxt .txt')[0].offsetWidth,document.body.offsetWidth);
 							$(window).width
-							$me.soundboxLeft = $('.audiotxt .txt')[0].offsetWidth / 2+document.body.offsetWidth*.2
+							$me.soundboxLeft = $('.audiotxt .txt')[0].offsetWidth / 2+225
 						}
 					});
 				}
