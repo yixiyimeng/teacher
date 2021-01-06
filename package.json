@@ -59,7 +59,7 @@
 	},
 	"dependencies": {
 		"ant-design-vue": "^1.4.6",
-		"axios": "^0.16.1",
+		"axios": "^0.21.1",
 		"echarts": "^4.2.1",
 		"html2canvas": "^1.0.0-rc.3",
 		"jquery": "^3.3.1",
