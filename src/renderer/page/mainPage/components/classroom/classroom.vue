@@ -8,7 +8,7 @@
 							<i class="red">*</i>
 							班级
 						</label>
-						<search :searchList="classsearchList" :selectValue.sync="selectclass" placeholdertxt="请选择班级" class="flex-1"></search>
+						<search :searchList="classsearchList" :isReadonly="false" :selectValue.sync="selectclass" placeholdertxt="请选择班级" class="flex-1"></search>
 					</div>
 					<div class="fromcontrol flex">
 						<label>
@@ -185,6 +185,10 @@ export default {
 				} else {
 					this.sendInfo.classCode = '';
 					this.sendInfo.className = '';
+					this.titlesearchList = [];
+					this.titleCode = null;
+					this.reftitletypelist = [];
+					this.selTalkName();
 				}
 				sessionStorage.setItem('sendInfo', JSON.stringify(this.sendInfo));
 			},

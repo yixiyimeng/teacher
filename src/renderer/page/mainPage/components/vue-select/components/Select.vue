@@ -162,11 +162,13 @@
 	display: block;
 	position: absolute;
 	top: calc(100% + 5px);
-	left: 0;
+	/* left: 0; */
+	right: -2px;
 	z-index: 1000;
 	/* padding: 5px 0; */
 	margin: 0;
-	width: 100%;
+	/* width: 100%; */
+	width: 500px;
 	max-height: 250px;
 	min-width: 160px;
 	overflow-y: auto;
