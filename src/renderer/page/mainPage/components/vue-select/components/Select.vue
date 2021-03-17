@@ -162,12 +162,14 @@
 	display: block;
 	position: absolute;
 	top: calc(100% + 5px);
-	left: 0;
+	/* left: 0; */
+	right: -2px;
 	z-index: 1000;
 	/* padding: 5px 0; */
 	margin: 0;
-	width: 100%;
+	/* width: 100%; */
 	max-height: 250px;
+	width: 500px;
 	min-width: 160px;
 	overflow-y: auto;
 	/* -webkit-box-shadow: 0 3px 6px 0 rgba(0, 0, 0, 0.15);

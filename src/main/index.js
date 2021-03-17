@@ -7,7 +7,7 @@ import {
 	ipcMain,
 	globalShortcut,
 	screen,
-	shell
+	shell,clipboard
 } from 'electron';
 import path from 'path';
 import fs from 'fs';
@@ -339,6 +339,20 @@ app.on('ready', () => {
 		// slashes: true
 		// }))
 	})
+	ipcMain.on('createSuspensionMenu', (e,value) => {
+		const rightM = Menu.buildFromTemplate([{
+				label: '复制班级',
+				click: () => {
+					// console.log('hahah,fuzhi')
+					// mainWindow.webContents.send('copy');
+					clipboard.writeText(value);
+					console.log(clipboard.readText())
+				}
+			}
+
+		]);
+		rightM.popup({});
+	});
 
 });
 

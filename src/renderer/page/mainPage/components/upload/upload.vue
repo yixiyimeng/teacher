@@ -21,7 +21,7 @@
 								accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
 							/>
 						</div>
-						
+
 						<!-- <a href="javascript:;" class="btn">清除答案</a> -->
 					</div>
 				</div>
@@ -35,11 +35,27 @@
 					<label>题目得分</label>
 					<input type="number" name="" id="" value="" placeholder="请输入题目得分" v-model="Data.score" class="flex-1 ant-input" />
 					<label>题目类型</label>
-					<select name="" id="" class="flex-1 ant-input" placeholder="请选择题目类型" v-model="Data.questionType"  @change="exchanswerreg(Data.questionType,Data.trueAnswer)">
+					<select
+						name=""
+						id=""
+						class="flex-1 ant-input"
+						placeholder="请选择题目类型"
+						v-model="Data.questionType"
+						@change="exchanswerreg(Data.questionType, Data.trueAnswer)"
+					>
 						<option v-for="type in typeList" :value="type.code" :key="type.code">{{ type.name }}</option>
 					</select>
 					<label>题目答案</label>
-					<input type="text" name="" id="" value="" placeholder="请输入题目答案" v-model="Data.trueAnswer" class="flex-1 ant-input"   @blur="exchanswerreg(Data.questionType,Data.trueAnswer)"/>
+					<input
+						type="text"
+						name=""
+						id=""
+						value=""
+						placeholder="请输入题目答案"
+						v-model="Data.trueAnswer"
+						class="flex-1 ant-input"
+						@blur="exchanswerreg(Data.questionType, Data.trueAnswer)"
+					/>
 					<div class="btnlist ml20"><a href="javascript:;" class="btn" @click="addSource(Data)">确认插入</a></div>
 				</div>
 				<p class="warn" style="color: #f00; text-align: center; padding: 10px 0 0;">
@@ -55,44 +71,66 @@
 				</p>
 				<div class="title mt10">答案设置</div>
 				<table class="table">
-				<col style="width: auto" /> 
+					<col style="width: auto" /> 
 				<col style="width: auto" />  
 				<col style="width: auto" /> 
 				<col style="width: auto" /> 
-				<col style="width: 120px" />  
-				<thead>
-					<tr>
-						<th>题号</th>
-						<th>分数</th>
-						<th>类型</th>
-						<th>答案</th>
-						<th>操作</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr v-for="(item,index) in dataSource" :key="index">
-						<td>{{index+1}}</td>
-						<td><span v-if="!item.editable&&item.id">{{item.score}}</span>
-						<input type="number" class="ant-input" v-if="item.editable||!item.id" v-model.trim="item.score"></td>
-						<td>
-							<span v-if="!item.editable&&item.id">{{item.questionName}}</span>
-							<select name="" id="" class="flex-1 ant-input" v-if="item.editable||!item.id"  v-model="item.questionType"  @change="exchanswerreg(item.questionType,item.trueAnswer,index)">
-					        	<option v-for="type in typeList" :key="type.code" :value="type.code">{{type.name}}</option>
-				            </select>
-						</td>
-						<td><span v-if="!item.editable&&item.id">{{item.trueAnswer}}</span>
-						<input type="text" class="ant-input" v-if="item.editable||!item.id" v-model.trim="item.trueAnswer" @blur="exchanswerreg(item.questionType,item.trueAnswer,index)"></td>
-						<td style="width: 80px;" width="80px">
-							<a href="javascript:;" class="link" v-if="!item.editable&&item.id" @click="edit(index)">编辑</a>
-							<!-- <a href="javascript:;" class="link" @click="save(index,item)"  v-if="item.editable||!item.id">保存</a> -->
-							<a href="javascript:;" class="link" v-if="!item.editable||!item.id" @click="del(index,item)">删除</a>
-							<a href="javascript:;" class="link" @click="cancel(index)"  v-if="item.editable">取消</a>
-						</td>
-					</tr>
-				</tbody>
-			</table>
-			<!-- totalbar -->
-			<div class="totalbar"><span>总题数{{total}}题，总分{{totalScore}}分</span> <a href="javascript:;" class="btn" @click="batchSave">批量保存</a></div>
+				<col style="width: 120px" /> 
+					<thead>
+						<tr>
+							<th>题号</th>
+							<th>分数</th>
+							<th>类型</th>
+							<th>答案</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for="(item, index) in dataSource" :key="index">
+							<td>{{ index + 1 }}</td>
+							<td>
+								<span v-if="!item.editable && item.id">{{ item.score }}</span>
+								<input type="number" class="ant-input" v-if="item.editable || !item.id" v-model.trim="item.score" />
+							</td>
+
+							<td>
+								<span v-if="!item.editable && item.id">{{ item.questionName }}</span>
+								<select
+									name=""
+									id=""
+									class="flex-1 ant-input"
+									v-if="item.editable || !item.id"
+									v-model="item.questionType"
+									@change="exchanswerreg(item.questionType, item.trueAnswer, index)"
+								>
+									<option v-for="type in typeList" :key="type.code" :value="type.code">{{ type.name }}</option>
+								</select>
+							</td>
+							<td>
+								<span v-if="!item.editable && item.id">{{ item.trueAnswer }}</span>
+								<input
+									type="text"
+									class="ant-input"
+									v-if="item.editable || !item.id"
+									v-model.trim="item.trueAnswer"
+									@blur="exchanswerreg(item.questionType, item.trueAnswer, index)"
+								/>
+							</td>
+
+							<td style="width: 80px;" width="80px">
+								<a href="javascript:;" class="link" v-if="!item.editable && item.id" @click="edit(index)">编辑</a>
+								<!-- <a href="javascript:;" class="link" @click="save(index,item)"  v-if="item.editable||!item.id">保存</a> -->
+								<a href="javascript:;" class="link" v-if="!item.editable || !item.id" @click="del(index, item)">删除</a>
+								<a href="javascript:;" class="link" @click="cancel(index)" v-if="item.editable">取消</a>
+							</td>
+						</tr>
+					</tbody>
+				</table>
+				<!-- totalbar -->
+				<div class="totalbar">
+					<span>总题数{{ total }}题，总分{{ totalScore }}分</span>
+					<a href="javascript:;" class="btn" @click="batchSave">批量保存</a>
+				</div>
 			</div>
 		</div>
 		<div class="exitappWin animated fadeIn" v-if="isSave">
@@ -116,7 +154,7 @@ export default {
 		return {
 			sendInfo: {},
 			titleName: '',
-			titleCode:'',
+			titleCode: '',
 			Data: {
 				totalNum: 1,
 				score: 5,
@@ -132,27 +170,28 @@ export default {
 					code: 2,
 					name: '单题多选'
 				},
-// 				{
-// 					code: 3,
-// 					name: '多题单选'
-// 				},
+				// 				{
+				// 					code: 3,
+				// 					name: '多题单选'
+				// 				},
 				{
 					code: 4,
 					name: '判断题'
 				}
-// 				{
-// 					code: 5,
-// 					name: '主观题'
-// 				},
-// 				{
-// 					code: 6,
-// 					name: '抢红包'
-// 				}
+				// 				{
+				// 					code: 5,
+				// 					name: '主观题'
+				// 				},
+				// 				{
+				// 					code: 6,
+				// 					name: '抢红包'
+				// 				}
 			],
 			title: '',
 			oldSource: [],
 			dataSource: [],
-			isSave:false
+			isSave: false,
+			isUploadFile: true
 		};
 	},
 	props: {
@@ -161,36 +200,36 @@ export default {
 			default: true
 		}
 	},
-	
+
 	created() {
 		this.sendInfo = sessionStorage.getItem('sendInfo') ? JSON.parse(sessionStorage.getItem('sendInfo')) : null;
-		console.log(this.sendInfo)
-// 		this.titleCode= sessionStorage.getItem('titleCode') ? sessionStorage.getItem('titleCode') : null;
-// 		this.titleName= sessionStorage.getItem('titleName') ? sessionStorage.getItem('titleName') : null;
-// 		if(this.titleCode){
-// 		this.selectQuestions();
-// 		}
+		console.log(this.sendInfo);
+		// 		this.titleCode= sessionStorage.getItem('titleCode') ? sessionStorage.getItem('titleCode') : null;
+		// 		this.titleName= sessionStorage.getItem('titleName') ? sessionStorage.getItem('titleName') : null;
+		// 		if(this.titleCode){
+		// 		this.selectQuestions();
+		// 		}
 	},
-	computed:{
-		total:function(){
+	computed: {
+		total: function() {
 			return this.dataSource.length;
 		},
-		totalScore:function(){
-			let count=0;
-			if(this.dataSource.length>0){
-			   count=this.dataSource.reduce((count,item)=>count+=item.score-0,0);	
+		totalScore: function() {
+			let count = 0;
+			if (this.dataSource.length > 0) {
+				count = this.dataSource.reduce((count, item) => (count += item.score - 0), 0);
 			}
 			return count;
 		}
 	},
 	methods: {
-		isCanclose(){
+		isCanclose() {
 			/* 是否可以保存 */
-			const $me=this;
-			if(JSON.stringify($me.oldSource)==JSON.stringify($me.dataSource)){
+			const $me = this;
+			if (JSON.stringify($me.oldSource) == JSON.stringify($me.dataSource)) {
 				$me.close();
-			}else{
-				$me.isSave=true;
+			} else {
+				$me.isSave = true;
 			}
 		},
 		close() {
@@ -205,7 +244,7 @@ export default {
 				var p = {
 					trueAnswer: val.trueAnswer,
 					score: val.score,
-					questionType: val.questionType,
+					questionType: val.questionType
 					//questionName:questionName
 					// typename: val.questionType > 0 ? this.typeList[val.questionType - 1].name : ''
 				};
@@ -215,7 +254,6 @@ export default {
 		},
 		edit(index) {
 			this.$set(this.dataSource[index], 'editable', true);
-			
 		},
 		cancel(index) {
 			const newData = [...this.dataSource];
@@ -226,22 +264,22 @@ export default {
 				this.dataSource = newData;
 			}
 		},
-		save(index,item) {
+		save(index, item) {
 			const $me = this;
 			if (!$me.titleName) {
 				this.$toast.center('请输入标题');
 				return false;
 			}
-			var questions={
-				questionType:item.questionType,
-				score:item.score,
-				trueAnswer:item.trueAnswer
+			var questions = {
+				questionType: item.questionType,
+				score: item.score,
+				trueAnswer: item.trueAnswer
 			};
-			if(item.id){
-				questions.id=item.id;
-				questions.questionId=item.questionId;
+			if (item.id) {
+				questions.id = item.id;
+				questions.questionId = item.questionId;
 			}
-			
+
 			var param = {
 				classCode: $me.sendInfo.classCode,
 				className: $me.sendInfo.className,
@@ -254,21 +292,21 @@ export default {
 			this.$http({
 				method: 'post',
 				url: urlPath + '/teacher-client/platform/batch_insert_or_update',
-				data: param,
+				data: param
 			}).then(da => {
 				if (da.data.ret == 'success') {
 					$me.$toast.center('保存成功');
-					$me.titleCode=da.data.data.titleCode;
-					sessionStorage.setItem('titleCode',$me.titleCode);
+					$me.titleCode = da.data.data.titleCode;
+					sessionStorage.setItem('titleCode', $me.titleCode);
 					//$me.selectQuestions();
 				} else {
 					$me.$toast.center(da.data.message);
 				}
 			});
 		},
-		del(index,val){
+		del(index, val) {
 			var $me = this;
-			if(val.id){
+			if (val.id) {
 				this.$http({
 					method: 'post',
 					url: urlPath + '/teacher-client/platform/batch_remove',
@@ -276,20 +314,19 @@ export default {
 				}).then(da => {
 					if (da.data.ret == 'success') {
 						$me.$toast.center('删除成功');
-						$me.dataSource.splice(index,1);
+						$me.dataSource.splice(index, 1);
 					} else {
 						$me.$toast.center('删除失败');
 					}
 				});
-			}else{
-				this.dataSource.splice(index,1);
+			} else {
+				this.dataSource.splice(index, 1);
 			}
-		
 		},
 		uploadFile() {
 			const $me = this;
 			var file = $('#upload')[0];
-			
+
 			if (file.files[0] && $me.sendInfo) {
 				var strFileName = $('#upload')
 					.val()
@@ -302,7 +339,7 @@ export default {
 					$me.$toast.center('请上传excel文件');
 					return false;
 				}
-				if(!$me.titleName){
+				if (!$me.titleName) {
 					$me.titleName = strFileName;
 				}
 				formData.append('file', file.files[0]);
@@ -311,6 +348,7 @@ export default {
 				formData.append('className', $me.sendInfo.className);
 				formData.append('subjectCode', $me.sendInfo.subjectCode);
 				formData.append('subjectName', $me.sendInfo.subjectName);
+				this.isUploadFile=false;
 				this.$http({
 					method: 'post',
 					url: urlPath + '/teacher-client/platform/importQuesrions',
@@ -321,15 +359,16 @@ export default {
 					if (da.data.ret == 'success') {
 						//showMessage('上传成功')
 						$me.$toast.center('上传成功');
-						$me.titleCode=da.data.data.titleCode;
-						sessionStorage.setItem('titleCode',$me.titleCode);
+						$me.titleCode = da.data.data.titleCode;
+						sessionStorage.setItem('titleCode', $me.titleCode);
 						$me.selectQuestions();
 						//$me.titleName=da.data.data.titleName;
 					} else {
 						$me.$toast.center(da.data.message);
 					}
-				});
-
+				}).finally(() => {
+					    this.isUploadFile=true;
+						});;
 				file.value = '';
 			} else {
 				this.$toast.center('请选择文件');
@@ -338,7 +377,7 @@ export default {
 		/* 批量保存 */
 		batchSave() {
 			const $me = this;
-			$me.isSave=false;
+			$me.isSave = false;
 			if (!$me.titleName) {
 				this.$toast.center('请输入标题');
 				return false;
@@ -348,38 +387,37 @@ export default {
 				return false;
 			}
 			//console.log(this.dataSource)
-			let questions=[];
-			for(var i=0;i<this.dataSource.length;i++){
-				var item=this.dataSource[i];
-				if(!item.questionType||!item.score||!item.trueAnswer){
+			let questions = [];
+			for (var i = 0; i < this.dataSource.length; i++) {
+				var item = this.dataSource[i];
+				if (!item.questionType || !item.score || !item.trueAnswer) {
 					this.$toast.center('请完善题目信息');
 					return false;
 				}
-				var param={
-					questionId:i+1,
-					questionType:item.questionType,
-					score:item.score,
-					trueAnswer:item.trueAnswer
-					
+				var param = {
+					questionId: i + 1,
+					questionType: item.questionType,
+					score: item.score,
+					trueAnswer: item.trueAnswer
 				};
-				if (item.id){
-					param.id=item.id
+				if (item.id) {
+					param.id = item.id;
 				}
 				questions.push(param);
 			}
-// 			let questions=this.dataSource.map((item,index)=>{
-// 				var param={
-// 					questionId:index+1,
-// 					questionType:item.questionType,
-// 					score:item.score,
-// 					trueAnswer:item.trueAnswer
-// 					
-// 				};
-// 				if (item.id){
-// 					param.id=item.id
-// 				}
-// 				return param
-// 			});
+			// 			let questions=this.dataSource.map((item,index)=>{
+			// 				var param={
+			// 					questionId:index+1,
+			// 					questionType:item.questionType,
+			// 					score:item.score,
+			// 					trueAnswer:item.trueAnswer
+			//
+			// 				};
+			// 				if (item.id){
+			// 					param.id=item.id
+			// 				}
+			// 				return param
+			// 			});
 			var param = {
 				classCode: $me.sendInfo.classCode,
 				className: $me.sendInfo.className,
@@ -392,12 +430,12 @@ export default {
 			this.$http({
 				method: 'post',
 				url: urlPath + '/teacher-client/platform/batch_insert_or_update',
-				data: param,
+				data: param
 			}).then(da => {
 				if (da.data.ret == 'success') {
 					$me.$toast.center('保存成功');
-					$me.titleCode=da.data.data.titleCode;
-					sessionStorage.setItem('titleCode',$me.titleCode);
+					$me.titleCode = da.data.data.titleCode;
+					sessionStorage.setItem('titleCode', $me.titleCode);
 					$me.selectQuestions();
 				} else {
 					$me.$toast.center(da.data.message);
@@ -405,22 +443,22 @@ export default {
 			});
 		},
 		/* 查询题目详情 */
-		selectQuestions(){
-			const $me=this;
+		selectQuestions() {
+			const $me = this;
 			this.$http({
 				method: 'post',
 				url: urlPath + '/teacher-client/platform/selectQuestions',
-				data: {titleCode:$me.titleCode},
+				data: { titleCode: $me.titleCode }
 			}).then(da => {
 				if (da.data.ret == 'success') {
 					/* 获取题目详情成功 */
 					//console.log(da.data.data) ;
-					$me.dataSource=da.data.data?da.data.data:[];
-					if($me.dataSource.length>0){
+					$me.dataSource = da.data.data ? da.data.data : [];
+					if ($me.dataSource.length > 0) {
 						// var questionName=this.typeList.find(item=>item.code==val.questionType).name
-						$me.dataSource=$me.dataSource.map(item=>{
-							item.questionName=$me.typeList.find(subitem=>subitem.code==item.questionType).name;
-							return item
+						$me.dataSource = $me.dataSource.map(item => {
+							item.questionName = $me.typeList.find(subitem => subitem.code == item.questionType).name;
+							return item;
 						});
 						$me.oldSource = this.dataSource.map(item => ({ ...item }));
 					}
@@ -429,13 +467,17 @@ export default {
 				}
 			});
 		},
-		exchanswerreg(questionType,trueAnswer,index){
-			const $me=this;
-			var answerreg='';
-			if(!trueAnswer){
+		exchanswerreg(questionType, trueAnswer, index) {
+			const $me = this;
+			var answerreg = '';
+			if (!trueAnswer) {
 				return false;
 			}
-			var answer =trueAnswer.toLocaleUpperCase().split('').sort().join('');
+			var answer = trueAnswer
+				.toLocaleUpperCase()
+				.split('')
+				.sort()
+				.join('');
 			if (questionType == 1) {
 				answerreg = /^[A-D]{1}$/;
 			} else if (questionType == 4) {
@@ -445,17 +487,16 @@ export default {
 			}
 			if (!answerreg.test(answer)) {
 				$me.$toast.center('请输入正确答案');
-				if(!index){
-					$me.Data.trueAnswer='';
-				}else{
-					this.dataSource[index].trueAnswer='';
+				if (!index) {
+					$me.Data.trueAnswer = '';
+				} else {
+					this.dataSource[index].trueAnswer = '';
 				}
-				
-			}else{
-				if(!index){
-					$me.Data.trueAnswer=answer;
-				}else{
-					this.dataSource[index].trueAnswer=answer;
+			} else {
+				if (!index) {
+					$me.Data.trueAnswer = answer;
+				} else {
+					this.dataSource[index].trueAnswer = answer;
 				}
 			}
 		}
@@ -542,7 +583,6 @@ export default {
 .bg > .upload-bd .btnbar .upload {
 	position: relative;
 	overflow: hidden;
-	
 }
 .bg > .upload-bd .btnbar .upload input[type='file'] {
 	position: absolute;
@@ -643,13 +683,13 @@ export default {
 	text-align: center;
 	line-height: 35px;
 }
-.totalbar{
+.totalbar {
 	position: absolute;
 	right: 40px;
 	bottom: 15px;
-	line-height: 34px
+	line-height: 34px;
 }
-.totalbar span{
-	vertical-align: middle
-	}
+.totalbar span {
+	vertical-align: middle;
+}
 </style>

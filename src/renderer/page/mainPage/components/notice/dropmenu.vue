@@ -86,8 +86,8 @@ export default {
 	box-sizing: border-box;
 	top:65px;
 	width: auto;
-	left: 5em;
-	right: 0;
+	/* left: 5em; */
+	right: -2px;
 	box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 </style>
